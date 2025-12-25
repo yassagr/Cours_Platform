@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Delete Course: {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto mt-20 bg-[#1e293b] text-white p-8 rounded-xl shadow-lg border border-gray-700">
+    <h1 class="text-3xl font-bold text-red-500 mb-6">Confirm Course Deletion</h1>
+
+    <p class="mb-6 text-gray-300">
+        Are you sure you want to <span class="font-semibold text-yellow-400">{{ course.title }}</span> to be <span class="text-red-400 font-bold">permanently deleted</span>? This action cannot be undone.
+    </p>
+
+    <form method="POST" class="flex gap-4">
+        {% csrf_token %}
+        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-2 rounded-lg transition">
+            🗑️ Delete
+        </button>
+        <a href="{% url 'course-list' %}" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-2 rounded-lg transition text-center">
+            Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}

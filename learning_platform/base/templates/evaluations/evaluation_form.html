@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}{{ form.instance.pk|yesno:"Edit Evaluation,Create Evaluation" }}{% endblock %}
+
+{% block content %}
+<div class="bg-[#1e293b] text-white p-6 rounded-xl shadow-lg border border-gray-700 max-w-3xl mx-auto">
+    <h1 class="text-3xl font-bold text-blue-300 mb-6">
+        {{ form.instance.pk|yesno:"✏️ Edit Evaluation,➕ Create a New Evaluation" }}
+    </h1>
+
+    {% if form.non_field_errors %}
+        <div class="mb-4 p-4 bg-red-500 text-white rounded-lg">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="space-y-5">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div>
+                <label class="block text-sm font-semibold mb-1 text-blue-200" for="{{ field.id_for_label }}">
+                    {{ field.label }}:
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                    <p class="text-sm text-gray-400">{{ field.help_text }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p class="text-red-400 text-sm mt-1">⚠️ {{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <div class="flex items-center gap-4 pt-4">
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition">
+                💾 Save
+            </button>
+            <a href="{% url 'module-list-by-course' course.id %}?module_id={{ module.id }}" class="text-sm text-gray-300 hover:underline">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        el.classList.add(
+            'w-full', 'px-4', 'py-2', 'bg-gray-800', 'text-white',
+            'rounded-lg', 'border', 'border-gray-600',
+            'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-400'
+        );
+    });
+</script>
+{% endblock %}

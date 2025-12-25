@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% block title %}Modules for {{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="flex">
+    <!-- Liste des modules à gauche -->
+    <div class="w-1/4 bg-gray-800 text-white p-4 rounded-l-lg">
+        <h2 class="text-xl font-semibold mb-4">📂 Modules</h2>
+        <ul class="space-y-2">
+            {% for module in modules %}
+                <li>
+                    <a href="?module_id={{ module.id }}"
+                        class="block p-2 rounded-md hover:bg-gray-700 {% if module == selected_module %}bg-gray-700{% endif %}">
+                        {{ module.title }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
+            <div class="mt-6">
+                <a href="{% url 'module-create' course.id %}"
+                    class="block bg-blue-800 text-white text-center px-4 py-2 rounded-md hover:bg-blue-500 transition">
+                    ➕ Add Module
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Détails du module sélectionné et ses ressources -->
+    <div class="w-3/4 bg-gray-900 text-white p-6 rounded-r-lg">
+        {% if selected_module %}
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-blue-400">{{ selected_module.title }}</h2>
+
+                {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
+                    <div class="space-x-4">
+                        <a href="{% url 'module-update' selected_module.pk %}"
+                            class="bg-yellow-500 text-white px-5 py-2 rounded-lg hover:bg-yellow-600 transition font-medium">✏️ Edit</a>
+                        <a href="{% url 'module-delete' selected_module.pk %}"
+                            class="bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 transition font-medium">🗑️ Delete</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <p class="mb-6 text-gray-300">{{ selected_module.description }}</p>
+
+            <div class="mt-10 bg-gray-800 p-6 rounded-lg border border-gray-700 shadow-inner">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-2xl font-semibold text-blue-300">📁 Resources</h3>
+                    {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
+                        <a href="{% url 'resource-add' selected_module.id %}" 
+                            class="bg-blue-800 hover:bg-blue-500 text-white px-4 py-2 rounded shadow">
+                                ➕ add resource
+                        </a>
+                    {% endif %}
+                    
+                </div>
+                {% if resources %}
+                    <ul class="space-y-3 text-gray-200">
+                        {% for resource in resources %}
+                            <li class="p-3 bg-gray-700 rounded-lg shadow hover:bg-gray-600 transition">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <strong>{{ resource.title }}</strong> - {{ resource.resource_type|title }}
+                                        <div class="mt-1">
+                                            <a href="{{ resource.file.url }}" target="_blank" class="text-blue-400">
+                                                🔗 Open resource
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2 ml-4">
+                                        {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
+                                            <div class="space-x-4">
+                                                <a href="{% url 'resource-edit' resource.id %}" 
+                                                class="text-yellow-300 hover:text-yellow-200 text-sm ">
+                                                    ✏️ Edit
+                                                </a>
+                                                <a href="{% url 'resource-delete' resource.id %}" 
+                                                class="text-red-400 hover:text-red-300 text-sm ">
+                                                    🗑️ Delete
+                                                </a>
+                                            </div>
+                                        {% endif %}
+                                        
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-gray-400">No resources for this module.</p>
+                {% endif %}
+            </div>
+            <div class="mt-10 bg-gray-800 p-6 rounded-lg border border-gray-700 shadow-inner">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-2xl font-semibold text-purple-300">📝 Evaluations</h3>
+                    {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
+                        <a href="{% url 'evaluation-add' selected_module.id %}" 
+                        class="bg-purple-800 hover:bg-purple-500 text-white px-4 py-2 rounded shadow">
+                            ➕ add Evaluation
+                        </a>
+                    {% endif %}
+                </div>
+                {% if evaluations %}
+                    <ul class="space-y-3 text-gray-200">
+                        {% for evaluation in evaluations %}
+                            <li class="p-3 bg-gray-700 rounded-lg shadow hover:bg-gray-600 transition">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <strong>{{ evaluation.title }}</strong> - {{ evaluation.evaluation_type }}
+                                        <div class="text-sm text-gray-300 mt-1">
+                                            🗓️ Deadline: <span class="text-yellow-300">{{ evaluation.deadline }}</span> |
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2 ml-4">
+                                        {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
+                                            <div class="space-x-4">
+                                                <a href="{% url 'evaluation-edit' evaluation.id %}" 
+                                                class="text-yellow-300 hover:text-yellow-200 text-sm">
+                                                    ✏️ Edit
+                                                </a>
+                                                <a href="{% url 'evaluation-delete' evaluation.id %}" 
+                                                class="text-red-400 hover:text-red-300 text-sm">
+                                                    🗑️ Delete
+                                                </a>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-gray-400">Aucune évaluation pour ce module.</p>
+                {% endif %}
+            </div>
+
+        {% else %}
+            <p class="text-gray-400">Select a module to view its resources.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
