@@ -67,10 +67,14 @@ class ModuleForm(forms.ModelForm):
 
 
 class ResourceForm(forms.ModelForm):
-    """Formulaire pour créer/modifier une ressource"""
+    """
+    Formulaire pour créer/modifier une ressource.
+    Les deux champs (file et url) sont affichés - le fichier a la priorité.
+    """
+    
     class Meta:
         model = Resource
-        fields = ['title', 'resource_type', 'file']
+        fields = ['title', 'resource_type', 'file', 'url']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'w-full px-4 py-2 bg-gray-800 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400',
@@ -79,10 +83,36 @@ class ResourceForm(forms.ModelForm):
             'resource_type': forms.Select(attrs={
                 'class': 'w-full px-4 py-2 bg-gray-800 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400'
             }),
+            'url': forms.URLInput(attrs={
+                'class': 'w-full px-4 py-2 bg-gray-800 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400',
+                'placeholder': 'https://youtube.com/watch?v=... ou https://drive.google.com/...'
+            }),
             'file': forms.FileInput(attrs={
                 'class': 'w-full px-4 py-2 bg-gray-800 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400'
             }),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Rendre url et file optionnels (validation personnalisée)
+        self.fields['url'].required = False
+        self.fields['file'].required = False
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        url = cleaned_data.get('url')
+        file = cleaned_data.get('file')
+        
+        # Si un fichier est fourni, ignorer l'URL (priorité au fichier)
+        if file:
+            cleaned_data['url'] = None
+        elif not url and not (self.instance and self.instance.file):
+            # Ni fichier ni URL fourni, et pas de fichier existant
+            raise forms.ValidationError(
+                "Veuillez fournir soit un fichier, soit une URL."
+            )
+        
+        return cleaned_data
 
 
 class EvaluationForm(forms.ModelForm):

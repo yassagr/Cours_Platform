@@ -37,6 +37,11 @@ class CourseListView(LoginRequiredMixin, ListView):
     model = Course
     template_name = 'courses/course_list.html'
     context_object_name = 'courses'
+    paginate_by = 9  # Pagination: 9 cours par page (grille 3x3)
+    
+    def get_queryset(self):
+        """Optimiser les requêtes avec select_related et prefetch_related"""
+        return Course.objects.select_related('instructor').prefetch_related('modules', 'enrollments')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -789,21 +794,33 @@ class QuizSubmitView(LoginRequiredMixin, View):
         
         for question in questions:
             answer_key = f'question_{question.id}'
-            selected_option = request.POST.get(answer_key, '')
+            selected_option = request.POST.get(answer_key, '').strip()
             
-            is_correct = selected_option == question.correct_option
-            points = question.points if is_correct else 0
-            
-            SubmittedAnswer.objects.create(
-                submission=submission,
-                question=question,
-                selected_option=selected_option if selected_option else None,
-                is_correct=is_correct,
-                points_earned=points
-            )
+            # Distinguer "pas de réponse" vs "mauvaise réponse"
+            if not selected_option:
+                # Question non répondue
+                SubmittedAnswer.objects.create(
+                    submission=submission,
+                    question=question,
+                    selected_option=None,
+                    is_correct=False,
+                    points_earned=0
+                )
+            else:
+                # Réponse fournie
+                is_correct = selected_option == question.correct_option
+                points = question.points if is_correct else 0
+                
+                SubmittedAnswer.objects.create(
+                    submission=submission,
+                    question=question,
+                    selected_option=selected_option,
+                    is_correct=is_correct,
+                    points_earned=points
+                )
+                earned_points += points
             
             total_points += question.points
-            earned_points += points
         
         # Calculer et sauvegarder le score
         submission.score = earned_points
@@ -907,8 +924,13 @@ class AssignmentSubmitView(LoginRequiredMixin, View):
             }
         )
         
-        # Vérifier si soumis en retard
-        if evaluation.deadline < timezone.now().date():
+        # Vérifier si soumis en retard (comparaison robuste avec fuseau horaire)
+        import datetime
+        deadline_end = timezone.make_aware(
+            datetime.datetime.combine(evaluation.deadline, datetime.time.max)
+        ) if evaluation.deadline else None
+        
+        if deadline_end and timezone.now() > deadline_end:
             submission.status = 'late'
             submission.save()
         

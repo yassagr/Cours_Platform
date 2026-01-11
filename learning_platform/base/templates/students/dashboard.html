@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
-{% block title %}Student Dashboard{% endblock %}
+{% block title %}Tableau de Bord Étudiant{% endblock %}
 
 {% block content %}
-<h1 class="text-3xl font-bold text-white mb-8">👤 Your Profile</h1>
+<h1 class="text-3xl font-bold text-white mb-8"><i class="fas fa-user-graduate mr-3"></i>Mon Profil</h1>
 
 <!-- Formulaire modification utilisateur -->
 <div class="bg-[#1e293b] p-6 rounded-xl shadow-lg border border-gray-700 max-w-3xl mb-12 mx-auto">
@@ -10,81 +10,80 @@
         {% csrf_token %}
         {% for field in form %}
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-200" for="{{ field.id_for_label }}">{{ field.label}}</label>
+            <label class="block text-sm font-semibold mb-1 text-blue-200" for="{{ field.id_for_label }}">{{ field.label
+                }}</label>
             {{ field }}
             {% for error in field.errors %}
-            <p class="text-red-400 text-sm mt-1">⚠️ {{ error }}</p>
+            <p class="text-red-400 text-sm mt-1">{{ error }}</p>
             {% endfor %}
         </div>
         {% endfor %}
         <button type="submit"
-            class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition">
-            💾 Update Profile
+            class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition flex items-center gap-2">
+            <i class="fas fa-save"></i> Mettre à jour
         </button>
     </form>
 </div>
 
 <hr class="my-10 border-gray-600">
 
-<h2 class="text-2xl font-bold text-white mb-6">📚 Your Enrolled Courses</h2>
+<h2 class="text-2xl font-bold text-white mb-6"><i class="fas fa-book mr-3"></i>Mes Cours</h2>
 {% if enrolled_courses %}
 <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
     {% for course in enrolled_courses %}
-    <div onclick="window.location.href='{% url 'course-detail' course.pk %}'"
-        class="cursor-pointer bg-[#1e293b] text-white rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all p-4 border border-gray-700 flex flex-col justify-between">
+    <div class="course-card cursor-pointer bg-[#1e293b] text-white rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all p-4 border border-gray-700 flex flex-col justify-between"
+        data-href="{% url 'course-detail' course.pk %}">
         <div>
             {% if course.image %}
             <img src="{{ course.image.url }}" alt="{{ course.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
             {% else %}
             <div
                 class="rounded-lg mb-4 h-40 w-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
-                <span class="text-6xl">📚</span>
+                <i class="fas fa-book text-6xl text-white/50"></i>
             </div>
             {% endif %}
             <h3 class="text-lg font-semibold text-blue-300 mb-1 hover:underline">{{ course.title }}</h3>
-            <p class="text-sm text-gray-300 mb-4">{{ course.description|slice:":50" }}{% if course.description|length >
-                50 %}...{% endif %}</p>
+            <p class="text-sm text-gray-300 mb-4">{{ course.description|truncatechars:50 }}</p>
         </div>
         <div class="mt-auto text-sm">
             <a href="{% url 'module-list-by-course' course.pk %}"
                 class="bg-blue-700 hover:bg-blue-800 text-white text-center font-semibold px-4 py-2 rounded-lg mt-2 inline-block transition w-full">
-                ➡️ Continue
+                <i class="fas fa-arrow-right mr-2"></i>Continuer
             </a>
         </div>
     </div>
     {% endfor %}
 </div>
 {% else %}
-<p class="text-gray-300">You are not enrolled in any course yet.</p>
+<p class="text-gray-300">Vous n'êtes inscrit à aucun cours pour le moment.</p>
 {% endif %}
 
 <hr class="my-10 border-gray-600">
 
-<h2 class="text-2xl font-bold text-white mb-6">🎯 Suggested Courses For You</h2>
+<h2 class="text-2xl font-bold text-white mb-6"><i class="fas fa-star mr-3"></i>Cours Suggérés</h2>
 {% if suggested_courses %}
 <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
     {% for course in suggested_courses %}
-    <div onclick="window.location.href='{% url 'course-detail' course.pk %}'"
-        class="cursor-pointer bg-[#1e293b] text-white rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all p-4 border border-gray-700 flex flex-col justify-between ">
+    <div class="course-card cursor-pointer bg-[#1e293b] text-white rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all p-4 border border-gray-700 flex flex-col justify-between"
+        data-href="{% url 'course-detail' course.pk %}">
         <div>
             {% if course.image %}
             <img src="{{ course.image.url }}" alt="{{ course.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
             {% else %}
             <div
                 class="rounded-lg mb-4 h-40 w-full bg-gradient-to-br from-green-600 to-teal-600 flex items-center justify-center">
-                <span class="text-6xl">🌟</span>
+                <i class="fas fa-lightbulb text-6xl text-white/50"></i>
             </div>
             {% endif %}
             <h3 class="text-lg font-semibold text-blue-300 mb-1 hover:underline">{{ course.title }}</h3>
-            <p class="text-sm text-gray-300 mb-4">{{ course.description|slice:":50" }}{% if course.description|length >
-                50 %}...{% endif %}</p>
+            <p class="text-sm text-gray-300 mb-4">{{ course.description|truncatechars:50 }}</p>
         </div>
-        <div class="mt-auto text-sm">
+        <div class="mt-auto text-sm" onclick="event.stopPropagation()">
             <form action="{% url 'enroll' course.pk %}" method="post">
                 {% csrf_token %}
                 <button type="submit"
-                    class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 mt-2 rounded-lg transition w-full">
-                    🎓 Enroll
+                    class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 mt-2 rounded-lg transition w-full flex items-center justify-center gap-2">
+                    <i class="fas fa-user-plus"></i> S'inscrire
                 </button>
             </form>
         </div>
@@ -92,33 +91,45 @@
     {% endfor %}
 </div>
 {% else %}
-<p class="text-gray-300">No course suggestions available right now.</p>
+<p class="text-gray-300">Pas de suggestions de cours disponibles pour le moment.</p>
 {% endif %}
 
 <hr class="my-10 border-gray-600">
 
-<h2 class="text-2xl font-bold text-white mb-6">🏅 Your Certificates</h2>
+<h2 class="text-2xl font-bold text-white mb-6"><i class="fas fa-certificate mr-3"></i>Mes Certificats</h2>
 {% if certificates %}
 <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
     {% for cert in certificates %}
     <div class="bg-[#1e293b] rounded-xl shadow-md p-4 border border-gray-700">
-        <h3 class="text-blue-300 font-semibold mb-2">{{ cert.title }}</h3>
-        <p class="text-gray-300 text-sm mb-2">Issued on: {{ cert.issued_on }}</p>
-        <p class="text-gray-400 text-sm">{{ cert.description|default:"No description" }}</p>
+        <h3 class="text-blue-300 font-semibold mb-2">{{ cert.course.title }}</h3>
+        <p class="text-gray-300 text-sm mb-2">Délivré le : {{ cert.issued_on }}</p>
+        <div class="flex gap-2 mt-3">
+            <a href="{% url 'certificate-preview' cert.id %}" target="_blank" class="btn-sm btn-outline-primary"
+                title="Voir le certificat">
+                <i class="fas fa-eye"></i>
+            </a>
+            <a href="{% url 'certificate-download' cert.id %}" class="btn-sm btn-outline-success"
+                title="Télécharger le certificat">
+                <i class="fas fa-download"></i>
+            </a>
+        </div>
     </div>
     {% endfor %}
 </div>
 {% else %}
-<p class="text-gray-300">You have no certificates yet.</p>
+<p class="text-gray-300">Vous n'avez pas encore de certificats.</p>
 {% endif %}
+
 <script>
-    // Corriger dynamiquement les champs si form-widget n'est pas stylé
     document.querySelectorAll('input, select, textarea').forEach(el => {
-        el.classList.add(
-            'w-full', 'px-4', 'py-2', 'bg-gray-800', 'text-white',
-            'rounded-lg', 'border', 'border-gray-600',
-            'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-400'
-        );
+        el.classList.add('w-full', 'px-4', 'py-2', 'bg-gray-800', 'text-white', 'rounded-lg', 'border', 'border-gray-600', 'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-400');
+    });
+    document.querySelectorAll('.course-card[data-href]').forEach(function (card) {
+        card.addEventListener('click', function (e) {
+            if (!e.target.closest('a, button, form')) {
+                window.location.href = this.dataset.href;
+            }
+        });
     });
 </script>
 {% endblock %}

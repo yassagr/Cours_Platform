@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
-{% block title %}Teacher Dashboard{% endblock %}
+{% block title %}Tableau de Bord Instructeur{% endblock %}
 
 {% block content %}
-<h1 class="text-3xl font-bold text-white mb-8">👨‍🏫 Your Profile</h1>
+<h1 class="text-3xl font-bold text-white mb-8"><i class="fas fa-chalkboard-teacher mr-3"></i>Mon Profil</h1>
 
 <!-- Formulaire modification infos -->
 <div class="bg-[#1e293b] p-6 rounded-xl shadow-lg border border-gray-700 max-w-3xl mb-12 mx-auto">
@@ -10,76 +10,76 @@
         {% csrf_token %}
         {% for field in form %}
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-200" for="{{ field.id_for_label }}">{{ field.label}}</label>
+            <label class="block text-sm font-semibold mb-1 text-blue-200" for="{{ field.id_for_label }}">{{ field.label
+                }}</label>
             {{ field }}
             {% for error in field.errors %}
-            <p class="text-red-400 text-sm mt-1">⚠️ {{ error }}</p>
+            <p class="text-red-400 text-sm mt-1">{{ error }}</p>
             {% endfor %}
         </div>
         {% endfor %}
         <button type="submit"
-            class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition">
-            💾 Update Profile
+            class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition flex items-center gap-2">
+            <i class="fas fa-save"></i> Mettre à jour
         </button>
     </form>
 </div>
 
 <hr class="my-10 border-gray-600">
 
-<h2 class="text-2xl font-bold text-white mb-6">📚 Your Created Courses</h2>
+<h2 class="text-2xl font-bold text-white mb-6"><i class="fas fa-book mr-3"></i>Mes Cours Créés</h2>
 {% if created_courses %}
 <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
     {% for course in created_courses %}
-    <div onclick="window.location.href='{% url 'course-detail' course.pk %}'"
-        class="cursor-pointer bg-[#1e293b] text-white rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all p-4 border border-gray-700 flex flex-col justify-between">
+    <div class="course-card cursor-pointer bg-[#1e293b] text-white rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all p-4 border border-gray-700 flex flex-col justify-between"
+        data-href="{% url 'course-detail' course.pk %}">
         <div>
             {% if course.image %}
             <img src="{{ course.image.url }}" alt="{{ course.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
             {% else %}
             <div
                 class="rounded-lg mb-4 h-40 w-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
-                <span class="text-6xl">📚</span>
+                <i class="fas fa-book text-6xl text-white/50"></i>
             </div>
             {% endif %}
             <h3 class="text-lg font-semibold text-blue-300 mb-1 hover:underline">{{ course.title }}</h3>
-            <p class="text-sm text-gray-300 mb-4">{{ course.description|slice:":50" }}{% if course.description|length >
-                50 %}...{% endif %}</p>
+            <p class="text-sm text-gray-300 mb-4">{{ course.description|truncatechars:50 }}</p>
         </div>
-        <div class="mt-auto text-sm">
-            <a href="{% url 'course-update' course.pk %}"
-                class="bg-yellow-500 hover:bg-yellow-700 text-white font-semibold px-4 py-2 rounded-lg transition inline-block">
-                ✏️ Edit Course
+        <div class="mt-auto text-sm flex gap-2" onclick="event.stopPropagation()">
+            <a href="{% url 'course-update' course.pk %}" class="btn-sm btn-outline-warning" title="Modifier">
+                <i class="fas fa-edit"></i>
             </a>
-            <a href="{% url 'course-delete' course.pk %}"
-                class="bg-red-500 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition inline-block">
-                🗑️ Delete Course
+            <a href="{% url 'course-delete' course.pk %}" class="btn-sm btn-outline-danger" title="Supprimer"
+                onclick="return confirm('Voulez-vous vraiment supprimer ce cours ?')">
+                <i class="fas fa-trash"></i>
             </a>
         </div>
     </div>
     {% endfor %}
 </div>
 {% else %}
-<p class="text-gray-300">You have not created any courses yet.</p>
+<p class="text-gray-300">Vous n'avez pas encore créé de cours.</p>
 {% endif %}
 
 <hr class="my-10 border-gray-600">
 
-<h2 class="text-2xl font-bold text-white mb-6">🕘 Your Last 10 Modifications</h2>
+<h2 class="text-2xl font-bold text-white mb-6"><i class="fas fa-history mr-3"></i>Dernières Modifications</h2>
 {% if last_modifications %}
-<ul class="list-disc pl-5 text-gray-300">
+<ul class="list-none pl-0 text-gray-300 space-y-2">
     {% for modif in last_modifications %}
-    <li>
-        <strong>{{ modif.modified_at|date:"Y-m-d H:i" }}</strong>: {{ modif.description }}
+    <li class="bg-[#1e293b] p-3 rounded-lg border border-gray-700">
+        <span class="text-blue-300 font-medium">{{ modif.modified_at|date:"d/m/Y H:i" }}</span> : {{ modif.description
+        }}
     </li>
     {% endfor %}
 </ul>
 {% else %}
-<p class="text-gray-300">No recent modifications recorded.</p>
+<p class="text-gray-300">Aucune modification récente enregistrée.</p>
 {% endif %}
 
 <hr class="my-10 border-gray-600">
 
-<h2 class="text-2xl font-bold text-white mb-6">👥 Students Enrolled in Your Courses</h2>
+<h2 class="text-2xl font-bold text-white mb-6"><i class="fas fa-users mr-3"></i>Étudiants Inscrits à Vos Cours</h2>
 {% if enrolled_users_by_course %}
 {% for course, users in enrolled_users_by_course.items %}
 <div class="mb-8 bg-[#1e293b] p-4 rounded-xl shadow-md border border-gray-700">
@@ -88,36 +88,38 @@
     <table class="w-full text-left text-gray-300 text-sm">
         <thead>
             <tr>
-                <th class="border-b border-gray-600 px-3 py-1">Username</th>
-                <th class="border-b border-gray-600 px-3 py-1">Email</th>
+                <th class="border-b border-gray-600 px-3 py-1"><i class="fas fa-user mr-2"></i>Utilisateur</th>
+                <th class="border-b border-gray-600 px-3 py-1"><i class="fas fa-envelope mr-2"></i>Email</th>
             </tr>
         </thead>
         <tbody>
-            {% for user in users %}
+            {% for enrolled_user in users %}
             <tr class="border-b border-gray-700">
-                <td class="px-3 py-1">{{ user.username }}</td>
-                <td class="px-3 py-1">{{ user.email }}</td>
+                <td class="px-3 py-1">{{ enrolled_user.username }}</td>
+                <td class="px-3 py-1">{{ enrolled_user.email }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     {% else %}
-    <p class="text-gray-400">No students enrolled in this course yet.</p>
+    <p class="text-gray-400">Aucun étudiant inscrit à ce cours pour le moment.</p>
     {% endif %}
 </div>
 {% endfor %}
 {% else %}
-<p class="text-gray-300">You have no courses or no enrolled students.</p>
+<p class="text-gray-300">Vous n'avez pas de cours ou pas d'étudiants inscrits.</p>
 {% endif %}
 
 <script>
-    // Corriger dynamiquement les champs si form-widget n'est pas stylé
     document.querySelectorAll('input, select, textarea').forEach(el => {
-        el.classList.add(
-            'w-full', 'px-4', 'py-2', 'bg-gray-800', 'text-white',
-            'rounded-lg', 'border', 'border-gray-600',
-            'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-400'
-        );
+        el.classList.add('w-full', 'px-4', 'py-2', 'bg-gray-800', 'text-white', 'rounded-lg', 'border', 'border-gray-600', 'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-400');
+    });
+    document.querySelectorAll('.course-card[data-href]').forEach(function (card) {
+        card.addEventListener('click', function (e) {
+            if (!e.target.closest('a, button, form')) {
+                window.location.href = this.dataset.href;
+            }
+        });
     });
 </script>
 

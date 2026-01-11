@@ -1,144 +1,251 @@
 {% extends 'base.html' %}
-{% block title %}Modules for {{ course.title }}{% endblock %}
+{% load custom_filters %}
+{% block title %}Modules - {{ course.title }}{% endblock %}
 
 {% block content %}
 <div class="flex">
     <!-- Liste des modules à gauche -->
     <div class="w-1/4 bg-gray-800 text-white p-4 rounded-l-lg">
-        <h2 class="text-xl font-semibold mb-4">📂 Modules</h2>
+        <h2 class="text-xl font-semibold mb-4"><i class="fas fa-folder-open mr-2"></i>Modules</h2>
         <ul class="space-y-2">
             {% for module in modules %}
-                <li>
-                    <a href="?module_id={{ module.id }}"
-                        class="block p-2 rounded-md hover:bg-gray-700 {% if module == selected_module %}bg-gray-700{% endif %}">
-                        {{ module.title }}
-                    </a>
-                </li>
+            <li>
+                <a href="?module_id={{ module.id }}"
+                    class="block p-2 rounded-md hover:bg-gray-700 {% if module == selected_module %}bg-gray-700 border-l-4 border-blue-500{% endif %}">
+                    <div class="flex items-center justify-between">
+                        <span>{{ module.title }}</span>
+                        {% if module.progress_percent is not None %}
+                        <span class="text-xs text-gray-400">{{ module.progress_percent|floatformat:0 }}%</span>
+                        {% endif %}
+                    </div>
+                    <!-- Barre de progression du module -->
+                    {% if module.progress_percent is not None %}
+                    <div class="w-full bg-gray-600 rounded-full h-1.5 mt-1">
+                        <div class="bg-blue-500 h-1.5 rounded-full progress-fill"
+                            data-width="{{ module.progress_percent|floatformat:0 }}"></div>
+                    </div>
+                    {% endif %}
+                </a>
+            </li>
             {% endfor %}
         </ul>
 
         {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
-            <div class="mt-6">
-                <a href="{% url 'module-create' course.id %}"
-                    class="block bg-blue-800 text-white text-center px-4 py-2 rounded-md hover:bg-blue-500 transition">
-                    ➕ Add Module
-                </a>
-            </div>
+        <div class="mt-6">
+            <a href="{% url 'module-create' course.id %}"
+                class="block bg-blue-600 text-white text-center px-4 py-2 rounded-md hover:bg-blue-500 transition">
+                <i class="fas fa-plus mr-1"></i> Ajouter un module
+            </a>
+        </div>
         {% endif %}
     </div>
 
     <!-- Détails du module sélectionné et ses ressources -->
     <div class="w-3/4 bg-gray-900 text-white p-6 rounded-r-lg">
         {% if selected_module %}
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-2xl font-bold text-blue-400">{{ selected_module.title }}</h2>
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-blue-400">{{ selected_module.title }}</h2>
 
+            {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
+            <div class="space-x-2">
+                <a href="{% url 'module-update' selected_module.pk %}" class="btn-sm btn-outline-warning"
+                    title="Modifier">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="{% url 'module-delete' selected_module.pk %}" class="btn-sm btn-outline-danger"
+                    title="Supprimer">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <p class="mb-6 text-gray-300">{{ selected_module.description }}</p>
+
+        <!-- Section Ressources -->
+        <div class="mt-10 bg-gray-800 p-6 rounded-lg border border-gray-700 shadow-inner">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-2xl font-semibold text-blue-300"><i class="fas fa-file-alt mr-2"></i>Ressources</h3>
                 {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
-                    <div class="space-x-4">
-                        <a href="{% url 'module-update' selected_module.pk %}"
-                            class="bg-yellow-500 text-white px-5 py-2 rounded-lg hover:bg-yellow-600 transition font-medium">✏️ Edit</a>
-                        <a href="{% url 'module-delete' selected_module.pk %}"
-                            class="bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 transition font-medium">🗑️ Delete</a>
+                <a href="{% url 'resource-add' selected_module.id %}"
+                    class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded shadow">
+                    <i class="fas fa-plus mr-1"></i> Ajouter
+                </a>
+                {% endif %}
+            </div>
+            {% if resources %}
+            <ul class="space-y-3 text-gray-200">
+                {% for resource in resources %}
+                <li class="p-3 bg-gray-700 rounded-lg shadow hover:bg-gray-600 transition">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            {% if resource.resource_type == 'video' %}
+                            <i class="fas fa-video text-red-400 mr-3"></i>
+                            {% elif resource.resource_type == 'pdf' %}
+                            <i class="fas fa-file-pdf text-red-500 mr-3"></i>
+                            {% elif resource.resource_type == 'doc' %}
+                            <i class="fas fa-file-word text-blue-400 mr-3"></i>
+                            {% elif resource.resource_type == 'link' %}
+                            <i class="fas fa-link text-green-400 mr-3"></i>
+                            {% else %}
+                            <i class="fas fa-file text-gray-400 mr-3"></i>
+                            {% endif %}
+                            <div>
+                                <strong>{{ resource.title }}</strong>
+                                <span class="text-sm text-gray-400 ml-2">({{ resource.resource_type|title }})</span>
+                                <div class="mt-1">
+                                    {% if resource.url %}
+                                    <a href="{{ resource.url }}" target="_blank"
+                                        class="text-blue-400 hover:text-blue-300">
+                                        <i class="fas fa-external-link-alt mr-1"></i>Ouvrir le lien
+                                    </a>
+                                    {% elif resource.file %}
+                                    <a href="{{ resource.file.url }}" target="_blank"
+                                        class="text-blue-400 hover:text-blue-300">
+                                        <i class="fas fa-download mr-1"></i>Télécharger
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 ml-4">
+                            {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
+                            <a href="{% url 'resource-edit' resource.id %}" class="btn-sm btn-outline-warning"
+                                title="Modifier">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'resource-delete' resource.id %}" class="btn-sm btn-outline-danger"
+                                title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            {% endif %}
+                        </div>
                     </div>
-                {% endif %}
-            </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-gray-400"><i class="fas fa-info-circle mr-2"></i>Aucune ressource pour ce module.</p>
+            {% endif %}
+        </div>
 
-            <p class="mb-6 text-gray-300">{{ selected_module.description }}</p>
+        <!-- Section Évaluations -->
+        <div class="mt-10 bg-gray-800 p-6 rounded-lg border border-gray-700 shadow-inner">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-2xl font-semibold text-purple-300"><i
+                        class="fas fa-clipboard-check mr-2"></i>Évaluations
+                </h3>
+                {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
+                <a href="{% url 'evaluation-add' selected_module.id %}"
+                    class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded shadow">
+                    <i class="fas fa-plus mr-1"></i> Ajouter
+                </a>
+                {% endif %}
+            </div>
+            {% if evaluations %}
+            <ul class="space-y-3 text-gray-200">
+                {% for evaluation in evaluations %}
+                <li class="p-4 bg-gray-700 rounded-lg shadow hover:bg-gray-600 transition">
+                    <div class="flex justify-between items-center">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                {% if evaluation.evaluation_type == 'quiz' %}
+                                <i class="fas fa-question-circle text-blue-400 mr-3 text-xl"></i>
+                                {% else %}
+                                <i class="fas fa-tasks text-green-400 mr-3 text-xl"></i>
+                                {% endif %}
+                                <div>
+                                    <strong class="text-lg">{{ evaluation.title }}</strong>
+                                    <span
+                                        class="ml-2 px-2 py-0.5 text-xs rounded-full 
+                                                    {% if evaluation.evaluation_type == 'quiz' %}bg-blue-600{% else %}bg-green-600{% endif %}">
+                                        {{ evaluation.evaluation_type|title }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="text-sm text-gray-300 mt-2 flex items-center gap-4">
+                                <span><i class="fas fa-calendar mr-1"></i>Date limite: <span class="text-yellow-300">{{
+                                        evaluation.deadline }}</span></span>
+                                <span><i class="fas fa-star mr-1"></i>Score max: {{ evaluation.max_score }}</span>
+                            </div>
+                        </div>
 
-            <div class="mt-10 bg-gray-800 p-6 rounded-lg border border-gray-700 shadow-inner">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-2xl font-semibold text-blue-300">📁 Resources</h3>
-                    {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
-                        <a href="{% url 'resource-add' selected_module.id %}" 
-                            class="bg-blue-800 hover:bg-blue-500 text-white px-4 py-2 rounded shadow">
-                                ➕ add resource
-                        </a>
-                    {% endif %}
-                    
-                </div>
-                {% if resources %}
-                    <ul class="space-y-3 text-gray-200">
-                        {% for resource in resources %}
-                            <li class="p-3 bg-gray-700 rounded-lg shadow hover:bg-gray-600 transition">
-                                <div class="flex justify-between items-center">
-                                    <div>
-                                        <strong>{{ resource.title }}</strong> - {{ resource.resource_type|title }}
-                                        <div class="mt-1">
-                                            <a href="{{ resource.file.url }}" target="_blank" class="text-blue-400">
-                                                🔗 Open resource
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="flex gap-2 ml-4">
-                                        {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
-                                            <div class="space-x-4">
-                                                <a href="{% url 'resource-edit' resource.id %}" 
-                                                class="text-yellow-300 hover:text-yellow-200 text-sm ">
-                                                    ✏️ Edit
-                                                </a>
-                                                <a href="{% url 'resource-delete' resource.id %}" 
-                                                class="text-red-400 hover:text-red-300 text-sm ">
-                                                    🗑️ Delete
-                                                </a>
-                                            </div>
-                                        {% endif %}
-                                        
-                                    </div>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p class="text-gray-400">No resources for this module.</p>
-                {% endif %}
-            </div>
-            <div class="mt-10 bg-gray-800 p-6 rounded-lg border border-gray-700 shadow-inner">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-2xl font-semibold text-purple-300">📝 Evaluations</h3>
-                    {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
-                        <a href="{% url 'evaluation-add' selected_module.id %}" 
-                        class="bg-purple-800 hover:bg-purple-500 text-white px-4 py-2 rounded shadow">
-                            ➕ add Evaluation
-                        </a>
-                    {% endif %}
-                </div>
-                {% if evaluations %}
-                    <ul class="space-y-3 text-gray-200">
-                        {% for evaluation in evaluations %}
-                            <li class="p-3 bg-gray-700 rounded-lg shadow hover:bg-gray-600 transition">
-                                <div class="flex justify-between items-center">
-                                    <div>
-                                        <strong>{{ evaluation.title }}</strong> - {{ evaluation.evaluation_type }}
-                                        <div class="text-sm text-gray-300 mt-1">
-                                            🗓️ Deadline: <span class="text-yellow-300">{{ evaluation.deadline }}</span> |
-                                        </div>
-                                    </div>
-                                    <div class="flex gap-2 ml-4">
-                                        {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
-                                            <div class="space-x-4">
-                                                <a href="{% url 'evaluation-edit' evaluation.id %}" 
-                                                class="text-yellow-300 hover:text-yellow-200 text-sm">
-                                                    ✏️ Edit
-                                                </a>
-                                                <a href="{% url 'evaluation-delete' evaluation.id %}" 
-                                                class="text-red-400 hover:text-red-300 text-sm">
-                                                    🗑️ Delete
-                                                </a>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p class="text-gray-400">Aucune évaluation pour ce module.</p>
-                {% endif %}
-            </div>
+                        <!-- Boutons d'action contextuels -->
+                        <div class="flex items-center gap-2 ml-4">
+                            {% if user.role == 'Student' %}
+                            {% get_submission_for_student evaluation user as student_submission %}
+                            {% if student_submission %}
+                            <!-- Étudiant a déjà soumis -->
+                            <span
+                                class="px-3 py-1 rounded-full text-sm 
+                                                    {% if student_submission.status == 'graded' %}bg-green-600{% else %}bg-yellow-600{% endif %}">
+                                {% if student_submission.status == 'graded' %}
+                                <i class="fas fa-check mr-1"></i>Noté: {{ student_submission.score }}/{{
+                                evaluation.max_score }}
+                                {% else %}
+                                <i class="fas fa-clock mr-1"></i>En attente
+                                {% endif %}
+                            </span>
+                            <a href="{% url 'submission-result' student_submission.id %}"
+                                class="btn-sm btn-outline-primary" title="Voir le résultat">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            {% else %}
+                            <!-- Étudiant peut soumettre -->
+                            {% if evaluation.evaluation_type == 'quiz' %}
+                            <a href="{% url 'take-quiz' evaluation.id %}"
+                                class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded transition">
+                                <i class="fas fa-play mr-1"></i>Commencer le quiz
+                            </a>
+                            {% else %}
+                            <a href="{% url 'submit-assignment' evaluation.id %}"
+                                class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded transition">
+                                <i class="fas fa-upload mr-1"></i>Soumettre
+                            </a>
+                            {% endif %}
+                            {% endif %}
+                            {% elif user.is_staff or user.role == 'Admin' or course.instructor == user %}
+                            <!-- Actions instructeur -->
+                            <a href="{% url 'question-list' evaluation.id %}" class="btn-sm btn-outline-primary"
+                                title="Gérer les questions">
+                                <i class="fas fa-list"></i>
+                            </a>
+                            <a href="{% url 'submission-list' evaluation.id %}" class="btn-sm btn-outline-success"
+                                title="Voir les soumissions">
+                                <i class="fas fa-inbox"></i>
+                            </a>
+                            <a href="{% url 'evaluation-edit' evaluation.id %}" class="btn-sm btn-outline-warning"
+                                title="Modifier">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'evaluation-delete' evaluation.id %}" class="btn-sm btn-outline-danger"
+                                title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-gray-400"><i class="fas fa-info-circle mr-2"></i>Aucune évaluation pour ce module.</p>
+            {% endif %}
+        </div>
 
         {% else %}
-            <p class="text-gray-400">Select a module to view its resources.</p>
+        <div class="text-center py-20">
+            <i class="fas fa-hand-point-left text-6xl text-gray-600 mb-4"></i>
+            <p class="text-gray-400 text-lg">Sélectionnez un module pour voir son contenu.</p>
+        </div>
         {% endif %}
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.progress-fill[data-width]').forEach(function (el) {
+            el.style.width = el.dataset.width + '%';
+        });
+    });
+</script>
 {% endblock %}

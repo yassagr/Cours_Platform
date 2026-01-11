@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from .validators import validate_resource_file, validate_submission_file, validate_course_image
 
 
 # =====================
@@ -77,10 +79,46 @@ RESOURCE_TYPE_CHOICES = [
 ]
 
 class Resource(models.Model):
+    """
+    Ressource pédagogique - peut être un lien externe (URL) ou un fichier uploadé.
+    Le diagramme de classe spécifie 'url', on ajoute aussi 'file' pour flexibilité.
+    """
     title = models.CharField(max_length=255)
     resource_type = models.CharField(max_length=50, choices=RESOURCE_TYPE_CHOICES)
-    file = models.FileField(upload_to='resources/')
+    
+    # Support URL externe (conforme au diagramme UML)
+    url = models.URLField(
+        max_length=500, 
+        blank=True, 
+        null=True,
+        help_text="Lien vers ressource externe (YouTube, Google Drive, etc.)"
+    )
+    
+    # Support upload fichier (optionnel, pour flexibilité)
+    file = models.FileField(
+        upload_to='resources/', 
+        blank=True, 
+        null=True,
+        validators=[validate_resource_file],
+        help_text="Ou uploader un fichier local"
+    )
+    
     module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name="resources")
+
+    def clean(self):
+        """Valider qu'au moins un des deux (URL ou file) est fourni"""
+        if not self.url and not self.file:
+            raise ValidationError("Vous devez fournir soit une URL, soit un fichier.")
+        if self.url and self.file:
+            raise ValidationError("Choisissez soit une URL, soit un fichier (pas les deux).")
+
+    def get_resource_url(self):
+        """Retourne l'URL de la ressource (externe ou fichier local)"""
+        if self.url:
+            return self.url
+        elif self.file:
+            return self.file.url
+        return None
 
     def __str__(self):
         return self.title
@@ -333,14 +371,31 @@ class SubmittedAnswer(models.Model):
 # =====================
 
 class Certificate(models.Model):
+    """
+    Certificat de complétion - stocke le fichier ET/OU l'URL publique.
+    Le diagramme UML spécifie 'certificate_url', on garde aussi 'certificate_file' pour compatibilité.
+    """
     student = models.ForeignKey(User, on_delete=models.CASCADE, related_name='certificates')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='certificates')
     issued_on = models.DateField(auto_now_add=True)
+    
+    # Conforme au diagramme UML
+    certificate_url = models.URLField(
+        max_length=500, 
+        blank=True,
+        help_text="URL publique du certificat (PDF hébergé, etc.)"
+    )
+    
+    # Garder pour compatibilité
     certificate_file = models.FileField(upload_to='certificates/', blank=True, null=True)
     certificate_number = models.CharField(max_length=50, unique=True, blank=True)
 
     class Meta:
         unique_together = ['student', 'course']
+        indexes = [
+            models.Index(fields=['student']),
+            models.Index(fields=['issued_on']),
+        ]
 
     def __str__(self):
         return f"Certificate for {self.student.username} in {self.course.title}"
