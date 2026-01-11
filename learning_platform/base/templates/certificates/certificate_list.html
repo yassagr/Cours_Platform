@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Certificats{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold">🏆 Mes Certificats</h1>
+            <p class="text-gray-400 mt-2">{{ certificates|length }} certificat(s) obtenu(s)</p>
+        </div>
+        <a href="{% url 'student-dashboard' %}" class="text-gray-400 hover:text-white transition">
+            ← Retour au dashboard
+        </a>
+    </div>
+
+    {% if certificates %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for certificate in certificates %}
+        <div class="bg-[#1e293b] rounded-xl p-6 border border-gray-700 hover:border-blue-500 transition group">
+            <!-- Certificate Icon -->
+            <div class="text-center mb-4">
+                <span class="text-6xl">📜</span>
+            </div>
+
+            <!-- Course Title -->
+            <h3 class="text-xl font-bold text-center mb-2 group-hover:text-blue-400 transition">
+                {{ certificate.course.title }}
+            </h3>
+
+            <!-- Details -->
+            <div class="text-center text-gray-400 text-sm mb-4">
+                <p>Niveau: {{ certificate.course.level }}</p>
+                <p>Délivré le {{ certificate.issued_on }}</p>
+                <p class="text-xs text-gray-500 mt-1">N° {{ certificate.certificate_number }}</p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-2 justify-center">
+                <a href="{% url 'certificate-preview' certificate.id %}" target="_blank"
+                    class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm transition">
+                    👁️ Voir
+                </a>
+                <a href="{% url 'certificate-download' certificate.id %}"
+                    class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg text-sm transition">
+                    📥 Télécharger
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-[#1e293b] rounded-xl p-12 text-center">
+        <span class="text-6xl mb-4 block">🎓</span>
+        <h3 class="text-xl font-bold mb-2">Pas encore de certificat</h3>
+        <p class="text-gray-400 mb-6">Complétez un cours à 100% pour obtenir votre premier certificat !</p>
+        <a href="{% url 'course-list' %}"
+            class="inline-block bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition">
+            Voir les cours disponibles
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

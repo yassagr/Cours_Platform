@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View,TemplateView
 from django.urls import reverse_lazy
 from .models import *
+from .forms import CourseForm, EvaluationForm
 from django.shortcuts import render, get_object_or_404,redirect
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -88,7 +89,7 @@ class CourseDetailView(LoginRequiredMixin, DetailView):
 
 class CourseCreateView(LoginRequiredMixin, CreateView):
     model = Course
-    fields = ['title', 'description', 'estimated_duration', 'level', 'start_date', 'end_date', 'image'] 
+    form_class = CourseForm
     template_name = 'courses/course_form.html'
     success_url = reverse_lazy('course-list')
 
@@ -108,7 +109,7 @@ class CourseCreateView(LoginRequiredMixin, CreateView):
 
 class CourseUpdateView(LoginRequiredMixin, UpdateView):
     model = Course
-    fields = ['title', 'description', 'estimated_duration', 'level', 'start_date', 'end_date', 'image']
+    form_class = CourseForm
     template_name = 'courses/course_form.html'
     success_url = reverse_lazy('course-list')
 
@@ -345,7 +346,7 @@ class ResourceDeleteView(AdminOrInstructorRequiredMixin, DeleteView):
 
 class EvaluationCreateView(AdminOrInstructorRequiredMixin, CreateView):
     model = Evaluation
-    fields = ['title', 'evaluation_type', 'deadline']
+    form_class = EvaluationForm
     template_name = 'evaluations/evaluation_form.html'
 
     def form_valid(self, form):
@@ -368,9 +369,9 @@ class EvaluationCreateView(AdminOrInstructorRequiredMixin, CreateView):
         return context
     
     def dispatch(self, request, *args, **kwargs):
-        # Récupérer manuellement l'objet sans utiliser self.get_object()
-        evaluation = get_object_or_404(Resource, pk=self.kwargs['pk'])
-        course = evaluation.module.course
+        # Récupérer le module pour vérifier les permissions
+        module = get_object_or_404(Module, pk=self.kwargs['module_id'])
+        course = module.course
 
         if request.user.role == 'Admin' or course.instructor == request.user:
             return super().dispatch(request, *args, **kwargs)
@@ -381,7 +382,7 @@ class EvaluationCreateView(AdminOrInstructorRequiredMixin, CreateView):
 
 class EvaluationUpdateView(AdminOrInstructorRequiredMixin, UpdateView):
     model = Evaluation
-    fields = ['title', 'evaluation_type', 'deadline']
+    form_class = EvaluationForm
     template_name = 'evaluations/evaluation_form.html'
 
     def get_success_url(self):
@@ -596,3 +597,690 @@ class TeacherDashboardView(LoginRequiredMixin, TemplateView):
             'enrolled_users_by_course': enrolled_users_by_course,
         }
         return self.render_to_response(context)
+
+
+# =====================================================
+# QUESTIONS - CRUD Views
+# =====================================================
+
+class QuestionListView(LoginRequiredMixin, View):
+    """Liste des questions d'une évaluation"""
+    def get(self, request, evaluation_id):
+        evaluation = get_object_or_404(Evaluation, pk=evaluation_id)
+        course = evaluation.module.course
+        
+        # Vérifier les permissions
+        if not (request.user.role == 'Admin' or course.instructor == request.user):
+            raise PermissionDenied("Vous n'avez pas accès à cette évaluation.")
+        
+        questions = evaluation.questions.all()
+        
+        return render(request, 'questions/question_list.html', {
+            'evaluation': evaluation,
+            'questions': questions,
+            'course': course,
+            'module': evaluation.module,
+        })
+
+
+class QuestionCreateView(AdminOrInstructorRequiredMixin, CreateView):
+    """Ajouter une question à une évaluation"""
+    model = Question
+    fields = ['text', 'option1', 'option2', 'option3', 'option4', 'correct_option', 'points']
+    template_name = 'questions/question_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.evaluation = get_object_or_404(Evaluation, pk=self.kwargs['evaluation_id'])
+        course = self.evaluation.module.course
+        if not (request.user.role == 'Admin' or course.instructor == request.user):
+            raise PermissionDenied("Vous ne pouvez pas ajouter de questions à cette évaluation.")
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.evaluation = self.evaluation
+        form.instance.order = self.evaluation.questions.count() + 1
+        messages.success(self.request, "Question ajoutée avec succès!")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('question-list', kwargs={'evaluation_id': self.evaluation.id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['evaluation'] = self.evaluation
+        context['course'] = self.evaluation.module.course
+        context['is_edit'] = False
+        return context
+
+
+class QuestionUpdateView(AdminOrInstructorRequiredMixin, UpdateView):
+    """Modifier une question"""
+    model = Question
+    fields = ['text', 'option1', 'option2', 'option3', 'option4', 'correct_option', 'points']
+    template_name = 'questions/question_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        question = self.get_object()
+        course = question.evaluation.module.course
+        if not (request.user.role == 'Admin' or course.instructor == request.user):
+            raise PermissionDenied("Vous ne pouvez pas modifier cette question.")
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        messages.success(self.request, "Question modifiée avec succès!")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('question-list', kwargs={'evaluation_id': self.object.evaluation.id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['evaluation'] = self.object.evaluation
+        context['course'] = self.object.evaluation.module.course
+        context['is_edit'] = True
+        return context
+
+
+class QuestionDeleteView(AdminOrInstructorRequiredMixin, DeleteView):
+    """Supprimer une question"""
+    model = Question
+    template_name = 'questions/question_confirm_delete.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        question = self.get_object()
+        course = question.evaluation.module.course
+        if not (request.user.role == 'Admin' or course.instructor == request.user):
+            raise PermissionDenied("Vous ne pouvez pas supprimer cette question.")
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        messages.success(self.request, "Question supprimée avec succès!")
+        return reverse_lazy('question-list', kwargs={'evaluation_id': self.object.evaluation.id})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['evaluation'] = self.object.evaluation
+        context['course'] = self.object.evaluation.module.course
+        return context
+
+
+# =====================================================
+# QUIZ - Take, Submit, Results Views
+# =====================================================
+
+class QuizTakeView(LoginRequiredMixin, View):
+    """Affiche le quiz pour qu'un étudiant le passe"""
+    def get(self, request, pk):
+        evaluation = get_object_or_404(Evaluation, pk=pk)
+        course = evaluation.module.course
+        
+        # Vérifier que c'est un Quiz
+        if evaluation.evaluation_type != 'Quiz':
+            messages.error(request, "Cette évaluation n'est pas un quiz.")
+            return redirect('module-list-by-course', course_id=course.id)
+        
+        # Vérifier l'inscription de l'étudiant
+        if request.user.role == 'Student':
+            enrolled = Enrollment.objects.filter(student=request.user, course=course).exists()
+            if not enrolled:
+                messages.error(request, "Vous devez être inscrit au cours pour passer ce quiz.")
+                return redirect('course-detail', pk=course.id)
+        
+        # Vérifier les tentatives précédentes
+        previous_submissions = Submission.objects.filter(
+            evaluation=evaluation, 
+            student=request.user
+        ).order_by('-attempt_number')
+        
+        if previous_submissions.exists():
+            last_attempt = previous_submissions.first()
+            if not evaluation.allow_retake:
+                messages.info(request, "Vous avez déjà passé ce quiz. Les reprises ne sont pas autorisées.")
+                return redirect('quiz-results', pk=last_attempt.id)
+            if last_attempt.attempt_number >= evaluation.max_attempts:
+                messages.info(request, f"Vous avez atteint le nombre maximum de tentatives ({evaluation.max_attempts}).")
+                return redirect('quiz-results', pk=last_attempt.id)
+        
+        questions = evaluation.questions.all()
+        if not questions.exists():
+            messages.warning(request, "Ce quiz ne contient pas encore de questions.")
+            return redirect('module-list-by-course', course_id=course.id)
+        
+        return render(request, 'evaluations/take_quiz.html', {
+            'evaluation': evaluation,
+            'questions': questions,
+            'course': course,
+            'previous_attempts': previous_submissions.count(),
+            'max_attempts': evaluation.max_attempts,
+        })
+
+
+class QuizSubmitView(LoginRequiredMixin, View):
+    """Traite la soumission d'un quiz et calcule le score"""
+    def post(self, request, pk):
+        evaluation = get_object_or_404(Evaluation, pk=pk)
+        course = evaluation.module.course
+        
+        # Vérifications de sécurité
+        if evaluation.evaluation_type != 'Quiz':
+            messages.error(request, "Cette évaluation n'est pas un quiz.")
+            return redirect('module-list-by-course', course_id=course.id)
+        
+        # Calculer le numéro de tentative
+        previous_count = Submission.objects.filter(
+            evaluation=evaluation, 
+            student=request.user
+        ).count()
+        
+        # Créer la soumission
+        from django.utils import timezone
+        submission = Submission.objects.create(
+            evaluation=evaluation,
+            student=request.user,
+            attempt_number=previous_count + 1,
+            status='graded',
+            graded_on=timezone.now()
+        )
+        
+        # Traiter chaque réponse
+        questions = evaluation.questions.all()
+        total_points = 0
+        earned_points = 0
+        
+        for question in questions:
+            answer_key = f'question_{question.id}'
+            selected_option = request.POST.get(answer_key, '')
+            
+            is_correct = selected_option == question.correct_option
+            points = question.points if is_correct else 0
+            
+            SubmittedAnswer.objects.create(
+                submission=submission,
+                question=question,
+                selected_option=selected_option if selected_option else None,
+                is_correct=is_correct,
+                points_earned=points
+            )
+            
+            total_points += question.points
+            earned_points += points
+        
+        # Calculer et sauvegarder le score
+        submission.score = earned_points
+        submission.max_score = total_points
+        submission.percentage = (earned_points / total_points * 100) if total_points > 0 else 0
+        submission.passed = submission.percentage >= evaluation.passing_score
+        submission.save()
+        
+        # Créer une notification
+        create_notification(
+            recipient=request.user,
+            title="Quiz terminé!",
+            message=f"Vous avez obtenu {submission.percentage:.1f}% au quiz '{evaluation.title}'.",
+            notif_type='grade_received',
+            related_course=course,
+            related_evaluation=evaluation,
+            action_url=f"/submission/{submission.id}/results/"
+        )
+        
+        messages.success(request, f"Quiz soumis! Score: {earned_points}/{total_points} ({submission.percentage:.1f}%)")
+        return redirect('quiz-results', pk=submission.id)
+
+
+class QuizResultView(LoginRequiredMixin, View):
+    """Affiche les résultats d'un quiz après soumission"""
+    def get(self, request, pk):
+        submission = get_object_or_404(Submission, pk=pk)
+        evaluation = submission.evaluation
+        course = evaluation.module.course
+        
+        # Vérifier les permissions (l'étudiant voit ses résultats, l'instructeur voit tout)
+        if request.user != submission.student:
+            if not (request.user.role == 'Admin' or course.instructor == request.user):
+                raise PermissionDenied("Vous n'avez pas accès à ces résultats.")
+        
+        answers = submission.submitted_answers.select_related('question').all()
+        
+        return render(request, 'evaluations/quiz_results.html', {
+            'submission': submission,
+            'evaluation': evaluation,
+            'answers': answers,
+            'course': course,
+            'show_corrections': evaluation.show_correct_answers,
+        })
+
+
+# =====================================================
+# ASSIGNMENTS - Submit, List, Grade Views
+# =====================================================
+
+class AssignmentSubmitView(LoginRequiredMixin, View):
+    """Soumettre un devoir (Assignment)"""
+    def get(self, request, pk):
+        evaluation = get_object_or_404(Evaluation, pk=pk)
+        course = evaluation.module.course
+        
+        if evaluation.evaluation_type != 'Assignment':
+            messages.error(request, "Cette évaluation n'est pas un devoir.")
+            return redirect('module-list-by-course', course_id=course.id)
+        
+        # Vérifier l'inscription
+        enrolled = Enrollment.objects.filter(student=request.user, course=course).exists()
+        if not enrolled:
+            messages.error(request, "Vous devez être inscrit au cours.")
+            return redirect('course-detail', pk=course.id)
+        
+        # Vérifier si déjà soumis
+        existing = Submission.objects.filter(evaluation=evaluation, student=request.user).first()
+        
+        return render(request, 'evaluations/submit_assignment.html', {
+            'evaluation': evaluation,
+            'course': course,
+            'existing_submission': existing,
+        })
+
+    def post(self, request, pk):
+        evaluation = get_object_or_404(Evaluation, pk=pk)
+        course = evaluation.module.course
+        
+        uploaded_file = request.FILES.get('file')
+        if not uploaded_file:
+            messages.error(request, "Veuillez sélectionner un fichier.")
+            return redirect('assignment-submit', pk=pk)
+        
+        # Vérifier la taille du fichier (max 10 MB)
+        if uploaded_file.size > 10 * 1024 * 1024:
+            messages.error(request, "Le fichier est trop volumineux (max 10 MB).")
+            return redirect('assignment-submit', pk=pk)
+        
+        from django.utils import timezone
+        
+        # Créer ou mettre à jour la soumission
+        submission, created = Submission.objects.update_or_create(
+            evaluation=evaluation,
+            student=request.user,
+            attempt_number=1,
+            defaults={
+                'file': uploaded_file,
+                'status': 'pending',
+                'submitted_on': timezone.now()
+            }
+        )
+        
+        # Vérifier si soumis en retard
+        if evaluation.deadline < timezone.now().date():
+            submission.status = 'late'
+            submission.save()
+        
+        # Notifier l'instructeur
+        create_notification(
+            recipient=course.instructor,
+            title="Nouvelle soumission de devoir",
+            message=f"{request.user.username} a soumis le devoir '{evaluation.title}'.",
+            notif_type='enrollment',
+            related_course=course,
+            related_evaluation=evaluation,
+            action_url=f"/evaluation/{evaluation.id}/submissions/"
+        )
+        
+        messages.success(request, "Devoir soumis avec succès!")
+        return redirect('module-list-by-course', course_id=course.id)
+
+
+class SubmissionListView(AdminOrInstructorRequiredMixin, View):
+    """Liste des soumissions pour une évaluation (vue instructeur)"""
+    def get(self, request, evaluation_id):
+        evaluation = get_object_or_404(Evaluation, pk=evaluation_id)
+        course = evaluation.module.course
+        
+        if not (request.user.role == 'Admin' or course.instructor == request.user):
+            raise PermissionDenied("Accès non autorisé.")
+        
+        submissions = Submission.objects.filter(evaluation=evaluation).select_related('student').order_by('-submitted_on')
+        
+        return render(request, 'evaluations/submission_list.html', {
+            'evaluation': evaluation,
+            'submissions': submissions,
+            'course': course,
+        })
+
+
+class SubmissionGradeView(AdminOrInstructorRequiredMixin, View):
+    """Noter une soumission de devoir"""
+    def get(self, request, pk):
+        submission = get_object_or_404(Submission, pk=pk)
+        course = submission.evaluation.module.course
+        
+        if not (request.user.role == 'Admin' or course.instructor == request.user):
+            raise PermissionDenied("Accès non autorisé.")
+        
+        return render(request, 'evaluations/grade_submission.html', {
+            'submission': submission,
+            'evaluation': submission.evaluation,
+            'course': course,
+        })
+
+    def post(self, request, pk):
+        submission = get_object_or_404(Submission, pk=pk)
+        course = submission.evaluation.module.course
+        
+        if not (request.user.role == 'Admin' or course.instructor == request.user):
+            raise PermissionDenied("Accès non autorisé.")
+        
+        try:
+            score = float(request.POST.get('score', 0))
+            max_score = submission.evaluation.max_score
+            
+            if score < 0 or score > max_score:
+                messages.error(request, f"Le score doit être entre 0 et {max_score}.")
+                return redirect('submission-grade', pk=pk)
+            
+            from django.utils import timezone
+            
+            submission.score = score
+            submission.max_score = max_score
+            submission.percentage = (score / max_score * 100) if max_score > 0 else 0
+            submission.passed = submission.percentage >= submission.evaluation.passing_score
+            submission.instructor_comment = request.POST.get('comment', '')
+            submission.graded_on = timezone.now()
+            submission.graded_by = request.user
+            submission.status = 'graded'
+            submission.save()
+            
+            # Notifier l'étudiant
+            create_notification(
+                recipient=submission.student,
+                title="Note reçue",
+                message=f"Votre devoir '{submission.evaluation.title}' a été noté: {score}/{max_score}.",
+                notif_type='grade_received',
+                related_course=course,
+                related_evaluation=submission.evaluation,
+                action_url=f"/submission/{submission.id}/results/",
+                priority='high'
+            )
+            
+            messages.success(request, "Soumission notée avec succès!")
+            return redirect('submission-list', evaluation_id=submission.evaluation.id)
+            
+        except ValueError:
+            messages.error(request, "Score invalide.")
+            return redirect('submission-grade', pk=pk)
+
+
+# =====================================================
+# PROGRESS TRACKING
+# =====================================================
+
+class MarkResourceViewedView(LoginRequiredMixin, View):
+    """Marquer une ressource comme consultée"""
+    def post(self, request, pk):
+        resource = get_object_or_404(Resource, pk=pk)
+        
+        # Créer l'enregistrement de vue (ou ignorer si existe déjà)
+        ResourceView.objects.get_or_create(
+            student=request.user,
+            resource=resource
+        )
+        
+        # Mettre à jour la progression du module
+        update_module_progress(request.user, resource.module)
+        
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+def update_module_progress(user, module):
+    """Met à jour la progression d'un utilisateur pour un module"""
+    from django.utils import timezone
+    
+    course = module.course
+    enrollment = Enrollment.objects.filter(student=user, course=course).first()
+    
+    if not enrollment:
+        return
+    
+    # Calculer les ressources vues
+    total_resources = module.resources.count()
+    viewed_resources = ResourceView.objects.filter(
+        student=user,
+        resource__module=module
+    ).count()
+    
+    # Calculer les évaluations complétées
+    total_evaluations = module.evaluations.count()
+    completed_evaluations = Submission.objects.filter(
+        student=user,
+        evaluation__module=module,
+        status='graded'
+    ).values('evaluation').distinct().count()
+    
+    # Calculer le pourcentage
+    total_items = total_resources + total_evaluations
+    completed_items = viewed_resources + completed_evaluations
+    completion_percent = (completed_items / total_items * 100) if total_items > 0 else 0
+    
+    # Mettre à jour ou créer Progress
+    progress, created = Progress.objects.update_or_create(
+        enrollment=enrollment,
+        module=module,
+        defaults={
+            'completion_percent': completion_percent,
+            'resources_viewed': viewed_resources,
+            'total_resources': total_resources,
+            'evaluations_completed': completed_evaluations,
+            'total_evaluations': total_evaluations,
+            'is_completed': completion_percent >= 100,
+            'completed_on': timezone.now() if completion_percent >= 100 else None,
+        }
+    )
+    
+    # Mettre à jour la progression du cours
+    update_course_progress(enrollment)
+    
+    return progress
+
+
+def update_course_progress(enrollment):
+    """Met à jour la progression globale d'un cours"""
+    course = enrollment.course
+    total_modules = course.modules.count()
+    
+    if total_modules == 0:
+        return
+    
+    # Calculer les modules complétés
+    completed_modules = Progress.objects.filter(
+        enrollment=enrollment,
+        is_completed=True
+    ).count()
+    
+    # Calculer le pourcentage moyen
+    avg_completion = Progress.objects.filter(enrollment=enrollment).aggregate(
+        avg=models.Avg('completion_percent')
+    )['avg'] or 0
+    
+    # Score moyen des évaluations
+    avg_score = Submission.objects.filter(
+        student=enrollment.student,
+        evaluation__module__course=course,
+        status='graded'
+    ).aggregate(avg=models.Avg('percentage'))['avg']
+    
+    # Mettre à jour CourseProgress
+    CourseProgress.objects.update_or_create(
+        enrollment=enrollment,
+        defaults={
+            'overall_completion_percent': avg_completion,
+            'modules_completed': completed_modules,
+            'total_modules': total_modules,
+            'average_score': avg_score,
+        }
+    )
+    
+    # Vérifier si le cours est terminé pour générer un certificat
+    if avg_completion >= 100 and not enrollment.certified:
+        check_and_generate_certificate(enrollment)
+
+
+def check_and_generate_certificate(enrollment):
+    """Vérifie si l'étudiant peut recevoir un certificat et le génère"""
+    # Vérifier que toutes les évaluations sont passées avec succès
+    course = enrollment.course
+    evaluations = Evaluation.objects.filter(module__course=course)
+    
+    for evaluation in evaluations:
+        passed_submission = Submission.objects.filter(
+            student=enrollment.student,
+            evaluation=evaluation,
+            passed=True
+        ).exists()
+        
+        if not passed_submission:
+            return None  # Pas encore prêt pour le certificat
+    
+    # Générer le certificat
+    certificate, created = Certificate.objects.get_or_create(
+        student=enrollment.student,
+        course=course
+    )
+    
+    if created:
+        enrollment.certified = True
+        enrollment.save()
+        
+        # Notification
+        create_notification(
+            recipient=enrollment.student,
+            title="Certificat obtenu! 🎉",
+            message=f"Félicitations! Vous avez obtenu le certificat pour '{course.title}'.",
+            notif_type='certificate_earned',
+            related_course=course,
+            priority='high'
+        )
+    
+    return certificate
+
+
+# =====================================================
+# NOTIFICATIONS
+# =====================================================
+
+def create_notification(recipient, title, message, notif_type='general', 
+                       related_course=None, related_evaluation=None, 
+                       action_url='', priority='medium'):
+    """Fonction utilitaire pour créer des notifications"""
+    return Notification.objects.create(
+        recipient=recipient,
+        title=title,
+        message=message,
+        notification_type=notif_type,
+        related_course=related_course,
+        related_evaluation=related_evaluation,
+        action_url=action_url,
+        priority=priority
+    )
+
+
+class NotificationListView(LoginRequiredMixin, View):
+    """Liste des notifications de l'utilisateur"""
+    def get(self, request):
+        notifications = Notification.objects.filter(recipient=request.user).order_by('-sent_on')
+        unread_count = notifications.filter(is_read=False).count()
+        
+        return render(request, 'notifications/notification_list.html', {
+            'notifications': notifications,
+            'unread_count': unread_count,
+        })
+
+
+class NotificationMarkReadView(LoginRequiredMixin, View):
+    """Marquer une notification comme lue"""
+    def post(self, request, pk):
+        notification = get_object_or_404(Notification, pk=pk, recipient=request.user)
+        notification.is_read = True
+        notification.save()
+        
+        return redirect(notification.action_url if notification.action_url else 'notification-list')
+
+
+class NotificationMarkAllReadView(LoginRequiredMixin, View):
+    """Marquer toutes les notifications comme lues"""
+    def post(self, request):
+        Notification.objects.filter(recipient=request.user, is_read=False).update(is_read=True)
+        messages.success(request, "Toutes les notifications ont été marquées comme lues.")
+        return redirect('notification-list')
+
+
+# =====================================================
+# CONTEXT PROCESSOR pour les notifications (à ajouter dans settings.py)
+# =====================================================
+
+def notification_context(request):
+    """Context processor pour afficher le compteur de notifications dans la navbar"""
+    if request.user.is_authenticated:
+        unread_count = Notification.objects.filter(
+            recipient=request.user, 
+            is_read=False
+        ).count()
+        return {'unread_notifications_count': unread_count}
+    return {'unread_notifications_count': 0}
+
+
+# =====================================================
+# CERTIFICATES
+# =====================================================
+
+class CertificateListView(LoginRequiredMixin, View):
+    """Liste des certificats de l'utilisateur"""
+    def get(self, request):
+        certificates = Certificate.objects.filter(student=request.user).select_related('course')
+        
+        return render(request, 'certificates/certificate_list.html', {
+            'certificates': certificates,
+        })
+
+
+class CertificateDownloadView(LoginRequiredMixin, View):
+    """Télécharger un certificat en PDF"""
+    def get(self, request, pk):
+        certificate = get_object_or_404(Certificate, pk=pk)
+        
+        # Vérifier que l'utilisateur a le droit de télécharger
+        if certificate.student != request.user:
+            if not (request.user.role == 'Admin' or certificate.course.instructor == request.user):
+                raise PermissionDenied("Vous n'avez pas accès à ce certificat.")
+        
+        # Importer la fonction de génération
+        from .utils import generate_certificate_pdf
+        
+        # Générer le PDF
+        pdf_buffer = generate_certificate_pdf(certificate)
+        
+        # Retourner la réponse HTTP avec le PDF
+        from django.http import HttpResponse
+        
+        response = HttpResponse(pdf_buffer.read(), content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="certificat_{certificate.certificate_number}.pdf"'
+        
+        return response
+
+
+class CertificatePreviewView(LoginRequiredMixin, View):
+    """Prévisualiser un certificat dans le navigateur"""
+    def get(self, request, pk):
+        certificate = get_object_or_404(Certificate, pk=pk)
+        
+        # Vérifier les permissions
+        if certificate.student != request.user:
+            if not (request.user.role == 'Admin' or certificate.course.instructor == request.user):
+                raise PermissionDenied("Vous n'avez pas accès à ce certificat.")
+        
+        from .utils import generate_certificate_pdf
+        from django.http import HttpResponse
+        
+        pdf_buffer = generate_certificate_pdf(certificate)
+        
+        # Afficher dans le navigateur au lieu de télécharger
+        response = HttpResponse(pdf_buffer.read(), content_type='application/pdf')
+        response['Content-Disposition'] = f'inline; filename="certificat_{certificate.certificate_number}.pdf"'
+        
+        return response

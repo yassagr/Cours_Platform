@@ -9,15 +9,16 @@
     <form method="post" class="space-y-5">
         {% csrf_token %}
         {% for field in form %}
-            <div>
-                <label class="block text-sm font-semibold mb-1 text-blue-200" for="{{ field.id_for_label }}">{{ field.label }}:</label>
-                {{ field }}
-                {% for error in field.errors %}
-                    <p class="text-red-400 text-sm mt-1">⚠️ {{ error }}</p>
-                {% endfor %}
-            </div>
+        <div>
+            <label class="block text-sm font-semibold mb-1 text-blue-200" for="{{ field.id_for_label }}">{{ field.label}}</label>
+            {{ field }}
+            {% for error in field.errors %}
+            <p class="text-red-400 text-sm mt-1">⚠️ {{ error }}</p>
+            {% endfor %}
+        </div>
         {% endfor %}
-        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition">
+        <button type="submit"
+            class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition">
             💾 Update Profile
         </button>
     </form>
@@ -27,70 +28,88 @@
 
 <h2 class="text-2xl font-bold text-white mb-6">📚 Your Enrolled Courses</h2>
 {% if enrolled_courses %}
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {% for course in enrolled_courses %}
-            <div onclick="window.location.href='{% url 'course-detail' course.pk %}'"
-                class="cursor-pointer bg-[#1e293b] text-white rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all p-4 border border-gray-700 flex flex-col justify-between">
-                <div>
-                    <img src="{{ course.image.url }}" alt="{{ course.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
-                    <h3 class="text-lg font-semibold text-blue-300 mb-1 hover:underline">{{ course.title }}</h3>
-                    <p class="text-sm text-gray-300 mb-4">{{ course.description|slice:":50" }}{% if course.description|length > 50 %}...{% endif %}</p>
-                </div>
-                <div class="mt-auto text-sm">
-                    <a href="{% url 'module-list-by-course' course.pk %}" class="bg-blue-700 hover:bg-blue-800 text-white text-center font-semibold px-4 py-2 rounded-lg mt-2 inline-block transition w-full">
-                        ➡️ Continue
-                    </a>
-                </div>
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {% for course in enrolled_courses %}
+    <div onclick="window.location.href='{% url 'course-detail' course.pk %}'"
+        class="cursor-pointer bg-[#1e293b] text-white rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all p-4 border border-gray-700 flex flex-col justify-between">
+        <div>
+            {% if course.image %}
+            <img src="{{ course.image.url }}" alt="{{ course.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
+            {% else %}
+            <div
+                class="rounded-lg mb-4 h-40 w-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+                <span class="text-6xl">📚</span>
             </div>
-        {% endfor %}
+            {% endif %}
+            <h3 class="text-lg font-semibold text-blue-300 mb-1 hover:underline">{{ course.title }}</h3>
+            <p class="text-sm text-gray-300 mb-4">{{ course.description|slice:":50" }}{% if course.description|length >
+                50 %}...{% endif %}</p>
+        </div>
+        <div class="mt-auto text-sm">
+            <a href="{% url 'module-list-by-course' course.pk %}"
+                class="bg-blue-700 hover:bg-blue-800 text-white text-center font-semibold px-4 py-2 rounded-lg mt-2 inline-block transition w-full">
+                ➡️ Continue
+            </a>
+        </div>
     </div>
+    {% endfor %}
+</div>
 {% else %}
-    <p class="text-gray-300">You are not enrolled in any course yet.</p>
+<p class="text-gray-300">You are not enrolled in any course yet.</p>
 {% endif %}
 
 <hr class="my-10 border-gray-600">
 
 <h2 class="text-2xl font-bold text-white mb-6">🎯 Suggested Courses For You</h2>
 {% if suggested_courses %}
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {% for course in suggested_courses %}
-            <div onclick="window.location.href='{% url 'course-detail' course.pk %}'"
-                class="cursor-pointer bg-[#1e293b] text-white rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all p-4 border border-gray-700 flex flex-col justify-between ">
-                <div>
-                    <img src="{{ course.image.url }}" alt="{{ course.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
-                    <h3 class="text-lg font-semibold text-blue-300 mb-1 hover:underline">{{ course.title }}</h3>
-                    <p class="text-sm text-gray-300 mb-4">{{ course.description|slice:":50" }}{% if course.description|length > 50 %}...{% endif %}</p>
-                </div>
-                <div class="mt-auto text-sm">
-                    <form action="{% url 'enroll' course.pk %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 mt-2 rounded-lg transition w-full">
-                            🎓 Enroll
-                        </button>
-                    </form>
-                </div>
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {% for course in suggested_courses %}
+    <div onclick="window.location.href='{% url 'course-detail' course.pk %}'"
+        class="cursor-pointer bg-[#1e293b] text-white rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all p-4 border border-gray-700 flex flex-col justify-between ">
+        <div>
+            {% if course.image %}
+            <img src="{{ course.image.url }}" alt="{{ course.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
+            {% else %}
+            <div
+                class="rounded-lg mb-4 h-40 w-full bg-gradient-to-br from-green-600 to-teal-600 flex items-center justify-center">
+                <span class="text-6xl">🌟</span>
             </div>
-        {% endfor %}
+            {% endif %}
+            <h3 class="text-lg font-semibold text-blue-300 mb-1 hover:underline">{{ course.title }}</h3>
+            <p class="text-sm text-gray-300 mb-4">{{ course.description|slice:":50" }}{% if course.description|length >
+                50 %}...{% endif %}</p>
+        </div>
+        <div class="mt-auto text-sm">
+            <form action="{% url 'enroll' course.pk %}" method="post">
+                {% csrf_token %}
+                <button type="submit"
+                    class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 mt-2 rounded-lg transition w-full">
+                    🎓 Enroll
+                </button>
+            </form>
+        </div>
     </div>
+    {% endfor %}
+</div>
 {% else %}
-    <p class="text-gray-300">No course suggestions available right now.</p>
+<p class="text-gray-300">No course suggestions available right now.</p>
 {% endif %}
 
 <hr class="my-10 border-gray-600">
 
 <h2 class="text-2xl font-bold text-white mb-6">🏅 Your Certificates</h2>
 {% if certificates %}
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {% for cert in certificates %}
-            <div class="bg-[#1e293b] rounded-xl shadow-md p-4 border border-gray-700">
-                <h3 class="text-blue-300 font-semibold mb-2">{{ cert.title }}</h3>
-                <p class="text-gray-300 text-sm mb-2">Issued on: {{ cert.issued_on }}</p>
-                <p class="text-gray-400 text-sm">{{ cert.description|default:"No description" }}</p>
-            </div>
-        {% endfor %}
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {% for cert in certificates %}
+    <div class="bg-[#1e293b] rounded-xl shadow-md p-4 border border-gray-700">
+        <h3 class="text-blue-300 font-semibold mb-2">{{ cert.title }}</h3>
+        <p class="text-gray-300 text-sm mb-2">Issued on: {{ cert.issued_on }}</p>
+        <p class="text-gray-400 text-sm">{{ cert.description|default:"No description" }}</p>
     </div>
+    {% endfor %}
+</div>
 {% else %}
-    <p class="text-gray-300">You have no certificates yet.</p>
+<p class="text-gray-300">You have no certificates yet.</p>
 {% endif %}
 <script>
     // Corriger dynamiquement les champs si form-widget n'est pas stylé

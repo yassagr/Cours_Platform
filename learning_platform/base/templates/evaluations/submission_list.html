@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Soumissions - {{ evaluation.title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold">📋 Soumissions</h1>
+            <p class="text-gray-400 mt-2">{{ evaluation.title }} • {{ course.title }}</p>
+        </div>
+        <a href="{% url 'module-list-by-course' course.id %}" class="text-gray-400 hover:text-white transition">
+            ← Retour au cours
+        </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-3 gap-4 mb-8">
+        <div class="bg-[#1e293b] rounded-xl p-6 text-center">
+            <p class="text-3xl font-bold text-blue-400">{{ submissions|length }}</p>
+            <p class="text-gray-400">Total soumissions</p>
+        </div>
+        <div class="bg-[#1e293b] rounded-xl p-6 text-center">
+            <p class="text-3xl font-bold text-green-400">
+                {{ submissions|dictsort:"status"|dictsortreversed:"status"|first }}
+            </p>
+            <p class="text-gray-400">Notées</p>
+        </div>
+        <div class="bg-[#1e293b] rounded-xl p-6 text-center">
+            <p class="text-3xl font-bold text-yellow-400">
+                {{ submissions|length }}
+            </p>
+            <p class="text-gray-400">En attente</p>
+        </div>
+    </div>
+
+    <!-- Submissions Table -->
+    {% if submissions %}
+    <div class="bg-[#1e293b] rounded-xl overflow-hidden">
+        <table class="w-full">
+            <thead class="bg-gray-800">
+                <tr>
+                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-300">Étudiant</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-300">Date</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-300">Fichier</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-300">Statut</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-300">Score</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-300">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-700">
+                {% for submission in submissions %}
+                <tr class="hover:bg-gray-800 transition">
+                    <td class="px-6 py-4">
+                        <span class="font-medium">{{ submission.student.username }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-gray-400">
+                        {{ submission.submitted_on|date:"d/m/Y H:i" }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if submission.file %}
+                        <a href="{{ submission.file.url }}" class="text-blue-400 hover:text-blue-300 transition"
+                            target="_blank">
+                            📎 Télécharger
+                        </a>
+                        {% else %}
+                        <span class="text-gray-500">-</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if submission.status == 'graded' %}
+                        <span class="bg-green-600 text-white text-xs px-3 py-1 rounded-full">Noté</span>
+                        {% elif submission.status == 'late' %}
+                        <span class="bg-red-600 text-white text-xs px-3 py-1 rounded-full">En retard</span>
+                        {% else %}
+                        <span class="bg-yellow-600 text-white text-xs px-3 py-1 rounded-full">En attente</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if submission.score is not None %}
+                        <span
+                            class="{% if submission.passed %}text-green-400{% else %}text-red-400{% endif %} font-bold">
+                            {{ submission.score|floatformat:1 }}/{{ submission.max_score|floatformat:1 }}
+                        </span>
+                        {% else %}
+                        <span class="text-gray-500">-</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if submission.status != 'graded' %}
+                        <a href="{% url 'submission-grade' submission.id %}"
+                            class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm transition">
+                            ✏️ Noter
+                        </a>
+                        {% else %}
+                        <a href="{% url 'submission-grade' submission.id %}"
+                            class="text-gray-400 hover:text-white transition text-sm">
+                            Modifier la note
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="bg-[#1e293b] rounded-xl p-12 text-center">
+        <p class="text-gray-400 text-lg">Aucune soumission pour cette évaluation.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

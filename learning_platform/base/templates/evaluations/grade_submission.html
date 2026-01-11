@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Noter - {{ submission.student.username }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="bg-[#1e293b] rounded-xl p-8">
+        <h1 class="text-3xl font-bold mb-2">✏️ Noter la soumission</h1>
+        <p class="text-gray-400 mb-6">{{ evaluation.title }} • {{ course.title }}</p>
+
+        <!-- Student Info -->
+        <div class="bg-gray-800 rounded-lg p-6 mb-6">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-sm text-gray-400">Étudiant</p>
+                    <p class="text-lg font-medium">{{ submission.student.username }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-400">Date de soumission</p>
+                    <p class="text-lg font-medium">{{ submission.submitted_on|date:"d/m/Y H:i" }}</p>
+                </div>
+            </div>
+
+            {% if submission.file %}
+            <div class="mt-4 pt-4 border-t border-gray-700">
+                <p class="text-sm text-gray-400 mb-2">Fichier soumis</p>
+                <a href="{{ submission.file.url }}"
+                    class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition"
+                    target="_blank">
+                    📎 Télécharger le fichier
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if submission.status == 'late' %}
+        <div class="bg-red-900/30 border border-red-500 rounded-lg p-4 mb-6">
+            <p class="text-red-400">⚠️ Cette soumission a été effectuée en retard.</p>
+        </div>
+        {% endif %}
+
+        <!-- Grading Form -->
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+                <label for="score" class="block text-sm font-medium text-gray-300 mb-2">
+                    Score (sur {{ evaluation.max_score }}) *
+                </label>
+                <input type="number" name="score" id="score" min="0" max="{{ evaluation.max_score }}" step="0.5"
+                    required value="{{ submission.score|default:'' }}"
+                    class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition text-2xl font-bold text-center">
+                <p class="text-sm text-gray-400 mt-2">
+                    Score minimum pour réussir: {{ evaluation.passing_score }}%
+                    (= {{ evaluation.max_score|floatformat:0 }} × {{ evaluation.passing_score }}%
+                    = {{ evaluation.max_score|floatformat:0|add:0 }} points)
+                </p>
+            </div>
+
+            <div>
+                <label for="comment" class="block text-sm font-medium text-gray-300 mb-2">
+                    Commentaire (optionnel)
+                </label>
+                <textarea name="comment" id="comment" rows="4"
+                    class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+                    placeholder="Feedback pour l'étudiant...">{{ submission.instructor_comment }}</textarea>
+            </div>
+
+            <div class="flex justify-between pt-4">
+                <a href="{% url 'submission-list' evaluation.id %}"
+                    class="bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold transition">
+                    Annuler
+                </a>
+                <button type="submit"
+                    class="bg-green-600 hover:bg-green-700 px-8 py-3 rounded-lg font-semibold transition">
+                    ✅ Enregistrer la note
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

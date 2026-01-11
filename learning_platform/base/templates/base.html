@@ -1,34 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}My Platform{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        a:hover { transform: scale(1.02); transition: all 0.2s ease-in-out; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        a:hover {
+            transform: scale(1.02);
+            transition: all 0.2s ease-in-out;
+        }
     </style>
 </head>
+
 <body class="bg-[#0f172a] text-white min-h-screen flex flex-col justify-between">
 
     <!-- Navbar -->
     <header class="bg-[#1e293b] shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
             <a href="{% url 'home' %}" class="text-xl font-bold hover:text-blue-300">🎓 EduSphere</a>
-            <nav class="space-x-4 text-sm font-medium">
+            <nav class="flex items-center space-x-4 text-sm font-medium">
                 {% if user.is_authenticated %}
-                    {% if user.role == 'Admin' or user.is_superuser %}
-                        <a href="/admin/" class="hover:text-blue-300">⚙️ Admin</a>
-                    {% elif user.role == 'Instructor' %}
-                        <a href="{% url 'teacher-dashboard' %}" class="hover:text-blue-300">👨‍🏫 Dashboard</a>
-                    {% else %}
-                        <a href="{% url 'student-dashboard' %}" class="hover:text-blue-300">👨‍🏫 Dashboard</a>
+                <!-- Notification Bell -->
+                <a href="{% url 'notification-list' %}" class="relative hover:text-blue-300 transition">
+                    🔔
+                    {% if unread_notifications_count > 0 %}
+                    <span
+                        class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                        {{ unread_notifications_count }}
+                    </span>
                     {% endif %}
-                    <a href="{% url 'logout' %}" class="text-red-400 hover:text-red-600">Logout</a>
+                </a>
+
+                {% if user.role == 'Admin' or user.is_superuser %}
+                <a href="/admin/" class="hover:text-blue-300">⚙️ Admin</a>
+                {% elif user.role == 'Instructor' %}
+                <a href="{% url 'teacher-dashboard' %}" class="hover:text-blue-300">👨‍🏫 Dashboard</a>
                 {% else %}
-                    <a href="{% url 'login' %}" class="hover:text-blue-300">Login</a>
-                    <a href="{% url 'signup' %}" class="hover:text-blue-300">Sign Up</a>
+                <a href="{% url 'student-dashboard' %}" class="hover:text-blue-300">📚 Dashboard</a>
+                {% endif %}
+                <a href="{% url 'logout' %}" class="text-red-400 hover:text-red-600">Logout</a>
+                {% else %}
+                <a href="{% url 'login' %}" class="hover:text-blue-300">Login</a>
+                <a href="{% url 'signup' %}" class="hover:text-blue-300">Sign Up</a>
                 {% endif %}
             </nav>
         </div>
@@ -37,17 +56,17 @@
     <!-- Main Content -->
     <main class="container mx-auto px-6 py-10">
         {% if messages %}
-            <div class="max-w-4xl mx-auto mt-4">
-                {% for message in messages %}
-                    <div class="p-4 rounded text-white text-center mb-3
+        <div class="max-w-4xl mx-auto mt-4">
+            {% for message in messages %}
+            <div class="p-4 rounded text-white text-center mb-3
                         {% if message.tags == 'success' %} bg-green-600
                         {% elif message.tags == 'error' %} bg-red-600
                         {% elif message.tags == 'info' %} bg-blue-800
                         {% else %} bg-gray-600 {% endif %}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
+                {{ message }}
             </div>
+            {% endfor %}
+        </div>
         {% endif %}
         {% block content %}{% endblock %}
     </main>
@@ -62,9 +81,9 @@
             <div>
                 <h4 class="text-white font-semibold mb-2">Useful Links</h4>
                 <ul class="space-y-1">
-                <li><a href="{% url 'home' %}" class="hover:text-white">Home</a></li>
-                <li><a href="{% url 'course-list' %}" class="hover:text-white">Courses</a></li>
-                <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+                    <li><a href="{% url 'home' %}" class="hover:text-white">Home</a></li>
+                    <li><a href="{% url 'course-list' %}" class="hover:text-white">Courses</a></li>
+                    <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
                 </ul>
             </div>
             <div>
@@ -79,4 +98,5 @@
 
 
 </body>
+
 </html>

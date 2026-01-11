@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if is_edit %}Modifier{% else %}Ajouter{% endif %} Question{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <!-- Breadcrumb -->
+    <nav class="text-sm text-gray-400 mb-6">
+        <a href="{% url 'course-list' %}" class="hover:text-white">Cours</a> /
+        <a href="{% url 'course-detail' course.id %}" class="hover:text-white">{{ course.title }}</a> /
+        <a href="{% url 'question-list' evaluation.id %}" class="hover:text-white">{{ evaluation.title }}</a> /
+        <span class="text-white">{% if is_edit %}Modifier{% else %}Ajouter{% endif %} Question</span>
+    </nav>
+
+    <!-- Header -->
+    <h1 class="text-3xl font-bold mb-8">
+        {% if is_edit %}✏️ Modifier la question{% else %}➕ Nouvelle question{% endif %}
+    </h1>
+
+    <!-- Form -->
+    <form method="post" class="bg-[#1e293b] rounded-xl p-8 space-y-6">
+        {% csrf_token %}
+
+        <!-- Question Text -->
+        <div>
+            <label for="id_text" class="block text-sm font-medium text-gray-300 mb-2">
+                Énoncé de la question *
+            </label>
+            <textarea name="text" id="id_text" rows="4" required
+                class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+                placeholder="Quelle est la capitale de la France ?">{{ form.text.value|default:'' }}</textarea>
+        </div>
+
+        <!-- Options Grid -->
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="id_option1" class="block text-sm font-medium text-gray-300 mb-2">
+                    Option A *
+                </label>
+                <input type="text" name="option1" id="id_option1" required value="{{ form.option1.value|default:'' }}"
+                    class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+                    placeholder="Paris">
+            </div>
+            <div>
+                <label for="id_option2" class="block text-sm font-medium text-gray-300 mb-2">
+                    Option B *
+                </label>
+                <input type="text" name="option2" id="id_option2" required value="{{ form.option2.value|default:'' }}"
+                    class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+                    placeholder="Londres">
+            </div>
+            <div>
+                <label for="id_option3" class="block text-sm font-medium text-gray-300 mb-2">
+                    Option C *
+                </label>
+                <input type="text" name="option3" id="id_option3" required value="{{ form.option3.value|default:'' }}"
+                    class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+                    placeholder="Berlin">
+            </div>
+            <div>
+                <label for="id_option4" class="block text-sm font-medium text-gray-300 mb-2">
+                    Option D *
+                </label>
+                <input type="text" name="option4" id="id_option4" required value="{{ form.option4.value|default:'' }}"
+                    class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition"
+                    placeholder="Madrid">
+            </div>
+        </div>
+
+        <!-- Correct Answer & Points -->
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="id_correct_option" class="block text-sm font-medium text-gray-300 mb-2">
+                    Bonne réponse *
+                </label>
+                <select name="correct_option" id="id_correct_option" required
+                    class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+                    <option value="A" {% if form.correct_option.value=='A' %}selected{% endif %}>A</option>
+                    <option value="B" {% if form.correct_option.value=='B' %}selected{% endif %}>B</option>
+                    <option value="C" {% if form.correct_option.value=='C' %}selected{% endif %}>C</option>
+                    <option value="D" {% if form.correct_option.value=='D' %}selected{% endif %}>D</option>
+                </select>
+            </div>
+            <div>
+                <label for="id_points" class="block text-sm font-medium text-gray-300 mb-2">
+                    Points
+                </label>
+                <input type="number" name="points" id="id_points" step="0.5" min="0"
+                    value="{{ form.points.value|default:'1' }}"
+                    class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex justify-between pt-4">
+            <a href="{% url 'question-list' evaluation.id %}"
+                class="bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold transition">
+                Annuler
+            </a>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-8 py-3 rounded-lg font-semibold transition">
+                {% if is_edit %}Enregistrer les modifications{% else %}Ajouter la question{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

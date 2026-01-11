@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Soumettre - {{ evaluation.title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-[#1e293b] rounded-xl p-8">
+        <h1 class="text-3xl font-bold mb-2">📤 Soumettre le devoir</h1>
+        <p class="text-gray-400 mb-6">{{ evaluation.title }} • {{ course.title }}</p>
+
+        <!-- Deadline Warning -->
+        <div class="bg-yellow-900/30 border border-yellow-500 rounded-lg p-4 mb-6">
+            <p class="text-yellow-400">
+                <span class="font-bold">⏰ Date limite:</span> {{ evaluation.deadline }}
+            </p>
+        </div>
+
+        {% if evaluation.description %}
+        <div class="bg-gray-800 rounded-lg p-4 mb-6">
+            <p class="text-sm text-gray-300">{{ evaluation.description }}</p>
+        </div>
+        {% endif %}
+
+        {% if existing_submission %}
+        <div class="bg-blue-900/30 border border-blue-500 rounded-lg p-4 mb-6">
+            <p class="text-blue-400">
+                ℹ️ Vous avez déjà soumis ce devoir le {{ existing_submission.submitted_on }}.
+                {% if existing_submission.status == 'graded' %}
+                <br>Note: {{ existing_submission.score }}/{{ existing_submission.max_score }}
+                {% else %}
+                <br>Statut: En attente de correction
+                {% endif %}
+            </p>
+            <p class="text-sm text-gray-400 mt-2">Soumettre à nouveau remplacera votre précédente soumission.</p>
+        </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <div>
+                <label for="file" class="block text-sm font-medium text-gray-300 mb-2">
+                    Fichier à soumettre (PDF, DOC, etc.) *
+                </label>
+                <input type="file" name="file" id="file" required accept=".pdf,.doc,.docx,.txt,.zip,.rar"
+                    class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white file:cursor-pointer hover:file:bg-blue-700">
+                <p class="text-sm text-gray-400 mt-2">Taille maximale: 10 MB</p>
+            </div>
+
+            <div class="flex justify-between pt-4">
+                <a href="{% url 'module-list-by-course' course.id %}"
+                    class="bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold transition">
+                    Annuler
+                </a>
+                <button type="submit"
+                    class="bg-green-600 hover:bg-green-700 px-8 py-3 rounded-lg font-semibold transition">
+                    📤 Soumettre le devoir
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

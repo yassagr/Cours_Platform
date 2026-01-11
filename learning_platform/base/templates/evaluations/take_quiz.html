@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz - {{ evaluation.title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="bg-[#1e293b] rounded-xl p-6 mb-8">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold">📋 {{ evaluation.title }}</h1>
+                <p class="text-gray-400 mt-2">{{ course.title }} • {{ questions|length }} questions</p>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-gray-400">Score minimum pour réussir</p>
+                <p class="text-2xl font-bold text-green-400">{{ evaluation.passing_score }}%</p>
+                {% if previous_attempts > 0 %}
+                <p class="text-sm text-yellow-400 mt-2">Tentative {{ previous_attempts|add:1 }}/{{ max_attempts }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Form -->
+    <form method="post" action="{% url 'quiz-submit' evaluation.id %}" id="quizForm">
+        {% csrf_token %}
+
+        <div class="space-y-6">
+            {% for question in questions %}
+            <div class="bg-[#1e293b] rounded-xl p-6 border border-gray-700 hover:border-blue-500 transition">
+                <div class="flex items-start gap-4 mb-4">
+                    <span class="bg-blue-600 text-white text-sm font-bold px-3 py-1 rounded-full flex-shrink-0">
+                        Q{{ forloop.counter }}
+                    </span>
+                    <p class="text-lg font-medium">{{ question.text }}</p>
+                </div>
+
+                <div class="space-y-3 ml-10">
+                    <label
+                        class="flex items-center gap-3 p-4 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition group">
+                        <input type="radio" name="question_{{ question.id }}" value="A" required
+                            class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
+                        <span class="font-bold text-blue-400">A.</span>
+                        <span class="group-hover:text-white">{{ question.option1 }}</span>
+                    </label>
+                    <label
+                        class="flex items-center gap-3 p-4 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition group">
+                        <input type="radio" name="question_{{ question.id }}" value="B"
+                            class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
+                        <span class="font-bold text-blue-400">B.</span>
+                        <span class="group-hover:text-white">{{ question.option2 }}</span>
+                    </label>
+                    <label
+                        class="flex items-center gap-3 p-4 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition group">
+                        <input type="radio" name="question_{{ question.id }}" value="C"
+                            class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
+                        <span class="font-bold text-blue-400">C.</span>
+                        <span class="group-hover:text-white">{{ question.option3 }}</span>
+                    </label>
+                    <label
+                        class="flex items-center gap-3 p-4 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition group">
+                        <input type="radio" name="question_{{ question.id }}" value="D"
+                            class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
+                        <span class="font-bold text-blue-400">D.</span>
+                        <span class="group-hover:text-white">{{ question.option4 }}</span>
+                    </label>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Submit Button -->
+        <div class="mt-8 flex justify-between items-center">
+            <a href="{% url 'module-list-by-course' course.id %}" class="text-gray-400 hover:text-white transition">
+                ← Abandonner le quiz
+            </a>
+            <button type="submit"
+                class="bg-green-600 hover:bg-green-700 px-8 py-4 rounded-xl font-bold text-lg transition transform hover:scale-105">
+                ✅ Soumettre le quiz
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Confirm before leaving
+    window.onbeforeunload = function () {
+        return "Êtes-vous sûr de vouloir quitter ? Vos réponses seront perdues.";
+    };
+
+    // Remove warning when submitting
+    document.getElementById('quizForm').onsubmit = function () {
+        window.onbeforeunload = null;
+    };
+</script>
+{% endblock %}

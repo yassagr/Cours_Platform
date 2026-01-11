@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold">🔔 Notifications</h1>
+            <p class="text-gray-400 mt-2">
+                {% if unread_count > 0 %}
+                {{ unread_count }} non lue(s)
+                {% else %}
+                Toutes lues
+                {% endif %}
+            </p>
+        </div>
+        {% if unread_count > 0 %}
+        <form method="post" action="{% url 'notification-mark-all-read' %}">
+            {% csrf_token %}
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm transition">
+                ✓ Tout marquer comme lu
+            </button>
+        </form>
+        {% endif %}
+    </div>
+
+    <!-- Notifications List -->
+    {% if notifications %}
+    <div class="space-y-3">
+        {% for notification in notifications %}
+        <div class="bg-[#1e293b] rounded-xl p-5 border-l-4 
+                    {% if not notification.is_read %}border-blue-500 bg-blue-900/10{% else %}border-gray-700{% endif %}
+                    hover:bg-[#253244] transition">
+            <div class="flex justify-between items-start">
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-2">
+                        <!-- Icon based on type -->
+                        {% if notification.notification_type == 'certificate_earned' %}
+                        <span class="text-2xl">🎉</span>
+                        {% elif notification.notification_type == 'grade_received' %}
+                        <span class="text-2xl">📊</span>
+                        {% elif notification.notification_type == 'deadline_reminder' %}
+                        <span class="text-2xl">⏰</span>
+                        {% elif notification.notification_type == 'new_evaluation' %}
+                        <span class="text-2xl">📝</span>
+                        {% elif notification.notification_type == 'enrollment' %}
+                        <span class="text-2xl">👤</span>
+                        {% else %}
+                        <span class="text-2xl">📢</span>
+                        {% endif %}
+
+                        <h3
+                            class="font-semibold {% if not notification.is_read %}text-white{% else %}text-gray-300{% endif %}">
+                            {{ notification.title }}
+                        </h3>
+
+                        {% if notification.priority == 'high' %}
+                        <span class="bg-red-600 text-white text-xs px-2 py-0.5 rounded">Important</span>
+                        {% endif %}
+                    </div>
+
+                    <p class="text-gray-400 mb-2">{{ notification.message }}</p>
+
+                    <div class="flex items-center gap-4 text-sm text-gray-500">
+                        <span>{{ notification.sent_on|date:"d/m/Y H:i" }}</span>
+                        {% if notification.related_course %}
+                        <span>• {{ notification.related_course.title }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 ml-4">
+                    {% if notification.action_url %}
+                    <a href="{{ notification.action_url }}"
+                        class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm transition">
+                        Voir
+                    </a>
+                    {% endif %}
+
+                    {% if not notification.is_read %}
+                    <form method="post" action="{% url 'notification-read' notification.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="text-gray-400 hover:text-white p-2 transition"
+                            title="Marquer comme lu">
+                            ✓
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-[#1e293b] rounded-xl p-12 text-center">
+        <p class="text-gray-400 text-lg">Aucune notification.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

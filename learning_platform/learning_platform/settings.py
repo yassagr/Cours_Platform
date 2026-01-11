@@ -64,6 +64,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'base.views.notification_context',  # Compteur de notifications
             ],
         },
     },
@@ -79,12 +80,8 @@ WSGI_APPLICATION = 'learning_platform.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'formation_platform',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -142,6 +139,7 @@ AUTH_USER_MODEL = 'base.User'
 
 
 
+LOGIN_URL = 'login'  # URL de redirection pour l'authentification
 LOGIN_REDIRECT_URL = 'course-list'  # ou autre page d'accueil après login
 LOGOUT_REDIRECT_URL = 'login'
 
