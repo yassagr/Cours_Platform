@@ -112,7 +112,9 @@
                 {% else %}
                 <a href="{% url 'student-dashboard' %}" class="hover:text-blue-300">📚 Dashboard</a>
                 {% endif %}
-                <a href="{% url 'logout' %}" class="text-red-400 hover:text-red-600">Logout</a>
+                <form action="{% url 'logout' %}" method="post" class="inline">{% csrf_token %}<button type="submit"
+                        class="text-red-400 hover:text-red-600 bg-transparent border-none cursor-pointer">Logout</button>
+                </form>
                 {% else %}
                 <a href="{% url 'login' %}" class="hover:text-blue-300">Login</a>
                 <a href="{% url 'signup' %}" class="hover:text-blue-300">Sign Up</a>
