@@ -14,7 +14,8 @@
 
     <!-- Header -->
     <h1 class="text-3xl font-bold mb-8">
-        {% if is_edit %}✏️ Modifier la question{% else %}➕ Nouvelle question{% endif %}
+        {% if is_edit %}<i class="fas fa-edit mr-2"></i>Modifier la question{% else %}<i
+            class="fas fa-plus mr-2"></i>Nouvelle question{% endif %}
     </h1>
 
     <!-- Form -->
@@ -75,10 +76,10 @@
                 </label>
                 <select name="correct_option" id="id_correct_option" required
                     class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition">
-                    <option value="A" {% if form.correct_option.value == 'A' %}selected{% endif %}>A</option>
-                    <option value="B" {% if form.correct_option.value == 'B' %}selected{% endif %}>B</option>
-                    <option value="C" {% if form.correct_option.value == 'C' %}selected{% endif %}>C</option>
-                    <option value="D" {% if form.correct_option.value == 'D' %}selected{% endif %}>D</option>
+                    <option value="A" {% if form.correct_option.value=='A' %}selected{% endif %}>A</option>
+                    <option value="B" {% if form.correct_option.value=='B' %}selected{% endif %}>B</option>
+                    <option value="C" {% if form.correct_option.value=='C' %}selected{% endif %}>C</option>
+                    <option value="D" {% if form.correct_option.value=='D' %}selected{% endif %}>D</option>
                 </select>
             </div>
             <div>

@@ -5,13 +5,13 @@
 {% block content %}
 <div class="max-w-2xl mx-auto">
     <div class="bg-[#1e293b] rounded-xl p-8">
-        <h1 class="text-3xl font-bold mb-2">📤 Soumettre le devoir</h1>
+        <h1 class="text-3xl font-bold mb-2"><i class="fas fa-upload mr-2"></i>Soumettre le devoir</h1>
         <p class="text-gray-400 mb-6">{{ evaluation.title }} • {{ course.title }}</p>
 
         <!-- Deadline Warning -->
-        <div class="bg-yellow-900/30 border border-yellow-500 rounded-lg p-4 mb-6">
+        <div class="bg-yellow-900/30 border border-yellow-700 rounded-lg p-4 mb-6">
             <p class="text-yellow-400">
-                <span class="font-bold">⏰ Date limite:</span> {{ evaluation.deadline }}
+                <i class="fas fa-clock mr-2"></i><span class="font-bold">Date limite:</span> {{ evaluation.deadline }}
             </p>
         </div>
 
@@ -22,9 +22,10 @@
         {% endif %}
 
         {% if existing_submission %}
-        <div class="bg-blue-900/30 border border-blue-500 rounded-lg p-4 mb-6">
-            <p class="text-blue-400">
-                ℹ️ Vous avez déjà soumis ce devoir le {{ existing_submission.submitted_on }}.
+        <div class="bg-blue-900/30 border border-blue-700 rounded-lg p-4 mb-6">
+            <p class="text-blue-600">
+                <i class="fas fa-info-circle mr-2"></i>Vous avez déjà soumis ce devoir le {{
+                existing_submission.submitted_on }}.
                 {% if existing_submission.status == 'graded' %}
                 <br>Note: {{ existing_submission.score }}/{{ existing_submission.max_score }}
                 {% else %}
@@ -53,8 +54,8 @@
                     Annuler
                 </a>
                 <button type="submit"
-                    class="bg-green-600 hover:bg-green-700 px-8 py-3 rounded-lg font-semibold transition">
-                    📤 Soumettre le devoir
+                    class="bg-green-600 hover:bg-green-700 px-8 py-3 rounded-lg font-semibold transition flex items-center gap-2">
+                    <i class="fas fa-paper-plane"></i> Soumettre le devoir
                 </button>
             </div>
         </form>

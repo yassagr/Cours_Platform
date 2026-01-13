@@ -120,6 +120,11 @@ class Resource(models.Model):
             return self.file.url
         return None
 
+    def save(self, *args, **kwargs):
+        """Override save() pour appeler clean() automatiquement"""
+        self.full_clean()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.title
 
@@ -349,6 +354,13 @@ class SubmittedAnswer(models.Model):
     submission = models.ForeignKey(Submission, on_delete=models.CASCADE, related_name='submitted_answers')
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
     selected_option = models.CharField(max_length=1, choices=OPTION_CHOICES, blank=True, null=True)
+    
+    # NOUVEAU CHAMP: Pour distinguer "pas répondu" vs "répondu faux"
+    answered = models.BooleanField(
+        default=False, 
+        help_text="L'étudiant a-t-il répondu à cette question?"
+    )
+    
     is_correct = models.BooleanField(default=False)
     points_earned = models.FloatField(default=0)
 
@@ -361,8 +373,13 @@ class SubmittedAnswer(models.Model):
     def save(self, *args, **kwargs):
         """Calcule automatiquement si la réponse est correcte"""
         if self.selected_option:
+            self.answered = True
             self.is_correct = self.selected_option == self.question.correct_option
             self.points_earned = self.question.points if self.is_correct else 0
+        else:
+            self.answered = False
+            self.is_correct = False
+            self.points_earned = 0
         super().save(*args, **kwargs)
 
 
@@ -401,11 +418,20 @@ class Certificate(models.Model):
         return f"Certificate for {self.student.username} in {self.course.title}"
 
     def save(self, *args, **kwargs):
-        """Génère un numéro de certificat unique"""
+        """Génère un numéro de certificat unique + validation automatique"""
         if not self.certificate_number:
             import uuid
             self.certificate_number = f"CERT-{uuid.uuid4().hex[:8].upper()}"
+        self.full_clean()
         super().save(*args, **kwargs)
+
+    def get_certificate_url(self):
+        """Helper pour obtenir l'URL du certificat (URL publique ou fichier)"""
+        if self.certificate_url:
+            return self.certificate_url
+        elif self.certificate_file:
+            return self.certificate_file.url
+        return None
 
 
 # =====================

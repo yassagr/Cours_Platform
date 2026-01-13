@@ -7,18 +7,18 @@
     <!-- Header -->
     <div class="flex justify-between items-center mb-8">
         <div>
-            <h1 class="text-3xl font-bold">📋 Soumissions</h1>
+            <h1 class="text-3xl font-bold"><i class="fas fa-inbox mr-2"></i>Soumissions</h1>
             <p class="text-gray-400 mt-2">{{ evaluation.title }} • {{ course.title }}</p>
         </div>
         <a href="{% url 'module-list-by-course' course.id %}" class="text-gray-400 hover:text-white transition">
-            ← Retour au cours
+            <i class="fas fa-arrow-left mr-1"></i> Retour au cours
         </a>
     </div>
 
     <!-- Stats -->
     <div class="grid grid-cols-3 gap-4 mb-8">
         <div class="bg-[#1e293b] rounded-xl p-6 text-center">
-            <p class="text-3xl font-bold text-blue-400">{{ submissions|length }}</p>
+            <p class="text-3xl font-bold text-blue-600">{{ submissions|length }}</p>
             <p class="text-gray-400">Total soumissions</p>
         </div>
         <div class="bg-[#1e293b] rounded-xl p-6 text-center">
@@ -60,9 +60,9 @@
                     </td>
                     <td class="px-6 py-4">
                         {% if submission.file %}
-                        <a href="{{ submission.file.url }}" class="text-blue-400 hover:text-blue-300 transition"
+                        <a href="{{ submission.file.url }}" class="text-blue-600 hover:text-blue-500 transition"
                             target="_blank">
-                            📎 Télécharger
+                            <i class="fas fa-paperclip mr-1"></i> Télécharger
                         </a>
                         {% else %}
                         <span class="text-gray-500">-</span>
@@ -90,8 +90,8 @@
                     <td class="px-6 py-4">
                         {% if submission.status != 'graded' %}
                         <a href="{% url 'submission-grade' submission.id %}"
-                            class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm transition">
-                            ✏️ Noter
+                            class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm transition flex items-center gap-1 inline-flex">
+                            <i class="fas fa-edit"></i> Noter
                         </a>
                         {% else %}
                         <a href="{% url 'submission-grade' submission.id %}"

@@ -5,7 +5,8 @@
 {% block content %}
 <div class="max-w-2xl mx-auto">
     <div class="bg-[#1e293b] rounded-xl p-8">
-        <h1 class="text-2xl font-bold text-red-400 mb-6">🗑️ Supprimer cette question ?</h1>
+        <h1 class="text-2xl font-bold text-red-700 mb-6"><i class="fas fa-trash mr-2"></i>Supprimer cette question ?
+        </h1>
 
         <div class="bg-gray-800 rounded-lg p-6 mb-6">
             <p class="text-lg mb-4">{{ object.text }}</p>
@@ -15,7 +16,7 @@
                 <p>C: {{ object.option3 }}</p>
                 <p>D: {{ object.option4 }}</p>
             </div>
-            <p class="mt-3 text-green-400">Réponse correcte: {{ object.correct_option }}</p>
+            <p class="mt-3 text-green-600">Réponse correcte: {{ object.correct_option }}</p>
         </div>
 
         <p class="text-gray-400 mb-6">Cette action est irréversible.</p>
@@ -26,8 +27,9 @@
                 class="bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-lg font-semibold transition">
                 Annuler
             </a>
-            <button type="submit" class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold transition">
-                Oui, supprimer
+            <button type="submit"
+                class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2">
+                <i class="fas fa-trash"></i> Oui, supprimer
             </button>
         </form>
     </div>

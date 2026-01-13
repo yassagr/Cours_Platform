@@ -1,55 +1,56 @@
 {% extends 'base.html' %}
-{% block title %}Sign Up{% endblock %}
+{% block title %}Inscription{% endblock %}
 
 {% block content %}
 <div class="bg-[#1e293b] text-white p-6 rounded-xl shadow-lg border border-gray-700 max-w-3xl mx-auto">
-    <h1 class="text-3xl font-bold text-blue-300 mb-6">📝 Create a New Account</h1>
+    <h1 class="text-3xl font-bold text-blue-500 mb-6"><i class="fas fa-user-plus mr-2"></i>Créer un nouveau compte</h1>
 
     {% if messages %}
-        {% for message in messages %}
-            <div class="mb-4 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-500{% else %}bg-green-500{% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
+    {% for message in messages %}
+    <div class="mb-4 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-700{% else %}bg-green-700{% endif %}">
+        {{ message }}
+    </div>
+    {% endfor %}
     {% endif %}
 
     <form method="post" class="space-y-5">
         {% csrf_token %}
 
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-200">Username:</label>
+            <label class="block text-sm font-semibold mb-1 text-blue-400">Nom d'utilisateur:</label>
             <input type="text" name="username" required>
         </div>
 
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-200">Email:</label>
+            <label class="block text-sm font-semibold mb-1 text-blue-400">Email:</label>
             <input type="email" name="email" required>
         </div>
 
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-200">Password:</label>
+            <label class="block text-sm font-semibold mb-1 text-blue-400">Mot de passe:</label>
             <input type="password" name="password1" required>
         </div>
 
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-200">Confirm Password:</label>
+            <label class="block text-sm font-semibold mb-1 text-blue-400">Confirmer le mot de passe:</label>
             <input type="password" name="password2" required>
         </div>
 
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-200">Role:</label>
+            <label class="block text-sm font-semibold mb-1 text-blue-400">Rôle:</label>
             <select name="role" required>
-                <option value="Student">Student</option>
-                <option value="Instructor">Instructor</option>
+                <option value="Student">Étudiant</option>
+                <option value="Instructor">Instructeur</option>
             </select>
         </div>
 
         <div class="flex items-center gap-4 pt-4">
-            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition">
-                ✅ Sign Up
+            <button type="submit"
+                class="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg transition flex items-center gap-2">
+                <i class="fas fa-check"></i> S'inscrire
             </button>
             <a href="{% url 'login' %}" class="text-sm text-gray-300 hover:underline">
-                Already have an account? Login
+                Déjà un compte ? Connectez-vous
             </a>
         </div>
     </form>
@@ -60,7 +61,7 @@
         el.classList.add(
             'w-full', 'px-4', 'py-2', 'bg-gray-800', 'text-white',
             'rounded-lg', 'border', 'border-gray-600',
-            'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-400'
+            'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-600'
         );
     });
 </script>

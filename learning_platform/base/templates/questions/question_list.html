@@ -15,12 +15,13 @@
     <!-- Header -->
     <div class="flex justify-between items-center mb-8">
         <div>
-            <h1 class="text-3xl font-bold">📝 {{ evaluation.title }}</h1>
-            <p class="text-gray-400 mt-2">{{ questions|length }} question(s) • Score min: {{ evaluation.passing_score }}%</p>
+            <h1 class="text-3xl font-bold"><i class="fas fa-clipboard-list mr-2"></i>{{ evaluation.title }}</h1>
+            <p class="text-gray-400 mt-2">{{ questions|length }} question(s) • Score min: {{ evaluation.passing_score
+                }}%</p>
         </div>
-        <a href="{% url 'question-create' evaluation.id %}" 
-           class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition">
-            ➕ Ajouter une question
+        <a href="{% url 'question-create' evaluation.id %}"
+            class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2">
+            <i class="fas fa-plus"></i> Ajouter une question
         </a>
     </div>
 
@@ -38,35 +39,43 @@
                         <span class="text-gray-400 text-sm">{{ question.points }} point(s)</span>
                     </div>
                     <p class="text-lg font-medium mb-4">{{ question.text }}</p>
-                    
+
                     <div class="grid grid-cols-2 gap-3">
-                        <div class="{% if question.correct_option == 'A' %}bg-green-900/30 border-green-500{% else %}bg-gray-800{% endif %} p-3 rounded-lg border border-gray-600">
-                            <span class="font-bold text-blue-400">A:</span> {{ question.option1 }}
-                            {% if question.correct_option == 'A' %}<span class="ml-2 text-green-400">✓</span>{% endif %}
+                        <div
+                            class="{% if question.correct_option == 'A' %}bg-green-900/30 border-green-500{% else %}bg-gray-800{% endif %} p-3 rounded-lg border border-gray-600">
+                            <span class="font-bold text-blue-600">A:</span> {{ question.option1 }}
+                            {% if question.correct_option == 'A' %}<span class="ml-2 text-green-600"><i
+                                    class="fas fa-check"></i></span>{% endif %}
                         </div>
-                        <div class="{% if question.correct_option == 'B' %}bg-green-900/30 border-green-500{% else %}bg-gray-800{% endif %} p-3 rounded-lg border border-gray-600">
-                            <span class="font-bold text-blue-400">B:</span> {{ question.option2 }}
-                            {% if question.correct_option == 'B' %}<span class="ml-2 text-green-400">✓</span>{% endif %}
+                        <div
+                            class="{% if question.correct_option == 'B' %}bg-green-900/30 border-green-500{% else %}bg-gray-800{% endif %} p-3 rounded-lg border border-gray-600">
+                            <span class="font-bold text-blue-600">B:</span> {{ question.option2 }}
+                            {% if question.correct_option == 'B' %}<span class="ml-2 text-green-600"><i
+                                    class="fas fa-check"></i></span>{% endif %}
                         </div>
-                        <div class="{% if question.correct_option == 'C' %}bg-green-900/30 border-green-500{% else %}bg-gray-800{% endif %} p-3 rounded-lg border border-gray-600">
-                            <span class="font-bold text-blue-400">C:</span> {{ question.option3 }}
-                            {% if question.correct_option == 'C' %}<span class="ml-2 text-green-400">✓</span>{% endif %}
+                        <div
+                            class="{% if question.correct_option == 'C' %}bg-green-900/30 border-green-500{% else %}bg-gray-800{% endif %} p-3 rounded-lg border border-gray-600">
+                            <span class="font-bold text-blue-600">C:</span> {{ question.option3 }}
+                            {% if question.correct_option == 'C' %}<span class="ml-2 text-green-600"><i
+                                    class="fas fa-check"></i></span>{% endif %}
                         </div>
-                        <div class="{% if question.correct_option == 'D' %}bg-green-900/30 border-green-500{% else %}bg-gray-800{% endif %} p-3 rounded-lg border border-gray-600">
-                            <span class="font-bold text-blue-400">D:</span> {{ question.option4 }}
-                            {% if question.correct_option == 'D' %}<span class="ml-2 text-green-400">✓</span>{% endif %}
+                        <div
+                            class="{% if question.correct_option == 'D' %}bg-green-900/30 border-green-500{% else %}bg-gray-800{% endif %} p-3 rounded-lg border border-gray-600">
+                            <span class="font-bold text-blue-600">D:</span> {{ question.option4 }}
+                            {% if question.correct_option == 'D' %}<span class="ml-2 text-green-600"><i
+                                    class="fas fa-check"></i></span>{% endif %}
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="flex gap-2 ml-4">
-                    <a href="{% url 'question-edit' question.id %}" 
-                       class="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded-lg text-sm transition">
-                        ✏️ Modifier
+                    <a href="{% url 'question-edit' question.id %}"
+                        class="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded-lg text-sm transition flex items-center gap-1">
+                        <i class="fas fa-edit"></i> Modifier
                     </a>
-                    <a href="{% url 'question-delete' question.id %}" 
-                       class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm transition">
-                        🗑️ Supprimer
+                    <a href="{% url 'question-delete' question.id %}"
+                        class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm transition flex items-center gap-1">
+                        <i class="fas fa-trash"></i> Supprimer
                     </a>
                 </div>
             </div>
@@ -76,8 +85,8 @@
     {% else %}
     <div class="bg-[#1e293b] rounded-xl p-12 text-center">
         <p class="text-gray-400 text-lg mb-4">Aucune question pour cette évaluation.</p>
-        <a href="{% url 'question-create' evaluation.id %}" 
-           class="inline-block bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition">
+        <a href="{% url 'question-create' evaluation.id %}"
+            class="inline-block bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg font-semibold transition">
             Ajouter la première question
         </a>
     </div>
@@ -85,9 +94,8 @@
 
     <!-- Back button -->
     <div class="mt-8">
-        <a href="{% url 'module-list-by-course' course.id %}" 
-           class="text-gray-400 hover:text-white transition">
-            ← Retour aux modules
+        <a href="{% url 'module-list-by-course' course.id %}" class="text-gray-400 hover:text-white transition">
+            <i class="fas fa-arrow-left mr-1"></i> Retour aux modules
         </a>
     </div>
 </div>

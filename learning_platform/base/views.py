@@ -159,7 +159,46 @@ class CourseDeleteView(LoginRequiredMixin, DeleteView):
 class ModuleListView(LoginRequiredMixin, View):
     def get(self, request, course_id):
         course = get_object_or_404(Course, pk=course_id)
-        modules = course.modules.all()
+        modules = list(course.modules.all())
+        
+        # Ajouter la progression pour chaque module si l'utilisateur est étudiant inscrit
+        if request.user.role == 'Student':
+            try:
+                enrollment = Enrollment.objects.get(student=request.user, course=course)
+                for module in modules:
+                    # Chercher la progression du module pour cet étudiant
+                    progress = Progress.objects.filter(
+                        enrollment=enrollment,
+                        module=module
+                    ).first()
+                    
+                    if progress:
+                        module.progress_percent = progress.completion_percent
+                    else:
+                        # Calculer manuellement si pas de Progress enregistré
+                        total_resources = module.resources.count()
+                        total_evals = module.evaluations.count()
+                        
+                        if total_resources + total_evals > 0:
+                            # Compter les évaluations passées
+                            passed_evals = Submission.objects.filter(
+                                student=request.user,
+                                evaluation__module=module,
+                                passed=True
+                            ).values('evaluation').distinct().count()
+                            
+                            progress_value = (passed_evals / (total_resources + total_evals)) * 100 if total_evals > 0 else 0
+                            module.progress_percent = min(progress_value, 100)
+                        else:
+                            module.progress_percent = 0
+            except Enrollment.DoesNotExist:
+                # Pas inscrit, pas de progression
+                for module in modules:
+                    module.progress_percent = None
+        else:
+            # Instructeur/Admin - pas de progression individuelle
+            for module in modules:
+                module.progress_percent = None
         
         selected_module_id = request.GET.get('module_id')
         selected_module = None
@@ -172,15 +211,26 @@ class ModuleListView(LoginRequiredMixin, View):
             selected_module = modules[0]  # par défaut le premier module
 
         if selected_module:
-            resources = selected_module.resources.all()  # suppose que tu as une relation vers les ressources
+            resources = selected_module.resources.all()
             evaluations = selected_module.evaluations.all()
+
+        # Récupérer les IDs des ressources consultées par l'étudiant
+        viewed_resource_ids = []
+        if request.user.role == 'Student':
+            viewed_resource_ids = list(
+                ResourceView.objects.filter(
+                    student=request.user,
+                    resource__module__course=course
+                ).values_list('resource_id', flat=True)
+            )
 
         return render(request, 'modules/module_list.html', {
             'course': course,
             'modules': modules,
             'selected_module': selected_module,
             'resources': resources,
-            'evaluations':evaluations,
+            'evaluations': evaluations,
+            'viewed_resource_ids': viewed_resource_ids,
         })
 
 
@@ -267,7 +317,31 @@ class ResourceCreateView(AdminOrInstructorRequiredMixin, CreateView):
     def form_valid(self, form):
         module = get_object_or_404(Module, pk=self.kwargs['module_id'])
         form.instance.module = module
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        
+        # Notifier tous les étudiants inscrits
+        course = module.course
+        enrolled_students = User.objects.filter(
+            enrollments__course=course,
+            role='Student'
+        )
+        
+        for student in enrolled_students:
+            create_notification(
+                recipient=student,
+                title="Nouvelle ressource disponible",
+                message=f"Une nouvelle ressource '{self.object.title}' a été ajoutée au module '{module.title}' du cours '{course.title}'.",
+                notif_type='course_update',
+                related_course=course,
+                action_url=f"/modules/course/{course.id}/?module_id={module.id}",
+                priority='medium'
+            )
+        
+        messages.success(
+            self.request, 
+            f"Ressource ajoutée. {enrolled_students.count()} étudiant(s) notifié(s)."
+        )
+        return response
 
     def get_success_url(self):
         return reverse_lazy('module-list-by-course', kwargs={'course_id': self.object.module.course.id})
@@ -357,7 +431,34 @@ class EvaluationCreateView(AdminOrInstructorRequiredMixin, CreateView):
     def form_valid(self, form):
         module = get_object_or_404(Module, pk=self.kwargs['module_id'])
         form.instance.module = module
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        
+        # Notifier tous les étudiants inscrits
+        course = module.course
+        enrolled_students = User.objects.filter(
+            enrollments__course=course,
+            role='Student'
+        )
+        
+        eval_type = "quiz" if self.object.evaluation_type == 'quiz' else "devoir"
+        
+        for student in enrolled_students:
+            create_notification(
+                recipient=student,
+                title=f"Nouveau {eval_type} disponible",
+                message=f"Un nouveau {eval_type} '{self.object.title}' a été ajouté au cours '{course.title}'. Date limite: {self.object.deadline}.",
+                notif_type='new_evaluation',
+                related_course=course,
+                related_evaluation=self.object,
+                action_url=f"/modules/course/{course.id}/?module_id={module.id}",
+                priority='high'
+            )
+        
+        messages.success(
+            self.request, 
+            f"Évaluation créée. {enrolled_students.count()} étudiant(s) notifié(s)."
+        )
+        return response
 
     def get_success_url(self):
         return reverse_lazy('module-list-by-course', kwargs={'course_id': self.object.module.course.id})
@@ -474,16 +575,27 @@ class EnrollView(LoginRequiredMixin, View):
         
         # Vérifie que l'utilisateur est étudiant
         if request.user.role != 'Student':
-            messages.error(request, "Only students can enroll in courses.")
+            messages.error(request, "Seuls les étudiants peuvent s'inscrire aux cours.")
             return redirect('course-detail', pk=pk)
 
         # Vérifie si déjà inscrit
         already_enrolled = Enrollment.objects.filter(student=request.user, course=course).exists()
         if already_enrolled:
-            messages.info(request, "You are already enrolled in this course.")
+            messages.info(request, "Vous êtes déjà inscrit à ce cours.")
         else:
             Enrollment.objects.create(student=request.user, course=course)
-            messages.success(request, "Successfully enrolled in the course!")
+            messages.success(request, "Inscription réussie!")
+            
+            # Notifier l'instructeur de la nouvelle inscription
+            create_notification(
+                recipient=course.instructor,
+                title="Nouvelle inscription",
+                message=f"{request.user.get_full_name() or request.user.username} s'est inscrit au cours '{course.title}'.",
+                notif_type='enrollment',
+                related_course=course,
+                action_url=f"/courses/{course.id}/",
+                priority='low'
+            )
 
         return redirect('course-detail', pk=pk)
     
@@ -829,6 +941,14 @@ class QuizSubmitView(LoginRequiredMixin, View):
         submission.passed = submission.percentage >= evaluation.passing_score
         submission.save()
         
+        # Mettre à jour la progression du cours et vérifier le certificat
+        if submission.passed:
+            try:
+                enrollment = Enrollment.objects.get(student=request.user, course=course)
+                update_course_progress(enrollment)
+            except Enrollment.DoesNotExist:
+                pass
+        
         # Créer une notification
         create_notification(
             recipient=request.user,
@@ -1035,7 +1155,13 @@ class SubmissionGradeView(AdminOrInstructorRequiredMixin, View):
 
 class MarkResourceViewedView(LoginRequiredMixin, View):
     """Marquer une ressource comme consultée"""
+    def get(self, request, pk):
+        return self.mark_viewed(request, pk)
+    
     def post(self, request, pk):
+        return self.mark_viewed(request, pk)
+    
+    def mark_viewed(self, request, pk):
         resource = get_object_or_404(Resource, pk=pk)
         
         # Créer l'enregistrement de vue (ou ignorer si existe déjà)
@@ -1046,6 +1172,8 @@ class MarkResourceViewedView(LoginRequiredMixin, View):
         
         # Mettre à jour la progression du module
         update_module_progress(request.user, resource.module)
+        
+        messages.success(request, f"Ressource '{resource.title}' marquée comme consultée!")
         
         return redirect(request.META.get('HTTP_REFERER', '/'))
 

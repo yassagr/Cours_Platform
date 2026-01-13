@@ -82,10 +82,115 @@ class EvaluationAdmin(admin.ModelAdmin):
 admin.site.register(Evaluation, EvaluationAdmin)
 
 
-admin.site.register(Resource)
+# ------------------------------------------------------
+# 6. Personnalisation pour Resource
+# ------------------------------------------------------
+class ResourceAdmin(admin.ModelAdmin):
+    list_display = ('title', 'module', 'resource_type', 'has_url', 'has_file')
+    search_fields = ['title', 'module__title', 'module__course__title']
+    list_filter = ('resource_type', 'module__course')
+    ordering = ('module', 'title')
+    list_per_page = 20
+    
+    def has_url(self, obj):
+        return bool(obj.url)
+    has_url.boolean = True
+    has_url.short_description = 'URL?'
+    
+    def has_file(self, obj):
+        return bool(obj.file)
+    has_file.boolean = True
+    has_file.short_description = 'Fichier?'
+
+admin.site.register(Resource, ResourceAdmin)
+
+
+# ------------------------------------------------------
+# 7. Personnalisation pour Question
+# ------------------------------------------------------
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ('text_preview', 'evaluation', 'correct_option', 'points', 'order')
+    search_fields = ['text', 'evaluation__title']
+    list_filter = ('evaluation', 'correct_option')
+    ordering = ('evaluation', 'order')
+    list_per_page = 20
+    
+    def text_preview(self, obj):
+        return obj.text[:60] + "..." if len(obj.text) > 60 else obj.text
+    text_preview.short_description = 'Question'
+
+admin.site.register(Question, QuestionAdmin)
+
+
+# ------------------------------------------------------
+# 8. Personnalisation pour Submission
+# ------------------------------------------------------
+class SubmissionAdmin(admin.ModelAdmin):
+    list_display = ('student', 'evaluation', 'submitted_on', 'status', 'score', 'passed', 'attempt_number')
+    search_fields = ['student__username', 'evaluation__title']
+    list_filter = ('status', 'passed', 'evaluation__evaluation_type', 'submitted_on')
+    ordering = ('-submitted_on',)
+    list_per_page = 25
+    readonly_fields = ('submitted_on', 'graded_on')
+
+admin.site.register(Submission, SubmissionAdmin)
+
+
+# ------------------------------------------------------
+# 9. Personnalisation pour Certificate
+# ------------------------------------------------------
+class CertificateAdmin(admin.ModelAdmin):
+    list_display = ('certificate_number', 'student', 'course', 'issued_on', 'has_url', 'has_file')
+    search_fields = ['certificate_number', 'student__username', 'course__title']
+    list_filter = ('issued_on', 'course')
+    ordering = ('-issued_on',)
+    list_per_page = 20
+    readonly_fields = ('certificate_number', 'issued_on')
+    
+    def has_url(self, obj):
+        return bool(obj.certificate_url)
+    has_url.boolean = True
+    has_url.short_description = 'URL?'
+    
+    def has_file(self, obj):
+        return bool(obj.certificate_file)
+    has_file.boolean = True
+    has_file.short_description = 'Fichier?'
+
+admin.site.register(Certificate, CertificateAdmin)
+
+
+# ------------------------------------------------------
+# 10. Personnalisation pour Notification
+# ------------------------------------------------------
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('title', 'recipient', 'notification_type', 'priority', 'is_read', 'sent_on')
+    search_fields = ['title', 'message', 'recipient__username']
+    list_filter = ('notification_type', 'priority', 'is_read', 'sent_on')
+    ordering = ('-sent_on',)
+    list_per_page = 25
+    readonly_fields = ('sent_on',)
+    actions = ['mark_as_read', 'mark_as_unread']
+    
+    def mark_as_read(self, request, queryset):
+        queryset.update(is_read=True)
+    mark_as_read.short_description = "Marquer comme lu"
+    
+    def mark_as_unread(self, request, queryset):
+        queryset.update(is_read=False)
+    mark_as_unread.short_description = "Marquer comme non lu"
+
+admin.site.register(Notification, NotificationAdmin)
+
+
+# ------------------------------------------------------
+# Modèles restants avec registration simple
+# ------------------------------------------------------
 admin.site.register(Progress)
-admin.site.register(Question)
-admin.site.register(Submission)
 admin.site.register(SubmittedAnswer)
-admin.site.register(Certificate)
-admin.site.register(Notification)
+
+
+# Personnalisation du site admin
+admin.site.site_header = "EduSphere Administration"
+admin.site.site_title = "EduSphere Admin"
+admin.site.index_title = "Bienvenue dans l'administration EduSphere"

@@ -11,7 +11,7 @@
             {% for module in modules %}
             <li>
                 <a href="?module_id={{ module.id }}"
-                    class="block p-2 rounded-md hover:bg-gray-700 {% if module == selected_module %}bg-gray-700 border-l-4 border-blue-500{% endif %}">
+                    class="block p-2 rounded-md hover:bg-gray-700 {% if module == selected_module %}bg-gray-700 border-l-4 border-blue-700{% endif %}">
                     <div class="flex items-center justify-between">
                         <span>{{ module.title }}</span>
                         {% if module.progress_percent is not None %}
@@ -21,7 +21,7 @@
                     <!-- Barre de progression du module -->
                     {% if module.progress_percent is not None %}
                     <div class="w-full bg-gray-600 rounded-full h-1.5 mt-1">
-                        <div class="bg-blue-500 h-1.5 rounded-full progress-fill"
+                        <div class="bg-blue-700 h-1.5 rounded-full progress-fill"
                             data-width="{{ module.progress_percent|floatformat:0 }}"></div>
                     </div>
                     {% endif %}
@@ -33,7 +33,7 @@
         {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
         <div class="mt-6">
             <a href="{% url 'module-create' course.id %}"
-                class="block bg-blue-600 text-white text-center px-4 py-2 rounded-md hover:bg-blue-500 transition">
+                class="block bg-blue-600 text-white text-center px-4 py-2 rounded-md hover:bg-blue-700 transition">
                 <i class="fas fa-plus mr-1"></i> Ajouter un module
             </a>
         </div>
@@ -44,7 +44,7 @@
     <div class="w-3/4 bg-gray-900 text-white p-6 rounded-r-lg">
         {% if selected_module %}
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl font-bold text-blue-400">{{ selected_module.title }}</h2>
+            <h2 class="text-2xl font-bold text-blue-600">{{ selected_module.title }}</h2>
 
             {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
             <div class="space-x-2">
@@ -68,7 +68,7 @@
                 <h3 class="text-2xl font-semibold text-blue-300"><i class="fas fa-file-alt mr-2"></i>Ressources</h3>
                 {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
                 <a href="{% url 'resource-add' selected_module.id %}"
-                    class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded shadow">
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
                     <i class="fas fa-plus mr-1"></i> Ajouter
                 </a>
                 {% endif %}
@@ -76,39 +76,55 @@
             {% if resources %}
             <ul class="space-y-3 text-gray-200">
                 {% for resource in resources %}
-                <li class="p-3 bg-gray-700 rounded-lg shadow hover:bg-gray-600 transition">
+                <li class="p-3 bg-gray-700 rounded-lg shadow hover:bg-gray-600 transition {% if resource.id in viewed_resource_ids %}border-l-4 border-green-500{% endif %}"
+                    id="resource-{{ resource.id }}">
                     <div class="flex justify-between items-center">
-                        <div class="flex items-center">
+                        <div class="flex items-center flex-1">
                             {% if resource.resource_type == 'video' %}
-                            <i class="fas fa-video text-red-400 mr-3"></i>
+                            <i class="fas fa-video text-red-700 mr-3"></i>
                             {% elif resource.resource_type == 'pdf' %}
                             <i class="fas fa-file-pdf text-red-500 mr-3"></i>
                             {% elif resource.resource_type == 'doc' %}
-                            <i class="fas fa-file-word text-blue-400 mr-3"></i>
+                            <i class="fas fa-file-word text-blue-600 mr-3"></i>
                             {% elif resource.resource_type == 'link' %}
-                            <i class="fas fa-link text-green-400 mr-3"></i>
+                            <i class="fas fa-link text-green-600 mr-3"></i>
                             {% else %}
                             <i class="fas fa-file text-gray-400 mr-3"></i>
                             {% endif %}
-                            <div>
+                            <div class="flex-1">
                                 <strong>{{ resource.title }}</strong>
                                 <span class="text-sm text-gray-400 ml-2">({{ resource.resource_type|title }})</span>
                                 <div class="mt-1">
                                     {% if resource.url %}
                                     <a href="{{ resource.url }}" target="_blank"
-                                        class="text-blue-400 hover:text-blue-300">
+                                        class="text-blue-600 hover:text-blue-300">
                                         <i class="fas fa-external-link-alt mr-1"></i>Ouvrir le lien
                                     </a>
                                     {% elif resource.file %}
                                     <a href="{{ resource.file.url }}" target="_blank"
-                                        class="text-blue-400 hover:text-blue-300">
+                                        class="text-blue-600 hover:text-blue-300">
                                         <i class="fas fa-download mr-1"></i>Télécharger
                                     </a>
                                     {% endif %}
                                 </div>
                             </div>
                         </div>
-                        <div class="flex gap-2 ml-4">
+                        <div class="flex items-center gap-3 ml-4">
+                            <!-- Bouton Œil pour marquer comme vu -->
+                            {% if user.role == 'Student' %}
+                            {% if resource.id in viewed_resource_ids %}
+                            <span class="p-2 rounded-lg bg-green-600 text-white" title="Consulté ✓">
+                                <i class="fas fa-eye text-lg"></i>
+                            </span>
+                            {% else %}
+                            <a href="{% url 'resource-view' resource.id %}"
+                                class="btn-sm bg-gray-600 hover:bg-blue-600 text-gray-300 hover:text-white p-2 rounded-lg transition-all"
+                                title="Marquer comme consulté">
+                                <i class="fas fa-eye-slash text-lg"></i>
+                            </a>
+                            {% endif %}
+                            {% endif %}
+
                             {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
                             <a href="{% url 'resource-edit' resource.id %}" class="btn-sm btn-outline-warning"
                                 title="Modifier">
@@ -149,10 +165,10 @@
                     <div class="flex justify-between items-center">
                         <div class="flex-1">
                             <div class="flex items-center">
-                                {% if evaluation.evaluation_type == 'quiz' %}
-                                <i class="fas fa-question-circle text-blue-400 mr-3 text-xl"></i>
+                                {% if evaluation.evaluation_type == 'Quiz' %}
+                                <i class="fas fa-question-circle text-blue-600 mr-3 text-xl"></i>
                                 {% else %}
-                                <i class="fas fa-tasks text-green-400 mr-3 text-xl"></i>
+                                <i class="fas fa-tasks text-green-600 mr-3 text-xl"></i>
                                 {% endif %}
                                 <div>
                                     <strong class="text-lg">{{ evaluation.title }}</strong>
@@ -164,8 +180,8 @@
                                 </div>
                             </div>
                             <div class="text-sm text-gray-300 mt-2 flex items-center gap-4">
-                                <span><i class="fas fa-calendar mr-1"></i>Date limite: <span class="text-yellow-300">{{
-                                        evaluation.deadline }}</span></span>
+                                <span><i class="fas fa-calendar mr-1"></i>Date limite: <span
+                                        class="text-yellow-300">{{evaluation.deadline }}</span></span>
                                 <span><i class="fas fa-star mr-1"></i>Score max: {{ evaluation.max_score }}</span>
                             </div>
                         </div>
@@ -180,21 +196,20 @@
                                 class="px-3 py-1 rounded-full text-sm 
                                                     {% if student_submission.status == 'graded' %}bg-green-600{% else %}bg-yellow-600{% endif %}">
                                 {% if student_submission.status == 'graded' %}
-                                <i class="fas fa-check mr-1"></i>Noté: {{ student_submission.score }}/{{
-                                evaluation.max_score }}
+                                <i class="fas fa-check mr-1"></i>Noté: {{ student_submission.score }}/{{evaluation.max_score }}
                                 {% else %}
                                 <i class="fas fa-clock mr-1"></i>En attente
                                 {% endif %}
                             </span>
-                            <a href="{% url 'submission-result' student_submission.id %}"
-                                class="btn-sm btn-outline-primary" title="Voir le résultat">
+                            <a href="{% url 'quiz-results' student_submission.id %}" class="btn-sm btn-outline-primary"
+                                title="Voir le résultat">
                                 <i class="fas fa-eye"></i>
                             </a>
                             {% else %}
                             <!-- Étudiant peut soumettre -->
-                            {% if evaluation.evaluation_type == 'quiz' %}
-                            <a href="{% url 'take-quiz' evaluation.id %}"
-                                class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded transition">
+                            {% if evaluation.evaluation_type == 'Quiz' %}
+                            <a href="{% url 'quiz-take' evaluation.id %}"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition">
                                 <i class="fas fa-play mr-1"></i>Commencer le quiz
                             </a>
                             {% else %}
@@ -243,6 +258,7 @@
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Animation des barres de progression
         document.querySelectorAll('.progress-fill[data-width]').forEach(function (el) {
             el.style.width = el.dataset.width + '%';
         });

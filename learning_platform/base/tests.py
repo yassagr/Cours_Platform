@@ -15,13 +15,13 @@ from .models import (
 User = get_user_model()
 
 
-def create_test_teacher():
-    """Helper pour créer un enseignant de test"""
+def create_test_instructor():
+    """Helper pour créer un instructeur de test"""
     return User.objects.create_user(
-        username='teacher',
-        email='teacher@test.com',
+        username='instructor',
+        email='instructor@test.com',
         password='testpass123',
-        role='Teacher',
+        role='Instructor',
         first_name='Jean',
         last_name='Dupont'
     )
@@ -76,32 +76,32 @@ class UserModelTests(TestCase):
         self.assertEqual(user.role, 'Student')
         self.assertTrue(user.check_password('testpass123'))
     
-    def test_create_teacher(self):
-        """Vérifie la création d'un enseignant"""
+    def test_create_instructor(self):
+        """Vérifie la création d'un instructeur"""
         user = User.objects.create_user(
             username='prof1',
             email='prof@test.com',
             password='testpass123',
-            role='Teacher'
+            role='Instructor'
         )
-        self.assertEqual(user.role, 'Teacher')
+        self.assertEqual(user.role, 'Instructor')
 
 
 class CourseModelTests(TestCase):
     """Tests pour le modèle Course"""
     
     def setUp(self):
-        self.teacher = create_test_teacher()
+        self.instructor = create_test_instructor()
     
     def test_create_course(self):
         """Vérifie la création d'un cours"""
-        course = create_test_course(self.teacher)
+        course = create_test_course(self.instructor)
         self.assertEqual(str(course), 'Python Basics')
-        self.assertEqual(course.instructor, self.teacher)
+        self.assertEqual(course.instructor, self.instructor)
     
     def test_course_enrollment(self):
         """Vérifie l'inscription à un cours"""
-        course = create_test_course(self.teacher)
+        course = create_test_course(self.instructor)
         student = create_test_student()
         enrollment = Enrollment.objects.create(
             student=student,
@@ -117,8 +117,8 @@ class EvaluationModelTests(TestCase):
     """Tests pour le modèle Evaluation"""
     
     def setUp(self):
-        self.teacher = create_test_teacher()
-        self.course = create_test_course(self.teacher)
+        self.instructor = create_test_instructor()
+        self.course = create_test_course(self.instructor)
         self.module = create_test_module(self.course)
     
     def test_create_quiz(self):
@@ -148,8 +148,8 @@ class QuestionModelTests(TestCase):
     """Tests pour le modèle Question"""
     
     def setUp(self):
-        self.teacher = create_test_teacher()
-        self.course = create_test_course(self.teacher)
+        self.instructor = create_test_instructor()
+        self.course = create_test_course(self.instructor)
         self.module = create_test_module(self.course)
         self.quiz = Evaluation.objects.create(
             title='Quiz 1',
@@ -178,9 +178,9 @@ class SubmissionModelTests(TestCase):
     """Tests pour le modèle Submission"""
     
     def setUp(self):
-        self.teacher = create_test_teacher()
+        self.instructor = create_test_instructor()
         self.student = create_test_student()
-        self.course = create_test_course(self.teacher)
+        self.course = create_test_course(self.instructor)
         self.module = create_test_module(self.course)
         self.quiz = Evaluation.objects.create(
             title='Quiz 1',
@@ -206,9 +206,9 @@ class CourseViewTests(TestCase):
     
     def setUp(self):
         self.client = Client()
-        self.teacher = create_test_teacher()
+        self.instructor = create_test_instructor()
         self.student = create_test_student()
-        self.course = create_test_course(self.teacher)
+        self.course = create_test_course(self.instructor)
     
     def test_course_list_view(self):
         """Vérifie l'accès à la liste des cours"""
@@ -224,7 +224,7 @@ class CourseViewTests(TestCase):
             Course.objects.create(
                 title=f'Course {i}',
                 description=f'Description for course {i}',
-                instructor=self.teacher,
+                instructor=self.instructor,
                 level='Beginner',
                 estimated_duration=10,
                 start_date=date.today(),
@@ -243,9 +243,9 @@ class QuizSubmitViewTests(TestCase):
     
     def setUp(self):
         self.client = Client()
-        self.teacher = create_test_teacher()
+        self.instructor = create_test_instructor()
         self.student = create_test_student()
-        self.course = create_test_course(self.teacher)
+        self.course = create_test_course(self.instructor)
         self.module = create_test_module(self.course)
         self.quiz = Evaluation.objects.create(
             title='Quiz 1',
@@ -310,9 +310,9 @@ class CertificateTests(TestCase):
     """Tests pour la génération de certificats"""
     
     def setUp(self):
-        self.teacher = create_test_teacher()
+        self.instructor = create_test_instructor()
         self.student = create_test_student()
-        self.course = create_test_course(self.teacher)
+        self.course = create_test_course(self.instructor)
     
     def test_certificate_creation(self):
         """Vérifie la création d'un certificat"""

@@ -7,7 +7,7 @@
 {% if user.is_staff or user.role == 'Admin' or user.role == 'Instructor' %}
 <div class="mb-6">
     <a href="{% url 'course-create' %}"
-        class="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-lg shadow hover:bg-blue-700 transition">
+        class="inline-flex items-center gap-2 bg-blue-700 text-white px-5 py-2 rounded-lg shadow hover:bg-blue-800 transition">
         <i class="fas fa-plus"></i> Créer un cours
     </a>
 </div>
@@ -25,7 +25,7 @@
             <img src="{{ course.image.url }}" alt="{{ course.title }}"
                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
             {% else %}
-            <div class="w-full h-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+            <div class="w-full h-full bg-gradient-to-br from-blue-800 to-purple-800 flex items-center justify-center">
                 <i class="fas fa-book text-6xl text-white/50"></i>
             </div>
             {% endif %}
@@ -40,14 +40,14 @@
             </div>
 
             <!-- Badge niveau -->
-            <div class="absolute top-3 right-3 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+            <div class="absolute top-3 right-3 bg-blue-700 text-white text-xs font-bold px-3 py-1 rounded-full">
                 {{ course.level }}
             </div>
         </div>
 
         <!-- Contenu -->
         <div class="p-5">
-            <h2 class="text-lg font-bold text-blue-300 mb-2 group-hover:text-blue-200 transition">
+            <h2 class="text-lg font-bold text-blue-400 mb-2 group-hover:text-blue-300 transition">
                 {{ course.title }}
             </h2>
 
@@ -79,14 +79,14 @@
                 {% elif user.role == 'Student' %}
                 {% if course.id in enrolled_course_ids %}
                 <a href="{% url 'module-list-by-course' course.id %}"
-                    class="block bg-blue-600 hover:bg-blue-700 text-white text-center font-semibold px-4 py-2 rounded-lg transition">
+                    class="block bg-blue-700 hover:bg-blue-800 text-white text-center font-semibold px-4 py-2 rounded-lg transition">
                     <i class="fas fa-arrow-right mr-2"></i>Continuer
                 </a>
                 {% else %}
                 <form action="{% url 'enroll' course.id %}" method="post">
                     {% csrf_token %}
                     <button type="submit"
-                        class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg transition flex items-center justify-center gap-2">
+                        class="w-full bg-green-700 hover:bg-green-800 text-white font-semibold px-4 py-2 rounded-lg transition flex items-center justify-center gap-2">
                         <i class="fas fa-user-graduate"></i> S'inscrire
                     </button>
                 </form>
@@ -111,7 +111,7 @@
     </a>
     {% endif %}
 
-    <span class="px-4 py-2 bg-blue-600 rounded-lg font-medium">
+    <span class="px-4 py-2 bg-blue-700 rounded-lg font-medium">
         Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
     </span>
 

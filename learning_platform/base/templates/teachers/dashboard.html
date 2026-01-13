@@ -10,11 +10,10 @@
         {% csrf_token %}
         {% for field in form %}
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-200" for="{{ field.id_for_label }}">{{ field.label
-                }}</label>
+            <label class="block text-sm font-semibold mb-1 text-blue-200" for="{{ field.id_for_label }}">{{ field.label}}</label>
             {{ field }}
             {% for error in field.errors %}
-            <p class="text-red-400 text-sm mt-1">{{ error }}</p>
+            <p class="text-red-700 text-sm mt-1">{{ error }}</p>
             {% endfor %}
         </div>
         {% endfor %}
@@ -42,7 +41,7 @@
                 <i class="fas fa-book text-6xl text-white/50"></i>
             </div>
             {% endif %}
-            <h3 class="text-lg font-semibold text-blue-300 mb-1 hover:underline">{{ course.title }}</h3>
+            <h3 class="text-lg font-semibold text-blue-500 mb-1 hover:underline">{{ course.title }}</h3>
             <p class="text-sm text-gray-300 mb-4">{{ course.description|truncatechars:50 }}</p>
         </div>
         <div class="mt-auto text-sm flex gap-2" onclick="event.stopPropagation()">
@@ -68,8 +67,7 @@
 <ul class="list-none pl-0 text-gray-300 space-y-2">
     {% for modif in last_modifications %}
     <li class="bg-[#1e293b] p-3 rounded-lg border border-gray-700">
-        <span class="text-blue-300 font-medium">{{ modif.modified_at|date:"d/m/Y H:i" }}</span> : {{ modif.description
-        }}
+        <span class="text-blue-500 font-medium">{{ modif.modified_at|date:"d/m/Y H:i" }}</span> : {{ modif.description}}
     </li>
     {% endfor %}
 </ul>
@@ -83,7 +81,7 @@
 {% if enrolled_users_by_course %}
 {% for course, users in enrolled_users_by_course.items %}
 <div class="mb-8 bg-[#1e293b] p-4 rounded-xl shadow-md border border-gray-700">
-    <h3 class="text-blue-300 font-semibold mb-3">{{ course.title }}</h3>
+    <h3 class="text-blue-500 font-semibold mb-3">{{ course.title }}</h3>
     {% if users %}
     <table class="w-full text-left text-gray-300 text-sm">
         <thead>
@@ -112,7 +110,7 @@
 
 <script>
     document.querySelectorAll('input, select, textarea').forEach(el => {
-        el.classList.add('w-full', 'px-4', 'py-2', 'bg-gray-800', 'text-white', 'rounded-lg', 'border', 'border-gray-600', 'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-400');
+        el.classList.add('w-full', 'px-4', 'py-2', 'bg-gray-800', 'text-white', 'rounded-lg', 'border', 'border-gray-600', 'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-600');
     });
     document.querySelectorAll('.course-card[data-href]').forEach(function (card) {
         card.addEventListener('click', function (e) {

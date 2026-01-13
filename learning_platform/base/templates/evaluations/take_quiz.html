@@ -8,7 +8,7 @@
     <div class="bg-[#1e293b] rounded-xl p-6 mb-8">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-3xl font-bold">📋 {{ evaluation.title }}</h1>
+                <h1 class="text-3xl font-bold"><i class="fas fa-clipboard-list mr-2"></i>{{ evaluation.title }}</h1>
                 <p class="text-gray-400 mt-2">{{ course.title }} • {{ questions|length }} questions</p>
             </div>
             <div class="text-right">
@@ -27,7 +27,7 @@
 
         <div class="space-y-6">
             {% for question in questions %}
-            <div class="bg-[#1e293b] rounded-xl p-6 border border-gray-700 hover:border-blue-500 transition">
+            <div class="bg-[#1e293b] rounded-xl p-6 border border-gray-700 hover:border-blue-700 transition">
                 <div class="flex items-start gap-4 mb-4">
                     <span class="bg-blue-600 text-white text-sm font-bold px-3 py-1 rounded-full flex-shrink-0">
                         Q{{ forloop.counter }}
@@ -39,29 +39,29 @@
                     <label
                         class="flex items-center gap-3 p-4 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition group">
                         <input type="radio" name="question_{{ question.id }}" value="A" required
-                            class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
-                        <span class="font-bold text-blue-400">A.</span>
+                            class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-700">
+                        <span class="font-bold text-blue-600">A.</span>
                         <span class="group-hover:text-white">{{ question.option1 }}</span>
                     </label>
                     <label
                         class="flex items-center gap-3 p-4 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition group">
                         <input type="radio" name="question_{{ question.id }}" value="B"
-                            class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
-                        <span class="font-bold text-blue-400">B.</span>
+                            class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-700">
+                        <span class="font-bold text-blue-600">B.</span>
                         <span class="group-hover:text-white">{{ question.option2 }}</span>
                     </label>
                     <label
                         class="flex items-center gap-3 p-4 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition group">
                         <input type="radio" name="question_{{ question.id }}" value="C"
-                            class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
-                        <span class="font-bold text-blue-400">C.</span>
+                            class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-700">
+                        <span class="font-bold text-blue-600">C.</span>
                         <span class="group-hover:text-white">{{ question.option3 }}</span>
                     </label>
                     <label
                         class="flex items-center gap-3 p-4 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition group">
                         <input type="radio" name="question_{{ question.id }}" value="D"
-                            class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
-                        <span class="font-bold text-blue-400">D.</span>
+                            class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-700">
+                        <span class="font-bold text-blue-600">D.</span>
                         <span class="group-hover:text-white">{{ question.option4 }}</span>
                     </label>
                 </div>
@@ -76,7 +76,7 @@
             </a>
             <button type="submit"
                 class="bg-green-600 hover:bg-green-700 px-8 py-4 rounded-xl font-bold text-lg transition transform hover:scale-105">
-                ✅ Soumettre le quiz
+                <i class="fas fa-check-circle mr-2"></i>Soumettre le quiz
             </button>
         </div>
     </form>
