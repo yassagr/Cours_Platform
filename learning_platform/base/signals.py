@@ -98,3 +98,62 @@ def update_progress_on_submission(sender, instance, created, **kwargs):
                 f"Module '{module.title}' completed by {student.username} "
                 f"after passing all evaluations"
             )
+
+
+# =====================================================
+# NEO4J SYNCHRONIZATION SIGNALS
+# =====================================================
+
+from django.contrib.auth import get_user_model
+
+
+@receiver(post_save, sender=get_user_model())
+def sync_user_to_neo4j(sender, instance, created, **kwargs):
+    """
+    Signal déclenché après chaque save() d'un User Django.
+    Crée ou met à jour le NeoUser correspondant dans Neo4j.
+    
+    Ceci garantit que les nouveaux utilisateurs inscrits via le site
+    sont automatiquement synchronisés dans le graphe Neo4j.
+    """
+    try:
+        from base.neo_models import NeoUser
+        
+        try:
+            # Essayer de récupérer le NeoUser existant
+            neo_user = NeoUser.nodes.get(username=instance.username)
+            
+            # Mise à jour des champs
+            neo_user.email = instance.email
+            neo_user.first_name = instance.first_name
+            neo_user.last_name = instance.last_name
+            neo_user.is_active = instance.is_active
+            neo_user.is_staff = instance.is_staff
+            
+            if hasattr(instance, 'role'):
+                neo_user.role = instance.role
+            
+            neo_user.save()
+            logger.debug(f"NeoUser mis à jour: {instance.username}")
+            
+        except NeoUser.DoesNotExist:
+            # Création d'un nouveau NeoUser
+            neo_user = NeoUser(
+                username=instance.username,
+                email=instance.email,
+                first_name=instance.first_name,
+                last_name=instance.last_name,
+                is_active=instance.is_active,
+                is_staff=instance.is_staff,
+                role=getattr(instance, 'role', 'Student'),
+                date_joined=instance.date_joined
+            ).save()
+            logger.info(f"NeoUser créé: {instance.username}")
+            
+    except ImportError:
+        # Neomodel pas encore importé (au démarrage)
+        pass
+    except Exception as e:
+        # Ne pas faire échouer l'opération Django si Neo4j est down
+        logger.warning(f"Sync Neo4j échouée pour {instance.username}: {e}")
+

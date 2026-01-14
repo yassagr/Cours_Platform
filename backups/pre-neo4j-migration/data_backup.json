@@ -1,0 +1,969 @@
+[
+{
+  "model": "base.user",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$XNmNljcjH3Wtt1M2kBLpX9$LoE67T6bLoaQiTtcKrngzwXwLPpYTdZYP73LPJdfMlA=",
+    "last_login": "2025-05-25T20:04:53.940Z",
+    "is_superuser": true,
+    "username": "yasser",
+    "first_name": "",
+    "last_name": "",
+    "email": "yasser.aguezzar@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-05-17T17:39:57Z",
+    "role": "Admin",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "base.user",
+  "pk": 5,
+  "fields": {
+    "password": "1234",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "yass",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-05-17T17:53:18Z",
+    "role": "Student",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "base.user",
+  "pk": 6,
+  "fields": {
+    "password": "1234",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "qwerty",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-05-18T01:28:57Z",
+    "role": "Instructor",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "base.user",
+  "pk": 7,
+  "fields": {
+    "password": "qwerty",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "ham",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-05-18T01:31:55Z",
+    "role": "Admin",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "base.user",
+  "pk": 8,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$oqAWVwpWuaA0VIe0FVqOJi$dLLzw0sIpMpqd7ZbsQozFMUWOH8Xsi/TYOyIfwoVDrM=",
+    "last_login": "2025-05-25T21:09:39.439Z",
+    "is_superuser": false,
+    "username": "std",
+    "first_name": "",
+    "last_name": "",
+    "email": "std@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-05-24T16:31:40.830Z",
+    "role": "Student",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "base.user",
+  "pk": 9,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$5gBANozSoGYhuL5KOkGXE6$oxI3keY/D5XFcs+1wkuoTjqcujEG0eJaHpnIEAfCZO4=",
+    "last_login": "2026-01-14T15:51:38.867Z",
+    "is_superuser": false,
+    "username": "teh",
+    "first_name": "hhh",
+    "last_name": "",
+    "email": "teh@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-05-24T20:51:45.683Z",
+    "role": "Instructor",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "base.user",
+  "pk": 10,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$nrJ24rgH9isNfjX6gIFIhw$ppgOb1QhGNlXBR69JTIFSrJj8oue+PzKELrCLZJR108=",
+    "last_login": "2025-12-26T11:47:00.564Z",
+    "is_superuser": false,
+    "username": "t",
+    "first_name": "",
+    "last_name": "",
+    "email": "Agu@ggg.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-12-26T11:46:46.088Z",
+    "role": "Instructor",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "base.user",
+  "pk": 11,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$svd3Nb2eP9bjzYuTFqtjNE$CY5SzRWl5uugyUADqkxE04gMzj6Vh5wtr6MmRyfYPck=",
+    "last_login": "2026-01-11T01:05:43.636Z",
+    "is_superuser": false,
+    "username": "yas",
+    "first_name": "",
+    "last_name": "",
+    "email": "yas@yas.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-01-11T01:05:28.113Z",
+    "role": "Instructor",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "base.user",
+  "pk": 12,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$WtjeZi3Od1MVecHRUs5pKH$LbHPjwXiRPp35x4qU82crrxf/ekaxM2KVYuZn91z49o=",
+    "last_login": "2026-01-11T15:08:30.821Z",
+    "is_superuser": false,
+    "username": "demo_instructor",
+    "first_name": "",
+    "last_name": "",
+    "email": "demo@test.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-01-11T15:07:49.000Z",
+    "role": "Instructor",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "base.user",
+  "pk": 13,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$HCVBRb9XSGSAHfgTc6ekka$CI/jSfTykly46Rc3R9CeemuI87KZu6Fj8rKkqg0xae8=",
+    "last_login": "2026-01-14T15:39:48.868Z",
+    "is_superuser": false,
+    "username": "et",
+    "first_name": "yasser",
+    "last_name": "yasser",
+    "email": "et@et.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-01-11T21:35:43.576Z",
+    "role": "Student",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "base.course",
+  "pk": 1,
+  "fields": {
+    "title": "python",
+    "description": "Python is a high-level, general-purpose programming language renowned for its readability and versatility. Its syntax is designed to be similar to English, which makes it easier for beginners to learn and understand. Python's emphasis on code readability, achieved through significant use of indentation, enhances its accessibility.\r\nPython supports multiple programming paradigms, including object-oriented and structured programming. Many of its features also accommodate functional and aspect-oriented programming. This flexibility makes it suitable for a wide range of applications, from web development and data science to machine learning and scripting.",
+    "estimated_duration": 36,
+    "level": "Beginner",
+    "start_date": "2025-05-18",
+    "end_date": "2025-05-18",
+    "instructor": 6,
+    "image": "course_images/python.jpg"
+  }
+},
+{
+  "model": "base.course",
+  "pk": 2,
+  "fields": {
+    "title": "c++",
+    "description": "C++ is a high-level, general-purpose programming language created by Danish computer scientist Bjarne Stroustrup. First released in 1985 as an extension of the C programming language, adding object-oriented (OOP) features, it has since expanded significantly over time adding more OOP and other features; as of 1997/C++98 standardization, C++ has added functional features, in addition to facilities for low-level memory manipulation for systems like microcomputers or to make operating systems like Linux or Windows, and even later came features like generic (template) programming. C++ is usually implemented as a compiled language, and many vendors provide C++ compilers, including the Free Software Foundation, LLVM, Microsoft, Intel, Embarcadero, Oracle, and IBM.",
+    "estimated_duration": 34,
+    "level": "Advanced",
+    "start_date": "2025-05-18",
+    "end_date": "2025-05-18",
+    "instructor": 6,
+    "image": "course_images/c.png"
+  }
+},
+{
+  "model": "base.course",
+  "pk": 3,
+  "fields": {
+    "title": "java",
+    "description": "Java is a high-level, general-purpose, memory-safe, object-oriented programming language. It is intended to let programmers write once, run anywhere (WORA), meaning that compiled Java code can run on all platforms that support Java without the need to recompile. Java applications are typically compiled to bytecode that can run on any Java virtual machine (JVM) regardless of the underlying computer architecture. The syntax of Java is similar to C and C++, but has fewer low-level facilities than either of them. The Java runtime provides dynamic capabilities (such as reflection and runtime code modification) that are typically not available in traditional compiled languages.",
+    "estimated_duration": 30,
+    "level": "Advanced",
+    "start_date": "2025-05-18",
+    "end_date": "2025-05-18",
+    "instructor": 6,
+    "image": "course_images/Java.jpg"
+  }
+},
+{
+  "model": "base.course",
+  "pk": 16,
+  "fields": {
+    "title": "asdfgxrdcfvghbjhgvbj",
+    "description": "zcxvfbxgcmvb,n.",
+    "estimated_duration": 43,
+    "level": "Beginner",
+    "start_date": "2025-05-18",
+    "end_date": "2025-05-18",
+    "instructor": 9,
+    "image": "course_images/pngegg_1.png"
+  }
+},
+{
+  "model": "base.course",
+  "pk": 18,
+  "fields": {
+    "title": "Introduction à Python",
+    "description": "Cours complet pour apprendre Python de zéro. Vous apprendrez les bases de la programmation, les structures de données et la POO.",
+    "estimated_duration": 20,
+    "level": "Beginner",
+    "start_date": "2026-01-15",
+    "end_date": "2026-03-15",
+    "instructor": 12,
+    "image": ""
+  }
+},
+{
+  "model": "base.module",
+  "pk": 1,
+  "fields": {
+    "title": "se1",
+    "description": "qwsdfghbnm",
+    "course": 1,
+    "order": 0
+  }
+},
+{
+  "model": "base.module",
+  "pk": 2,
+  "fields": {
+    "title": "se2",
+    "description": "dfgvb",
+    "course": 1,
+    "order": 0
+  }
+},
+{
+  "model": "base.module",
+  "pk": 3,
+  "fields": {
+    "title": "se3",
+    "description": "sdfghjkm",
+    "course": 1,
+    "order": 0
+  }
+},
+{
+  "model": "base.module",
+  "pk": 4,
+  "fields": {
+    "title": "se4",
+    "description": "sdZFfxgcgfvhjbnm",
+    "course": 1,
+    "order": 0
+  }
+},
+{
+  "model": "base.module",
+  "pk": 5,
+  "fields": {
+    "title": "yvivcvvayctas",
+    "description": "uyubcubdubc",
+    "course": 16,
+    "order": 0
+  }
+},
+{
+  "model": "base.module",
+  "pk": 6,
+  "fields": {
+    "title": "iojiojoijo",
+    "description": "ijjiiojojoi",
+    "course": 16,
+    "order": 0
+  }
+},
+{
+  "model": "base.resource",
+  "pk": 1,
+  "fields": {
+    "title": "sr1",
+    "resource_type": "pdf",
+    "url": null,
+    "file": "resources/Modelo_de_Relatório_de_Práticas_do_IFPE_Campus_Pesqueira_2.pdf",
+    "module": 1
+  }
+},
+{
+  "model": "base.resource",
+  "pk": 2,
+  "fields": {
+    "title": "sr2",
+    "resource_type": "pdf",
+    "url": null,
+    "file": "resources/Modelo_de_Relatório_de_Práticas_do_IFPE_Campus_Pesqueira.pdf",
+    "module": 1
+  }
+},
+{
+  "model": "base.resource",
+  "pk": 3,
+  "fields": {
+    "title": "sr3",
+    "resource_type": "img",
+    "url": null,
+    "file": "resources/diagramclass.png",
+    "module": 1
+  }
+},
+{
+  "model": "base.resource",
+  "pk": 4,
+  "fields": {
+    "title": "sr4",
+    "resource_type": "img",
+    "url": null,
+    "file": "resources/diagramtrans.png",
+    "module": 1
+  }
+},
+{
+  "model": "base.resource",
+  "pk": 9,
+  "fields": {
+    "title": "uygwuduygwu",
+    "resource_type": "pdf",
+    "url": null,
+    "file": "resources/rapport_mourad.pdf",
+    "module": 5
+  }
+},
+{
+  "model": "base.resource",
+  "pk": 10,
+  "fields": {
+    "title": "jjjkjjh",
+    "resource_type": "image",
+    "url": null,
+    "file": "resources/thumb-1920-1340814.jpeg",
+    "module": 5
+  }
+},
+{
+  "model": "base.resource",
+  "pk": 11,
+  "fields": {
+    "title": "jhbhfb",
+    "resource_type": "video",
+    "url": null,
+    "file": "resources/sukuna-vs-mahoraga.3840x2160.mp4",
+    "module": 5
+  }
+},
+{
+  "model": "base.resource",
+  "pk": 12,
+  "fields": {
+    "title": "igfouewgggug",
+    "resource_type": "pdf",
+    "url": null,
+    "file": "resources/rapport_mourad_VJnUiJ2.pdf",
+    "module": 6
+  }
+},
+{
+  "model": "base.resourceview",
+  "pk": 1,
+  "fields": {
+    "student": 13,
+    "resource": 9,
+    "viewed_on": "2026-01-12T20:53:57.225Z"
+  }
+},
+{
+  "model": "base.resourceview",
+  "pk": 2,
+  "fields": {
+    "student": 13,
+    "resource": 10,
+    "viewed_on": "2026-01-12T20:54:00.265Z"
+  }
+},
+{
+  "model": "base.resourceview",
+  "pk": 3,
+  "fields": {
+    "student": 13,
+    "resource": 11,
+    "viewed_on": "2026-01-12T20:54:03.332Z"
+  }
+},
+{
+  "model": "base.resourceview",
+  "pk": 4,
+  "fields": {
+    "student": 13,
+    "resource": 12,
+    "viewed_on": "2026-01-12T20:55:06.065Z"
+  }
+},
+{
+  "model": "base.enrollment",
+  "pk": 8,
+  "fields": {
+    "student": 8,
+    "course": 1,
+    "enrolled_on": "2025-05-24",
+    "certified": false
+  }
+},
+{
+  "model": "base.enrollment",
+  "pk": 14,
+  "fields": {
+    "student": 13,
+    "course": 16,
+    "enrolled_on": "2026-01-11",
+    "certified": true
+  }
+},
+{
+  "model": "base.progress",
+  "pk": 1,
+  "fields": {
+    "enrollment": 14,
+    "module": 5,
+    "completion_percent": 85.71428571428571,
+    "resources_viewed": 4,
+    "total_resources": 4,
+    "evaluations_completed": 2,
+    "total_evaluations": 3,
+    "is_completed": false,
+    "completed_on": null,
+    "last_accessed": "2026-01-14T14:22:26.099Z"
+  }
+},
+{
+  "model": "base.progress",
+  "pk": 2,
+  "fields": {
+    "enrollment": 14,
+    "module": 6,
+    "completion_percent": 100.0,
+    "resources_viewed": 1,
+    "total_resources": 1,
+    "evaluations_completed": 0,
+    "total_evaluations": 0,
+    "is_completed": true,
+    "completed_on": "2026-01-12T20:55:06.079Z",
+    "last_accessed": "2026-01-12T20:55:06.080Z"
+  }
+},
+{
+  "model": "base.courseprogress",
+  "pk": 1,
+  "fields": {
+    "enrollment": 14,
+    "overall_completion_percent": 92.85714285714286,
+    "modules_completed": 1,
+    "total_modules": 2,
+    "average_score": 93.33333333333333,
+    "last_activity": "2026-01-14T14:22:26.113Z"
+  }
+},
+{
+  "model": "base.evaluation",
+  "pk": 1,
+  "fields": {
+    "title": "ev1",
+    "description": "",
+    "module": 1,
+    "evaluation_type": "Quiz",
+    "deadline": "2000-05-20",
+    "max_score": 100,
+    "passing_score": 60,
+    "allow_retake": false,
+    "max_attempts": 1,
+    "show_correct_answers": true,
+    "time_limit_minutes": null
+  }
+},
+{
+  "model": "base.evaluation",
+  "pk": 2,
+  "fields": {
+    "title": "ev1",
+    "description": "",
+    "module": 1,
+    "evaluation_type": "Assignment",
+    "deadline": "2000-05-20",
+    "max_score": 100,
+    "passing_score": 60,
+    "allow_retake": false,
+    "max_attempts": 1,
+    "show_correct_answers": true,
+    "time_limit_minutes": null
+  }
+},
+{
+  "model": "base.evaluation",
+  "pk": 3,
+  "fields": {
+    "title": "iuhiuhih",
+    "description": "iuhuihuhiuh",
+    "module": 5,
+    "evaluation_type": "Quiz",
+    "deadline": "2026-01-11",
+    "max_score": 100,
+    "passing_score": 80,
+    "allow_retake": false,
+    "max_attempts": 2,
+    "show_correct_answers": false,
+    "time_limit_minutes": 1
+  }
+},
+{
+  "model": "base.evaluation",
+  "pk": 4,
+  "fields": {
+    "title": "oon",
+    "description": "monoioi",
+    "module": 5,
+    "evaluation_type": "Assignment",
+    "deadline": "2026-01-11",
+    "max_score": 100,
+    "passing_score": 80,
+    "allow_retake": false,
+    "max_attempts": 1,
+    "show_correct_answers": true,
+    "time_limit_minutes": 10
+  }
+},
+{
+  "model": "base.evaluation",
+  "pk": 6,
+  "fields": {
+    "title": "kjbnkbdjf",
+    "description": "ugduuygfgu ugydgf fgdoi gfioo iyfgf sdgif dsifu sdipsdifu uifi iuf ip iuf duiff sdshfiu hsdiuh fidsidff puisd diufiusdipufsihofh eoh ouhpoug ueh iugh uohoughp hoguh ohgo hsuhgpouhugh ugduuygfgu ugydgf fgdoi gfioo iyfgf sdgif dsifu sdipsdifu uifi iuf ip iuf duiff sdshfiu hsdiuh fidsidff puisd diufiusdipufsihofh eoh ouhpoug ueh iugh uohoughp hoguh ohgo hsuhgpouhugh ugduuygfgu ugydgf fgdoi gfioo iyfgf sdgif dsifu sdipsdifu uifi iuf ip iuf duiff sdshfiu hsdiuh fidsidff puisd diufiusdipufsihofh eoh ouhpoug ueh iugh uohoughp hoguh ohgo hsuhgpouhugh ugduuygfgu ugydgf fgdoi gfioo iyfgf sdgif dsifu sdipsdifu uifi iuf ip iuf duiff sdshfiu hsdiuh fidsidff puisd diufiusdipufsihofh eoh ouhpoug ueh iugh uohoughp hoguh ohgo hsuhgpouhugh ugduuygfgu ugydgf fgdoi gfioo iyfgf sdgif dsifu sdipsdifu uifi iuf ip iuf duiff sdshfiu hsdiuh fidsidff puisd diufiusdipufsihofh eoh ouhpoug ueh iugh uohoughp hoguh ohgo hsuhgpouhugh ugduuygfgu ugydgf fgdoi gfioo iyfgf sdgif dsifu sdipsdifu uifi iuf ip iuf duiff sdshfiu hsdiuh fidsidff puisd diufiusdipufsihofh eoh ouhpoug ueh iugh uohoughp hoguh ohgo hsuhgpouhugh",
+    "module": 5,
+    "evaluation_type": "Assignment",
+    "deadline": "2026-01-14",
+    "max_score": 100,
+    "passing_score": 60,
+    "allow_retake": true,
+    "max_attempts": 2,
+    "show_correct_answers": false,
+    "time_limit_minutes": 1
+  }
+},
+{
+  "model": "base.question",
+  "pk": 1,
+  "fields": {
+    "evaluation": 3,
+    "text": "2+2",
+    "option1": "1",
+    "option2": "2",
+    "option3": "3",
+    "option4": "4",
+    "correct_option": "D",
+    "points": 25.0,
+    "order": 1
+  }
+},
+{
+  "model": "base.question",
+  "pk": 2,
+  "fields": {
+    "evaluation": 3,
+    "text": "3+3",
+    "option1": "4",
+    "option2": "6",
+    "option3": "7",
+    "option4": "9",
+    "correct_option": "B",
+    "points": 25.0,
+    "order": 2
+  }
+},
+{
+  "model": "base.question",
+  "pk": 3,
+  "fields": {
+    "evaluation": 3,
+    "text": "tygyvygugtgty",
+    "option1": "rr",
+    "option2": "rrr",
+    "option3": "rt",
+    "option4": "tttt",
+    "correct_option": "C",
+    "points": 25.0,
+    "order": 3
+  }
+},
+{
+  "model": "base.question",
+  "pk": 4,
+  "fields": {
+    "evaluation": 3,
+    "text": "ggg",
+    "option1": "tt",
+    "option2": "yty",
+    "option3": "yy",
+    "option4": "uuu",
+    "correct_option": "A",
+    "points": 25.0,
+    "order": 4
+  }
+},
+{
+  "model": "base.submission",
+  "pk": 1,
+  "fields": {
+    "evaluation": 3,
+    "student": 13,
+    "submitted_on": "2026-01-12T11:16:28.029Z",
+    "file": "",
+    "score": 80.0,
+    "max_score": 100.0,
+    "percentage": 80.0,
+    "passed": true,
+    "graded_on": "2026-01-12T19:35:50.715Z",
+    "graded_by": 9,
+    "instructor_comment": "",
+    "status": "graded",
+    "attempt_number": 1
+  }
+},
+{
+  "model": "base.submission",
+  "pk": 2,
+  "fields": {
+    "evaluation": 3,
+    "student": 13,
+    "submitted_on": "2026-01-12T11:31:00.612Z",
+    "file": "",
+    "score": 100.0,
+    "max_score": 100.0,
+    "percentage": 100.0,
+    "passed": true,
+    "graded_on": "2026-01-12T19:35:25.673Z",
+    "graded_by": 9,
+    "instructor_comment": "",
+    "status": "graded",
+    "attempt_number": 2
+  }
+},
+{
+  "model": "base.submission",
+  "pk": 4,
+  "fields": {
+    "evaluation": 4,
+    "student": 13,
+    "submitted_on": "2026-01-12T20:20:01.721Z",
+    "file": "submissions/rapport_mourad.pdf",
+    "score": 100.0,
+    "max_score": 100.0,
+    "percentage": 100.0,
+    "passed": true,
+    "graded_on": "2026-01-12T20:20:50.568Z",
+    "graded_by": 9,
+    "instructor_comment": "uyguiuyegyfgywgeyfgygfy",
+    "status": "graded",
+    "attempt_number": 1
+  }
+},
+{
+  "model": "base.submittedanswer",
+  "pk": 1,
+  "fields": {
+    "submission": 1,
+    "question": 1,
+    "selected_option": "A",
+    "answered": true,
+    "is_correct": false,
+    "points_earned": 0.0
+  }
+},
+{
+  "model": "base.submittedanswer",
+  "pk": 2,
+  "fields": {
+    "submission": 1,
+    "question": 2,
+    "selected_option": "B",
+    "answered": true,
+    "is_correct": true,
+    "points_earned": 50.0
+  }
+},
+{
+  "model": "base.submittedanswer",
+  "pk": 3,
+  "fields": {
+    "submission": 1,
+    "question": 3,
+    "selected_option": "B",
+    "answered": true,
+    "is_correct": false,
+    "points_earned": 0.0
+  }
+},
+{
+  "model": "base.submittedanswer",
+  "pk": 4,
+  "fields": {
+    "submission": 1,
+    "question": 4,
+    "selected_option": "B",
+    "answered": true,
+    "is_correct": false,
+    "points_earned": 0.0
+  }
+},
+{
+  "model": "base.submittedanswer",
+  "pk": 5,
+  "fields": {
+    "submission": 2,
+    "question": 1,
+    "selected_option": "D",
+    "answered": true,
+    "is_correct": true,
+    "points_earned": 50.0
+  }
+},
+{
+  "model": "base.submittedanswer",
+  "pk": 6,
+  "fields": {
+    "submission": 2,
+    "question": 2,
+    "selected_option": "B",
+    "answered": true,
+    "is_correct": true,
+    "points_earned": 50.0
+  }
+},
+{
+  "model": "base.submittedanswer",
+  "pk": 7,
+  "fields": {
+    "submission": 2,
+    "question": 3,
+    "selected_option": "C",
+    "answered": true,
+    "is_correct": true,
+    "points_earned": 50.0
+  }
+},
+{
+  "model": "base.submittedanswer",
+  "pk": 8,
+  "fields": {
+    "submission": 2,
+    "question": 4,
+    "selected_option": "A",
+    "answered": true,
+    "is_correct": true,
+    "points_earned": 50.0
+  }
+},
+{
+  "model": "base.certificate",
+  "pk": 1,
+  "fields": {
+    "student": 13,
+    "course": 16,
+    "issued_on": "2026-01-12",
+    "certificate_url": "",
+    "certificate_file": "",
+    "certificate_number": "CERT-084E291B"
+  }
+},
+{
+  "model": "base.notification",
+  "pk": 1,
+  "fields": {
+    "recipient": 13,
+    "title": "Quiz terminé!",
+    "message": "Vous avez obtenu 25.0% au quiz 'iuhiuhih'.",
+    "sent_on": "2026-01-12T11:16:28.065Z",
+    "is_read": true,
+    "notification_type": "grade_received",
+    "priority": "medium",
+    "related_course": 16,
+    "related_evaluation": 3,
+    "action_url": "/submission/1/results/"
+  }
+},
+{
+  "model": "base.notification",
+  "pk": 2,
+  "fields": {
+    "recipient": 13,
+    "title": "Quiz terminé!",
+    "message": "Vous avez obtenu 100.0% au quiz 'iuhiuhih'.",
+    "sent_on": "2026-01-12T11:31:00.651Z",
+    "is_read": true,
+    "notification_type": "grade_received",
+    "priority": "medium",
+    "related_course": 16,
+    "related_evaluation": 3,
+    "action_url": "/submission/2/results/"
+  }
+},
+{
+  "model": "base.notification",
+  "pk": 3,
+  "fields": {
+    "recipient": 13,
+    "title": "Note reçue",
+    "message": "Votre devoir 'iuhiuhih' a été noté: 100.0/100.",
+    "sent_on": "2026-01-12T19:35:25.693Z",
+    "is_read": true,
+    "notification_type": "grade_received",
+    "priority": "high",
+    "related_course": 16,
+    "related_evaluation": 3,
+    "action_url": "/submission/2/results/"
+  }
+},
+{
+  "model": "base.notification",
+  "pk": 4,
+  "fields": {
+    "recipient": 13,
+    "title": "Note reçue",
+    "message": "Votre devoir 'iuhiuhih' a été noté: 100.0/100.",
+    "sent_on": "2026-01-12T19:35:36.448Z",
+    "is_read": true,
+    "notification_type": "grade_received",
+    "priority": "high",
+    "related_course": 16,
+    "related_evaluation": 3,
+    "action_url": "/submission/1/results/"
+  }
+},
+{
+  "model": "base.notification",
+  "pk": 5,
+  "fields": {
+    "recipient": 13,
+    "title": "Note reçue",
+    "message": "Votre devoir 'iuhiuhih' a été noté: 80.0/100.",
+    "sent_on": "2026-01-12T19:35:50.722Z",
+    "is_read": true,
+    "notification_type": "grade_received",
+    "priority": "high",
+    "related_course": 16,
+    "related_evaluation": 3,
+    "action_url": "/submission/1/results/"
+  }
+},
+{
+  "model": "base.notification",
+  "pk": 6,
+  "fields": {
+    "recipient": 13,
+    "title": "Nouveau devoir disponible",
+    "message": "Un nouveau devoir 'uguuyguy' a été ajouté au cours 'asdfgxrdcfvghbjhgvbj'. Date limite: 2026-01-12.",
+    "sent_on": "2026-01-12T19:42:38.839Z",
+    "is_read": true,
+    "notification_type": "new_evaluation",
+    "priority": "high",
+    "related_course": 16,
+    "related_evaluation": null,
+    "action_url": "/modules/course/16/?module_id=5"
+  }
+},
+{
+  "model": "base.notification",
+  "pk": 7,
+  "fields": {
+    "recipient": 13,
+    "title": "Quiz terminé!",
+    "message": "Vous avez obtenu 50.0% au quiz 'uguuyguy'.",
+    "sent_on": "2026-01-12T19:45:08.587Z",
+    "is_read": true,
+    "notification_type": "grade_received",
+    "priority": "medium",
+    "related_course": 16,
+    "related_evaluation": null,
+    "action_url": "/submission/3/results/"
+  }
+},
+{
+  "model": "base.notification",
+  "pk": 8,
+  "fields": {
+    "recipient": 9,
+    "title": "Nouvelle soumission de devoir",
+    "message": "et a soumis le devoir 'oon'.",
+    "sent_on": "2026-01-12T20:20:01.750Z",
+    "is_read": true,
+    "notification_type": "enrollment",
+    "priority": "medium",
+    "related_course": 16,
+    "related_evaluation": 4,
+    "action_url": "/evaluation/4/submissions/"
+  }
+},
+{
+  "model": "base.notification",
+  "pk": 9,
+  "fields": {
+    "recipient": 13,
+    "title": "Note reçue",
+    "message": "Votre devoir 'oon' a été noté: 100.0/100.",
+    "sent_on": "2026-01-12T20:20:50.585Z",
+    "is_read": true,
+    "notification_type": "grade_received",
+    "priority": "high",
+    "related_course": 16,
+    "related_evaluation": 4,
+    "action_url": "/submission/4/results/"
+  }
+},
+{
+  "model": "base.notification",
+  "pk": 10,
+  "fields": {
+    "recipient": 13,
+    "title": 

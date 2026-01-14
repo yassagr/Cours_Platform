@@ -210,3 +210,29 @@ LOGGING = {
         'level': 'INFO',
     },
 }
+
+
+# =====================================================
+# NEO4J CONFIGURATION
+# =====================================================
+
+from decouple import config
+
+# URL de connexion Neo4j (depuis .env ou valeur par défaut)
+NEOMODEL_NEO4J_BOLT_URL = config(
+    'NEO4J_BOLT_URL',
+    default='bolt://neo4j:password@localhost:7687'
+)
+
+# Configuration Neomodel
+NEOMODEL_SIGNALS = True
+NEOMODEL_FORCE_TIMEZONE = True
+NEOMODEL_ENCRYPTED = False
+
+# Ajouter logger pour neomodel
+LOGGING['loggers']['neomodel'] = {
+    'handlers': ['console', 'file'],
+    'level': 'INFO',
+    'propagate': False,
+}
+

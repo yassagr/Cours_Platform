@@ -1,6 +1,11 @@
 from django.urls import path, include
 from .views import *
 from django.contrib.auth.views import LoginView, LogoutView
+from .neo_admin import (
+    NeoAdminDashboardView, NeoUserListView, NeoUserDetailView, NeoUserDeleteView,
+    NeoCourseListView, NeoCourseDeleteView, NeoModuleListView, NeoSyncView
+)
+
 
 
 
@@ -111,5 +116,19 @@ urlpatterns = [
     path('certificates/<int:pk>/download/', CertificateDownloadView.as_view(), name='certificate-download'),
     path('certificates/<int:pk>/preview/', CertificatePreviewView.as_view(), name='certificate-preview'),
 
+
+    # =====================================================
+    # NEO4J ADMIN
+    # =====================================================
+    path('neo-admin/', NeoAdminDashboardView.as_view(), name='neo-admin-dashboard'),
+    path('neo-admin/users/', NeoUserListView.as_view(), name='neo-admin-users'),
+    path('neo-admin/users/<str:uid>/', NeoUserDetailView.as_view(), name='neo-admin-user-detail'),
+    path('neo-admin/users/<str:uid>/delete/', NeoUserDeleteView.as_view(), name='neo-admin-user-delete'),
+    path('neo-admin/courses/', NeoCourseListView.as_view(), name='neo-admin-courses'),
+    path('neo-admin/courses/<str:uid>/delete/', NeoCourseDeleteView.as_view(), name='neo-admin-course-delete'),
+    path('neo-admin/modules/', NeoModuleListView.as_view(), name='neo-admin-modules'),
+    path('neo-admin/sync/', NeoSyncView.as_view(), name='neo-admin-sync'),
+
 ]
+
 

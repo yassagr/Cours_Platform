@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% block title %}Neo4j Admin - Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-[#312B1E]">
+                <i class="fas fa-database mr-3 text-[#A7AA63]"></i>Neo4j Admin
+            </h1>
+            <p class="text-[#505039] mt-2">Gestion des données du graphe</p>
+        </div>
+        <div class="flex gap-3">
+            <form action="{% url 'neo-admin-sync' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn-secondary">
+                    <i class="fas fa-sync-alt mr-2"></i>Synchroniser Users
+                </button>
+            </form>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+        <i class="fas fa-exclamation-circle mr-2"></i>{{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-[#F2EFE4] rounded-xl p-6 border border-[#C5B8A8]/30 shadow-warm-sm">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-[#7C6B51]">Total Nœuds</p>
+                    <p class="text-3xl font-bold text-[#312B1E]">{{ total_nodes|default:0 }}</p>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A7AA63] to-[#E2CEAE] flex items-center justify-center">
+                    <i class="fas fa-circle text-[#121A1B] text-lg"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-[#F2EFE4] rounded-xl p-6 border border-[#C5B8A8]/30 shadow-warm-sm">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-[#7C6B51]">Total Relations</p>
+                    <p class="text-3xl font-bold text-[#312B1E]">{{ total_relationships|default:0 }}</p>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#505039] to-[#7C6B51] flex items-center justify-center">
+                    <i class="fas fa-link text-white text-lg"></i>
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'neo-admin-users' %}"
+            class="bg-[#F2EFE4] rounded-xl p-6 border border-[#C5B8A8]/30 shadow-warm-sm hover:border-[#A7AA63] transition">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-[#7C6B51]">Utilisateurs</p>
+                    <p class="text-3xl font-bold text-[#312B1E]">
+                        {% for stat in node_stats %}{% if stat.label == 'NeoUser' %}{{ stat.count }}{% endif %}{% endfor
+                        %}
+                    </p>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#7C6B51] to-[#C5B8A8] flex items-center justify-center">
+                    <i class="fas fa-users text-white text-lg"></i>
+                </div>
+            </div>
+        </a>
+
+        <a href="{% url 'neo-admin-courses' %}"
+            class="bg-[#F2EFE4] rounded-xl p-6 border border-[#C5B8A8]/30 shadow-warm-sm hover:border-[#A7AA63] transition">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-[#7C6B51]">Cours</p>
+                    <p class="text-3xl font-bold text-[#312B1E]">
+                        {% for stat in node_stats %}{% if stat.label == 'NeoCourse' %}{{ stat.count }}{% endif %}{%endfor %}
+                    </p>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#312B1E] to-[#505039] flex items-center justify-center">
+                    <i class="fas fa-book text-white text-lg"></i>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <a href="{% url 'neo-admin-users' %}"
+            class="bg-[#F2EFE4] rounded-xl p-6 border border-[#C5B8A8]/30 hover:border-[#A7AA63] transition flex items-center gap-4">
+            <div class="w-10 h-10 rounded-lg bg-[#A7AA63]/20 flex items-center justify-center">
+                <i class="fas fa-users text-[#A7AA63]"></i>
+            </div>
+            <span class="font-semibold text-[#312B1E]">Gérer les Utilisateurs</span>
+            <i class="fas fa-chevron-right ml-auto text-[#C5B8A8]"></i>
+        </a>
+
+        <a href="{% url 'neo-admin-courses' %}"
+            class="bg-[#F2EFE4] rounded-xl p-6 border border-[#C5B8A8]/30 hover:border-[#A7AA63] transition flex items-center gap-4">
+            <div class="w-10 h-10 rounded-lg bg-[#505039]/20 flex items-center justify-center">
+                <i class="fas fa-book text-[#505039]"></i>
+            </div>
+            <span class="font-semibold text-[#312B1E]">Gérer les Cours</span>
+            <i class="fas fa-chevron-right ml-auto text-[#C5B8A8]"></i>
+        </a>
+
+        <a href="{% url 'neo-admin-modules' %}"
+            class="bg-[#F2EFE4] rounded-xl p-6 border border-[#C5B8A8]/30 hover:border-[#A7AA63] transition flex items-center gap-4">
+            <div class="w-10 h-10 rounded-lg bg-[#7C6B51]/20 flex items-center justify-center">
+                <i class="fas fa-folder text-[#7C6B51]"></i>
+            </div>
+            <span class="font-semibold text-[#312B1E]">Gérer les Modules</span>
+            <i class="fas fa-chevron-right ml-auto text-[#C5B8A8]"></i>
+        </a>
+    </div>
+
+    <!-- Stats Tables -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Node Stats -->
+        <div class="bg-[#F2EFE4] rounded-xl border border-[#C5B8A8]/30 overflow-hidden">
+            <div class="p-4 bg-gradient-to-r from-[#F2EFE4] to-[#EAE6D2] border-b border-[#C5B8A8]/30">
+                <h3 class="font-semibold text-[#312B1E]">
+                    <i class="fas fa-circle mr-2 text-[#A7AA63]"></i>Nœuds par Type
+                </h3>
+            </div>
+            <div class="p-4">
+                <table class="w-full">
+                    <thead>
+                        <tr class="text-left text-sm text-[#7C6B51]">
+                            <th class="pb-2">Type</th>
+                            <th class="pb-2 text-right">Nombre</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#C5B8A8]/30">
+                        {% for stat in node_stats %}
+                        <tr>
+                            <td class="py-2 text-[#312B1E]">{{ stat.label }}</td>
+                            <td class="py-2 text-right font-semibold text-[#312B1E]">{{ stat.count }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2" class="py-4 text-center text-[#7C6B51]">Aucune donnée</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Relationship Stats -->
+        <div class="bg-[#F2EFE4] rounded-xl border border-[#C5B8A8]/30 overflow-hidden">
+            <div class="p-4 bg-gradient-to-r from-[#F2EFE4] to-[#EAE6D2] border-b border-[#C5B8A8]/30">
+                <h3 class="font-semibold text-[#312B1E]">
+                    <i class="fas fa-link mr-2 text-[#505039]"></i>Relations par Type
+                </h3>
+            </div>
+            <div class="p-4">
+                <table class="w-full">
+                    <thead>
+                        <tr class="text-left text-sm text-[#7C6B51]">
+                            <th class="pb-2">Type</th>
+                            <th class="pb-2 text-right">Nombre</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#C5B8A8]/30">
+                        {% for stat in rel_stats %}
+                        <tr>
+                            <td class="py-2 text-[#312B1E]">{{ stat.type }}</td>
+                            <td class="py-2 text-right font-semibold text-[#312B1E]">{{ stat.count }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="2" class="py-4 text-center text-[#7C6B51]">Aucune donnée</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

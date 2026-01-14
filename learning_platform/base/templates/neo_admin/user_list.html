@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}Neo4j Admin - Utilisateurs{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-sm text-[#7C6B51] mb-6">
+        <a href="{% url 'neo-admin-dashboard' %}" class="hover:text-[#A7AA63] transition-colors">Neo4j Admin</a>
+        <i class="fas fa-chevron-right text-xs"></i>
+        <span class="text-[#312B1E] font-medium">Utilisateurs</span>
+    </nav>
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-[#312B1E]">
+                <i class="fas fa-users mr-3 text-[#A7AA63]"></i>Utilisateurs Neo4j
+            </h1>
+            <p class="text-[#505039] mt-2">{{ total }} utilisateur{{ total|pluralize }} dans le graphe</p>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+        <i class="fas fa-exclamation-circle mr-2"></i>{{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Users Table -->
+    <div class="bg-[#F2EFE4] rounded-xl border border-[#C5B8A8]/30 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-[#EAE6D2] text-left text-sm text-[#505039]">
+                        <th class="px-6 py-4 font-semibold">Username</th>
+                        <th class="px-6 py-4 font-semibold">Email</th>
+                        <th class="px-6 py-4 font-semibold">Rôle</th>
+                        <th class="px-6 py-4 font-semibold">Statut</th>
+                        <th class="px-6 py-4 font-semibold text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[#C5B8A8]/30">
+                    {% for user in users %}
+                    <tr class="hover:bg-[#EAE6D2]/50 transition-colors">
+                        <td class="px-6 py-4">
+                            <a href="{% url 'neo-admin-user-detail' user.uid %}"
+                                class="font-medium text-[#312B1E] hover:text-[#A7AA63]">
+                                {{ user.username }}
+                            </a>
+                        </td>
+                        <td class="px-6 py-4 text-[#505039]">{{ user.email }}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                                {% if user.role == 'Admin' %}bg-[#8B4513]/10 text-[#8B4513]
+                                {% elif user.role == 'Instructor' %}bg-[#A7AA63]/10 text-[#A7AA63]
+                                {% else %}bg-[#505039]/10 text-[#505039]{% endif %}">
+                                {{ user.role }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if user.is_active %}
+                            <span class="text-green-600"><i class="fas fa-check-circle"></i> Actif</span>
+                            {% else %}
+                            <span class="text-red-600"><i class="fas fa-times-circle"></i> Inactif</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <a href="{% url 'neo-admin-user-detail' user.uid %}" class="btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <button type="button" class="btn-sm btn-outline-danger delete-trigger ml-2"
+                                data-delete-url="{% url 'neo-admin-user-delete' user.uid %}"
+                                data-item-title="{{ user.username }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-8 text-center text-[#7C6B51]">
+                            <i class="fas fa-users text-4xl mb-4 block text-[#C5B8A8]"></i>
+                            Aucun utilisateur dans Neo4j
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if has_prev or has_next %}
+        <div class="px-6 py-4 bg-[#EAE6D2] border-t border-[#C5B8A8]/30 flex justify-between">
+            {% if has_prev %}
+            <a href="?page={{ page|add:-1 }}" class="btn-secondary">
+                <i class="fas fa-chevron-left mr-2"></i>Précédent
+            </a>
+            {% else %}
+            <span></span>
+            {% endif %}
+
+            <span class="text-[#505039]">Page {{ page }}</span>
+
+            {% if has_next %}
+            <a href="?page={{ page|add:1 }}" class="btn-secondary">
+                Suivant<i class="fas fa-chevron-right ml-2"></i>
+            </a>
+            {% else %}
+            <span></span>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
