@@ -5,85 +5,138 @@
 {% block content %}
 <div class="max-w-4xl mx-auto">
     <!-- Score Card -->
-    <div class="bg-[#F2EFE4] rounded-xl p-8 mb-8 text-center border border-[#C5B8A8]">
-        <h1 class="text-3xl font-bold text-[#312B1E] mb-4"><i class="fas fa-chart-bar mr-2 text-[#A7AA63]"></i>Résultats
-            du Quiz</h1>
-        <p class="text-[#7C6B51] mb-6">{{ evaluation.title }} • {{ course.title }}</p>
-
-        <div class="inline-block bg-[#EAE6D2] rounded-2xl p-8 mb-6 border border-[#C5B8A8]">
-            <p class="text-6xl font-bold {% if submission.passed %}text-[#A7AA63]{% else %}text-[#8B4513]{% endif %}">
-                {{ submission.percentage|floatformat:1 }}%
-            </p>
-            <p class="text-xl text-[#7C6B51] mt-2">
-                {{ submission.score|floatformat:1 }} / {{ submission.max_score|floatformat:1 }} points
-            </p>
-        </div>
-
+    <div
+        class="bg-[#F2EFE4] rounded-2xl p-8 mb-10 text-center border border-[#C5B8A8]/30 shadow-warm-lg relative overflow-hidden">
+        <!-- Decorative background -->
         {% if submission.passed %}
-        <div class="bg-[#CFD1A1]/30 border border-[#A7AA63] rounded-lg p-4 inline-block">
-            <p class="text-[#505039] font-semibold text-lg"><i
-                    class="fas fa-check-circle mr-2 text-[#A7AA63]"></i>Félicitations ! Vous
-                avez réussi ce quiz !</p>
+        <div
+            class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#A7AA63]/20 to-transparent rounded-full blur-3xl">
         </div>
-        {% else %}
-        <div class="bg-[#8B4513]/10 border border-[#8B4513] rounded-lg p-4 inline-block">
-            <p class="text-[#8B4513] font-semibold text-lg"><i class="fas fa-times-circle mr-2"></i>Score insuffisant.
-                Minimum requis: {{ evaluation.passing_score }}%</p>
+        {% endif %}
+
+        <div class="relative">
+            <h1 class="text-3xl font-bold text-[#312B1E] mb-2 flex items-center justify-center gap-3">
+                <div
+                    class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A7AA63] to-[#8e9150] flex items-center justify-center">
+                    <i class="fas fa-chart-bar text-[#FFFFFF]"></i>
+                </div>
+                Résultats du Quiz
+            </h1>
+            <p class="text-[#505039] mb-8">{{ evaluation.title }} • {{ course.title }}</p>
+
+            <!-- Score display -->
+            <div class="inline-block bg-[#EAE6D2] rounded-2xl px-12 py-8 mb-8 border border-[#C5B8A8]/50">
+                <p
+                    class="text-7xl font-bold {% if submission.passed %}text-[#A7AA63]{% else %}text-[#312B1E]{% endif %}">
+                    {{ submission.percentage|floatformat:0 }}%
+                </p>
+                <p class="text-xl text-[#505039] mt-3">
+                    {{ submission.score|floatformat:1 }} / {{ submission.max_score|floatformat:1 }} points
+                </p>
+
+                
+            </div>
+
+            <!-- Pass/Fail message -->
+            {% if submission.passed %}
+            <div class="inline-flex items-center gap-3 px-6 py-4 bg-[#A7AA63]/10 border border-[#A7AA63] rounded-xl">
+                <div class="w-10 h-10 rounded-full bg-[#A7AA63] flex items-center justify-center">
+                    <i class="fas fa-check text-[#FFFFFF] text-xl"></i>
+                </div>
+                <p class="text-[#505039] font-semibold text-lg">Félicitations ! <br>Vous avez réussi ce quiz !</p>
+            </div>
+            {% else %}
+            <div class="inline-flex items-center gap-3 px-6 py-4 bg-[#312B1E]/5 border border-[#312B1E]/30 rounded-xl">
+                <div class="w-10 h-10 rounded-full bg-[#312B1E] flex items-center justify-center">
+                    <i class="fas fa-times text-[#EAE6D2] text-xl"></i>
+                </div>
+                <p class="text-[#505039] font-semibold text-lg">Score insuffisant. <br> Minimum requis: {{
+                    evaluation.passing_score }}%</p>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if submission.instructor_comment %}
+        <div class="mt-6 pt-4 border-t border-[#C5B8A8]">
+            <p class="text-sm font-semibold text-[#7C6B51] mb-2"><i
+                    class="fas fa-comment-dots mr-1"></i>Feedback:</p>
+            <p class="text-[#312B1E] italic bg-[#F2EFE4] p-3 rounded-lg border border-[#C5B8A8]/30">
+                "{{ submission.instructor_comment }}"
+            </p>
         </div>
         {% endif %}
     </div>
 
     <!-- Answers Review -->
     {% if show_corrections %}
-    <h2 class="text-2xl font-bold text-[#312B1E] mb-4"><i
-            class="fas fa-clipboard-check mr-2 text-[#A7AA63]"></i>Correction détaillée</h2>
+    <h2 class="text-2xl font-bold text-[#312B1E] mb-6 flex items-center gap-3">
+        <i class="fas fa-clipboard-check text-[#A7AA63]"></i>
+        Correction détaillée
+    </h2>
+
     <div class="space-y-4">
         {% for answer in answers %}
         <div
-            class="bg-[#F2EFE4] rounded-xl p-6 border-l-4 {% if not answer.answered %}border-[#7C6B51]{% elif answer.is_correct %}border-[#A7AA63]{% else %}border-[#8B4513]{% endif %}">
+            class="bg-[#F2EFE4] rounded-2xl p-6 border-l-4 transition-all duration-300
+                    {% if not answer.answered %}border-l-[#7C6B51]{% elif answer.is_correct %}border-l-[#A7AA63]{% else %}border-l-[#312B1E]{% endif %}">
             <div class="flex items-start gap-4">
-                <span
-                    class="{% if not answer.answered %}bg-[#7C6B51]{% elif answer.is_correct %}bg-[#A7AA63]{% else %}bg-[#8B4513]{% endif %} text-white text-sm font-bold px-3 py-1 rounded-full flex-shrink-0">
-                    {% if not answer.answered %}<i class="fas fa-ban"></i>{% elif answer.is_correct %}<i
-                        class="fas fa-check"></i>{% else %}<i class="fas fa-times"></i>{% endif %}
-                </span>
+                <!-- Status icon -->
+                <div
+                    class="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center
+                            {% if not answer.answered %}bg-[#7C6B51]{% elif answer.is_correct %}bg-[#A7AA63]{% else %}bg-[#312B1E]{% endif %}">
+                    {% if not answer.answered %}
+                    <i class="fas fa-ban text-[#FFFFFF]"></i>
+                    {% elif answer.is_correct %}
+                    <i class="fas fa-check text-[#FFFFFF]"></i>
+                    {% else %}
+                    <i class="fas fa-times text-[#EAE6D2]"></i>
+                    {% endif %}
+                </div>
+
                 <div class="flex-1">
                     <p class="text-lg font-medium text-[#312B1E] mb-4">{{ answer.question.text }}</p>
 
                     {% if not answer.answered %}
-                    <div class="bg-[#7C6B51]/10 border border-[#7C6B51] rounded-lg p-4">
+                    <div class="p-4 bg-[#7C6B51]/10 border border-[#7C6B51]/30 rounded-xl">
                         <p class="text-[#7C6B51] flex items-center gap-2">
                             <i class="fas fa-exclamation-triangle"></i>
-                            <span>Question non répondue</span>
+                            Question non répondue
                         </p>
                     </div>
                     {% else %}
-
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {% with options="ABCD" %}
                         {% for opt in options %}
-                        <div class="p-3 rounded-lg border 
+                        <div class="p-4 rounded-xl border transition-all
                             {% if answer.question.correct_option == opt %}
-                                bg-[#CFD1A1]/30 border-[#A7AA63]
+                                bg-[#A7AA63]/10 border-[#A7AA63]
                             {% elif answer.selected_option == opt and not answer.is_correct %}
-                                bg-[#8B4513]/10 border-[#8B4513]
+                                bg-[#312B1E]/5 border-[#312B1E]/30
                             {% else %}
-                                bg-[#EAE6D2] border-[#C5B8A8]
+                                bg-[#EAE6D2] border-[#C5B8A8]/50
                             {% endif %}">
-                            <span class="font-bold text-[#505039]">{{ opt }}:</span>
-                            {% if opt == 'A' %}{{ answer.question.option1 }}
-                            {% elif opt == 'B' %}{{ answer.question.option2 }}
-                            {% elif opt == 'C' %}{{ answer.question.option3 }}
-                            {% else %}{{ answer.question.option4 }}{% endif %}
+                            <span
+                                class="font-bold {% if answer.question.correct_option == opt %}text-[#A7AA63]{% else %}text-[#505039]{% endif %}">{{
+                                opt }}:</span>
+                            <span class="text-[#312B1E] ml-1">
+                                {% if opt == 'A' %}{{ answer.question.option1 }}
+                                {% elif opt == 'B' %}{{ answer.question.option2 }}
+                                {% elif opt == 'C' %}{{ answer.question.option3 }}
+                                {% else %}{{ answer.question.option4 }}{% endif %}
+                            </span>
 
                             {% if answer.question.correct_option == opt %}
-                            <span class="ml-2 text-[#A7AA63]"><i class="fas fa-check-circle"></i> Bonne réponse</span>
+                            <span class="ml-2 text-[#A7AA63] text-sm"><i class="fas fa-check-circle"></i> Correct</span>
                             {% endif %}
+
                             {% if answer.selected_option == opt and not answer.is_correct %}
-                            <span class="ml-2 text-[#8B4513]"><i class="fas fa-times-circle"></i> Votre réponse</span>
+                            <span class="ml-2 text-[#312B1E] text-sm"><i class="fas fa-times-circle"></i> Votre
+                                réponse</span>
                             {% endif %}
+
                             {% if answer.selected_option == opt and answer.is_correct %}
-                            <span class="ml-2 text-[#A7AA63]"><i class="fas fa-check-circle"></i> Votre réponse</span>
+                            <span class="ml-2 text-[#A7AA63] text-sm"><i class="fas fa-check-circle"></i> Votre
+                                réponse</span>
                             {% endif %}
                         </div>
                         {% endfor %}
@@ -91,7 +144,8 @@
                     </div>
                     {% endif %}
 
-                    <p class="mt-3 text-sm text-[#7C6B51]">
+                    <p class="mt-4 text-sm text-[#7C6B51] flex items-center gap-2">
+                        <i class="fas fa-star text-[#A7AA63]"></i>
                         Points: {{ answer.points_earned|floatformat:1 }} / {{ answer.question.points|floatformat:1 }}
                     </p>
                 </div>
@@ -100,21 +154,23 @@
         {% endfor %}
     </div>
     {% else %}
-    <div class="bg-[#F2EFE4] rounded-xl p-8 text-center border border-[#C5B8A8]">
+    <div class="text-center py-12 bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30">
+        <i class="fas fa-clock text-4xl text-[#7C6B51] mb-4"></i>
         <p class="text-[#7C6B51]">Les corrections seront disponibles après la date limite.</p>
     </div>
     {% endif %}
 
     <!-- Actions -->
-    <div class="mt-8 flex justify-between">
-        <a href="{% url 'module-list-by-course' course.id %}"
-            class="bg-[#C5B8A8] hover:bg-[#A7AA63] text-[#312B1E] hover:text-white px-6 py-3 rounded-lg font-semibold transition">
-            ← Retour au cours
+    <div
+        class="mt-10 flex flex-wrap items-center justify-between gap-4 p-6 bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30">
+        <a href="{% url 'module-list-by-course' course.id %}" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            Retour au cours
         </a>
         {% if evaluation.allow_retake and submission.attempt_number < evaluation.max_attempts %} <a
-            href="{% url 'quiz-take' evaluation.id %}"
-            class="bg-[#A7AA63] hover:bg-[#8e9150] text-white px-6 py-3 rounded-lg font-semibold transition">
-            <i class="fas fa-redo mr-1"></i> Repasser le quiz
+            href="{% url 'quiz-take' evaluation.id %}" class="btn-primary">
+            <i class="fas fa-redo"></i>
+            Repasser le quiz
             </a>
             {% endif %}
     </div>

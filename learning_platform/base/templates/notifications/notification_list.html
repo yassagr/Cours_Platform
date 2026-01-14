@@ -5,24 +5,32 @@
 {% block content %}
 <div class="max-w-4xl mx-auto">
     <!-- Header -->
-    <div class="flex justify-between items-center mb-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
-            <h1 class="text-3xl font-bold text-[#312B1E]"><i class="fas fa-bell mr-2 text-[#A7AA63]"></i>Notifications
+            <h1 class="text-3xl font-bold text-[#312B1E] flex items-center gap-3">
+                <div
+                    class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A7AA63] to-[#E2CEAE] flex items-center justify-center">
+                    <i class="fas fa-bell text-[#121A1B]"></i>
+                </div>
+                Notifications
             </h1>
-            <p class="text-[#7C6B51] mt-2">
+            <p class="text-[#505039] mt-2">
                 {% if unread_count > 0 %}
-                {{ unread_count }} non lue(s)
+                <span class="px-2 py-1 rounded-full text-sm bg-[#A7AA63]/10 text-[#A7AA63] font-semibold">
+                    {{ unread_count }} non lue{{ unread_count|pluralize }}
+                </span>
                 {% else %}
-                Toutes lues
+                Toutes vos notifications sont lues
                 {% endif %}
             </p>
         </div>
+
         {% if unread_count > 0 %}
         <form method="post" action="{% url 'notification-mark-all-read' %}">
             {% csrf_token %}
-            <button type="submit"
-                class="bg-[#A7AA63] hover:bg-[#8e9150] text-white px-4 py-2 rounded-lg text-sm transition flex items-center gap-2">
-                <i class="fas fa-check-double"></i> Tout marquer comme lu
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-check-double"></i>
+                Tout marquer comme lu
             </button>
         </form>
         {% endif %}
@@ -30,55 +38,80 @@
 
     <!-- Notifications List -->
     {% if notifications %}
-    <div class="space-y-3">
+    <div class="space-y-4">
         {% for notification in notifications %}
-        <div class="bg-[#F2EFE4] rounded-xl p-5 border-l-4 
-                    {% if not notification.is_read %}border-[#A7AA63] bg-[#CFD1A1]/10{% else %}border-[#C5B8A8]{% endif %}
-                    hover:bg-[#E2CEAE] transition">
-            <div class="flex justify-between items-start">
-                <div class="flex-1">
-                    <div class="flex items-center gap-3 mb-2">
-                        <!-- Icon based on type -->
+        <div class="bg-[#F2EFE4] rounded-2xl p-6 border-l-4 transition-all duration-300 hover:shadow-warm-md
+                    {% if not notification.is_read %}
+                    border-l-[#A7AA63] bg-gradient-to-r from-[#A7AA63]/5 to-transparent
+                    {% else %}
+                    border-l-[#C5B8A8]
+                    {% endif %}">
+            <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+                <!-- Icon -->
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center
+                                {% if notification.notification_type == 'certificate_earned' %}bg-gradient-to-br from-[#7C6B51] to-[#C5B8A8]
+                                {% elif notification.notification_type == 'grade_received' %}bg-gradient-to-br from-[#A7AA63] to-[#8e9150]
+                                {% elif notification.notification_type == 'deadline_reminder' %}bg-gradient-to-br from-[#7C6B51] to-[#C5B8A8]
+                                {% elif notification.notification_type == 'new_evaluation' %}bg-gradient-to-br from-[#505039] to-[#7C6B51]
+                                {% elif notification.notification_type == 'enrollment' %}bg-gradient-to-br from-[#A7AA63] to-[#E2CEAE]
+                                {% elif notification.notification_type == 'course_update' %}bg-gradient-to-br from-[#505039] to-[#7C6B51]
+                                {% else %}bg-gradient-to-br from-[#7C6B51] to-[#C5B8A8]{% endif %}">
                         {% if notification.notification_type == 'certificate_earned' %}
-                        <i class="fas fa-trophy text-2xl text-[#7C6B51]"></i>
+                        <i class="fas fa-trophy text-[#FFFFFF] text-xl"></i>
                         {% elif notification.notification_type == 'grade_received' %}
-                        <i class="fas fa-chart-line text-2xl text-[#A7AA63]"></i>
+                        <i class="fas fa-chart-line text-[#FFFFFF] text-xl"></i>
                         {% elif notification.notification_type == 'deadline_reminder' %}
-                        <i class="fas fa-clock text-2xl text-[#7C6B51]"></i>
+                        <i class="fas fa-clock text-[#FFFFFF] text-xl"></i>
                         {% elif notification.notification_type == 'new_evaluation' %}
-                        <i class="fas fa-clipboard-list text-2xl text-[#505039]"></i>
+                        <i class="fas fa-clipboard-list text-[#FFFFFF] text-xl"></i>
                         {% elif notification.notification_type == 'enrollment' %}
-                        <i class="fas fa-user-plus text-2xl text-[#A7AA63]"></i>
+                        <i class="fas fa-user-plus text-[#121A1B] text-xl"></i>
                         {% elif notification.notification_type == 'course_update' %}
-                        <i class="fas fa-sync text-2xl text-[#505039]"></i>
+                        <i class="fas fa-sync text-[#FFFFFF] text-xl"></i>
                         {% else %}
-                        <i class="fas fa-bullhorn text-2xl text-[#7C6B51]"></i>
-                        {% endif %}
-
-                        <h3
-                            class="font-semibold {% if not notification.is_read %}text-[#312B1E]{% else %}text-[#505039]{% endif %}">
-                            {{ notification.title }}
-                        </h3>
-
-                        {% if notification.priority == 'high' %}
-                        <span class="bg-[#8B4513] text-white text-xs px-2 py-0.5 rounded">Important</span>
-                        {% endif %}
-                    </div>
-
-                    <p class="text-[#7C6B51] mb-2">{{ notification.message }}</p>
-
-                    <div class="flex items-center gap-4 text-sm text-[#C5B8A8]">
-                        <span>{{ notification.sent_on|date:"d/m/Y H:i" }}</span>
-                        {% if notification.related_course %}
-                        <span>• {{ notification.related_course.title }}</span>
+                        <i class="fas fa-bullhorn text-[#FFFFFF] text-xl"></i>
                         {% endif %}
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2 ml-4">
+                <!-- Content -->
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                        <h3
+                            class="font-semibold {% if not notification.is_read %}text-[#312B1E]{% else %}text-[#505039]{% endif %}">
+                            {{ notification.title }}
+                        </h3>
+                        {% if notification.priority == 'high' %}
+                        <span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#312B1E] text-[#EAE6D2]">
+                            Important
+                        </span>
+                        {% endif %}
+                        {% if not notification.is_read %}
+                        <span class="w-2 h-2 rounded-full bg-[#A7AA63]"></span>
+                        {% endif %}
+                    </div>
+
+                    <p class="text-[#505039] mb-3">{{ notification.message }}</p>
+
+                    <div class="flex flex-wrap items-center gap-3 text-sm text-[#7C6B51]">
+                        <span class="flex items-center gap-1">
+                            <i class="fas fa-clock text-[#A7AA63]"></i>
+                            {{ notification.sent_on|date:"d/m/Y H:i" }}
+                        </span>
+                        {% if notification.related_course %}
+                        <span class="flex items-center gap-1">
+                            <i class="fas fa-book text-[#A7AA63]"></i>
+                            {{ notification.related_course.title }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-2">
                     {% if notification.action_url %}
-                    <a href="{{ notification.action_url }}"
-                        class="bg-[#A7AA63] hover:bg-[#8e9150] text-white px-4 py-2 rounded-lg text-sm transition">
+                    <a href="{{ notification.action_url }}" class="btn-primary text-sm px-4 py-2">
                         Voir
                     </a>
                     {% endif %}
@@ -86,8 +119,7 @@
                     {% if not notification.is_read %}
                     <form method="post" action="{% url 'notification-read' notification.id %}">
                         {% csrf_token %}
-                        <button type="submit" class="text-[#7C6B51] hover:text-[#312B1E] p-2 transition"
-                            title="Marquer comme lu">
+                        <button type="submit" class="btn-icon" title="Marquer comme lu">
                             <i class="fas fa-check"></i>
                         </button>
                     </form>
@@ -98,8 +130,13 @@
         {% endfor %}
     </div>
     {% else %}
-    <div class="bg-[#F2EFE4] rounded-xl p-12 text-center border border-[#C5B8A8]">
-        <p class="text-[#7C6B51] text-lg">Aucune notification.</p>
+    <!-- Empty State -->
+    <div class="text-center py-20 bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30">
+        <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-[#E2CEAE] flex items-center justify-center">
+            <i class="fas fa-bell-slash text-3xl text-[#7C6B51]"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-[#312B1E] mb-2">Aucune notification</h3>
+        <p class="text-[#7C6B51]">Vous n'avez pas de notifications pour le moment.</p>
     </div>
     {% endif %}
 </div>

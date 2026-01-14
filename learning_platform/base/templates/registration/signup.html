@@ -2,69 +2,111 @@
 {% block title %}Inscription{% endblock %}
 
 {% block content %}
-<div class="bg-[#F2EFE4] text-[#312B1E] p-6 rounded-xl shadow-lg border border-[#C5B8A8] max-w-3xl mx-auto">
-    <h1 class="text-3xl font-bold text-[#312B1E] mb-6"><i class="fas fa-user-plus mr-2 text-[#A7AA63]"></i>Créer un
-        nouveau compte</h1>
+<div class="min-h-[60vh] flex items-center justify-center py-12">
+    <div class="w-full max-w-md">
+        <!-- Logo/Brand -->
+        <div class="text-center mb-8">
+            <div
+                class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#A7AA63] to-[#E2CEAE] flex items-center justify-center mx-auto mb-4 shadow-warm-lg">
+                <i class="fas fa-user-plus text-[#121A1B] text-2xl"></i>
+            </div>
+            <h1 class="text-3xl font-bold text-[#312B1E]">Inscription</h1>
+            <p class="text-[#505039] mt-2">Rejoignez EduSphere aujourd'hui</p>
+        </div>
 
-    {% if messages %}
-    {% for message in messages %}
-    <div
-        class="mb-4 p-4 rounded-lg {% if message.tags == 'error' %}bg-[#8B4513] text-white{% else %}bg-[#A7AA63] text-white{% endif %}">
-        {{ message }}
+        <!-- Form Card -->
+        <div class="bg-[#F2EFE4] p-8 rounded-2xl shadow-warm-lg border border-[#C5B8A8]/30">
+            {% if messages %}
+            {% for message in messages %}
+            <div
+                class="mb-6 p-4 rounded-xl flex items-center gap-3
+                        {% if message.tags == 'error' %}bg-[#312B1E] text-[#EAE6D2]{% else %}bg-[#A7AA63] text-[#FFFFFF]{% endif %}">
+                <i
+                    class="fas {% if message.tags == 'error' %}fa-exclamation-triangle{% else %}fa-check-circle{% endif %}"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <form method="post" class="space-y-5">
+                {% csrf_token %}
+
+                <div class="form-field">
+                    <label class="block text-sm font-semibold mb-2 text-[#505039]">
+                        Nom d'utilisateur <span class="text-[#A7AA63]">*</span>
+                    </label>
+                    <div class="relative">
+                        <input type="text" name="username" required class="w-full px-4 py-3 pl-12 rounded-xl"
+                            placeholder="Choisissez un nom d'utilisateur">
+                        <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-[#7C6B51]"></i>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label class="block text-sm font-semibold mb-2 text-[#505039]">
+                        Email <span class="text-[#A7AA63]">*</span>
+                    </label>
+                    <div class="relative">
+                        <input type="email" name="email" required class="w-full px-4 py-3 pl-12 rounded-xl"
+                            placeholder="votre@email.com">
+                        <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-[#7C6B51]"></i>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label class="block text-sm font-semibold mb-2 text-[#505039]">
+                        Mot de passe <span class="text-[#A7AA63]">*</span>
+                    </label>
+                    <div class="relative">
+                        <input type="password" name="password1" required class="w-full px-4 py-3 pl-12 rounded-xl"
+                            placeholder="Créez un mot de passe sécurisé">
+                        <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-[#7C6B51]"></i>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label class="block text-sm font-semibold mb-2 text-[#505039]">
+                        Confirmer le mot de passe <span class="text-[#A7AA63]">*</span>
+                    </label>
+                    <div class="relative">
+                        <input type="password" name="password2" required class="w-full px-4 py-3 pl-12 rounded-xl"
+                            placeholder="Confirmez votre mot de passe">
+                        <i class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-[#7C6B51]"></i>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label class="block text-sm font-semibold mb-2 text-[#505039]">
+                        Rôle <span class="text-[#A7AA63]">*</span>
+                    </label>
+                    <div class="relative">
+                        <select name="role" required
+                            class="w-full px-4 py-3 pl-12 rounded-xl appearance-none cursor-pointer">
+                            <option value="Student">Étudiant</option>
+                            <option value="Instructor">Instructeur</option>
+                        </select>
+                        <i class="fas fa-user-tag absolute left-4 top-1/2 -translate-y-1/2 text-[#7C6B51]"></i>
+                        <i
+                            class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[#7C6B51] pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary w-full justify-center text-lg py-4">
+                    <i class="fas fa-check"></i>
+                    Créer mon compte
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-[#7C6B51]">
+                    Déjà un compte ?
+                    <a href="{% url 'login' %}"
+                        class="text-[#A7AA63] hover:text-[#8e9150] font-semibold transition-colors">
+                        Connectez-vous
+                    </a>
+                </p>
+            </div>
+        </div>
     </div>
-    {% endfor %}
-    {% endif %}
-
-    <form method="post" class="space-y-5">
-        {% csrf_token %}
-
-        <div>
-            <label class="block text-sm font-semibold mb-1 text-[#505039]">Nom d'utilisateur:</label>
-            <input type="text" name="username" required>
-        </div>
-
-        <div>
-            <label class="block text-sm font-semibold mb-1 text-[#505039]">Email:</label>
-            <input type="email" name="email" required>
-        </div>
-
-        <div>
-            <label class="block text-sm font-semibold mb-1 text-[#505039]">Mot de passe:</label>
-            <input type="password" name="password1" required>
-        </div>
-
-        <div>
-            <label class="block text-sm font-semibold mb-1 text-[#505039]">Confirmer le mot de passe:</label>
-            <input type="password" name="password2" required>
-        </div>
-
-        <div>
-            <label class="block text-sm font-semibold mb-1 text-[#505039]">Rôle:</label>
-            <select name="role" required>
-                <option value="Student">Étudiant</option>
-                <option value="Instructor">Instructeur</option>
-            </select>
-        </div>
-
-        <div class="flex items-center gap-4 pt-4">
-            <button type="submit"
-                class="bg-[#A7AA63] hover:bg-[#8e9150] text-white font-semibold px-6 py-2 rounded-lg transition flex items-center gap-2">
-                <i class="fas fa-check"></i> S'inscrire
-            </button>
-            <a href="{% url 'login' %}" class="text-sm text-[#7C6B51] hover:underline">
-                Déjà un compte ? Connectez-vous
-            </a>
-        </div>
-    </form>
 </div>
-
-<script>
-    document.querySelectorAll('input, select').forEach(el => {
-        el.classList.add(
-            'w-full', 'px-4', 'py-2', 'bg-[#EAE6D2]', 'text-[#312B1E]',
-            'rounded-lg', 'border', 'border-[#C5B8A8]',
-            'focus:outline-none', 'focus:ring-2', 'focus:ring-[#A7AA63]'
-        );
-    });
-</script>
 {% endblock %}

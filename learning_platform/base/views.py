@@ -1080,10 +1080,15 @@ class SubmissionListView(AdminOrInstructorRequiredMixin, View):
         
         submissions = Submission.objects.filter(evaluation=evaluation).select_related('student').order_by('-submitted_on')
         
+        graded_count = submissions.filter(status='graded').count()
+        pending_count = submissions.exclude(status='graded').count()
+        
         return render(request, 'evaluations/submission_list.html', {
             'evaluation': evaluation,
             'submissions': submissions,
             'course': course,
+            'graded_count': graded_count,
+            'pending_count': pending_count,
         })
 
 

@@ -2,59 +2,78 @@
 {% block title %}{{ form.instance.pk|yesno:"Modifier Évaluation,Créer Évaluation" }}{% endblock %}
 
 {% block content %}
-<div class="bg-[#F2EFE4] text-[#312B1E] p-6 rounded-xl shadow-lg border border-[#C5B8A8] max-w-3xl mx-auto">
-    <h1 class="text-3xl font-bold text-[#312B1E] mb-6">
-        {% if form.instance.pk %}
-        <i class="fas fa-edit mr-2 text-[#A7AA63]"></i>Modifier l'évaluation
-        {% else %}
-        <i class="fas fa-plus mr-2 text-[#A7AA63]"></i>Créer une nouvelle évaluation
-        {% endif %}
-    </h1>
-
-    {% if form.non_field_errors %}
-    <div class="mb-4 p-4 bg-[#8B4513] text-white rounded-lg">
-        {{ form.non_field_errors }}
-    </div>
-    {% endif %}
-
-    <form method="post" enctype="multipart/form-data" class="space-y-5">
-        {% csrf_token %}
-
-        {% for field in form %}
-        <div>
-            <label class="block text-sm font-semibold mb-1 text-[#505039]" for="{{ field.id_for_label }}">
-                {{ field.label }}:
-            </label>
-            {{ field }}
-            {% if field.help_text %}
-            <p class="text-sm text-[#7C6B51]">{{ field.help_text }}</p>
+<div class="max-w-3xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+        <a href="{% url 'module-list-by-course' course.id %}?module_id={{ module.id }}"
+            class="text-[#7C6B51] hover:text-[#A7AA63] text-sm mb-2 inline-flex items-center gap-1 transition-colors">
+            <i class="fas fa-arrow-left"></i>
+            Retour au module
+        </a>
+        <h1 class="text-3xl font-bold text-[#312B1E] flex items-center gap-3">
+            {% if form.instance.pk %}
+            <div
+                class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#7C6B51] to-[#C5B8A8] flex items-center justify-center">
+                <i class="fas fa-edit text-[#FFFFFF]"></i>
+            </div>
+            Modifier l'évaluation
+            {% else %}
+            <div
+                class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#505039] to-[#7C6B51] flex items-center justify-center">
+                <i class="fas fa-clipboard-check text-[#FFFFFF]"></i>
+            </div>
+            Créer une évaluation
             {% endif %}
-            {% for error in field.errors %}
-            <p class="text-[#8B4513] text-sm mt-1"><i class="fas fa-exclamation-triangle mr-1"></i>{{ error }}</p>
-            {% endfor %}
-        </div>
-        {% endfor %}
+        </h1>
+    </div>
 
-        <div class="flex items-center gap-4 pt-4">
-            <button type="submit"
-                class="bg-[#A7AA63] hover:bg-[#8e9150] text-white font-semibold px-6 py-2 rounded-lg transition flex items-center gap-2">
-                <i class="fas fa-save"></i> Enregistrer
-            </button>
-            <a href="{% url 'module-list-by-course' course.id %}?module_id={{ module.id }}"
-                class="text-sm text-[#7C6B51] hover:underline">
-                Annuler
-            </a>
+    <!-- Form Card -->
+    <div class="bg-[#F2EFE4] p-8 rounded-2xl shadow-warm-md border border-[#C5B8A8]/30">
+        {% if form.non_field_errors %}
+        <div class="mb-6 p-4 bg-[#312B1E] text-[#EAE6D2] rounded-xl flex items-center gap-3">
+            <i class="fas fa-exclamation-triangle text-[#E2CEAE]"></i>
+            {{ form.non_field_errors }}
         </div>
-    </form>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            {% for field in form %}
+            <div class="form-field">
+                <label class="block text-sm font-semibold mb-2 text-[#505039]" for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                    {% if field.field.required %}<span class="text-[#A7AA63]">*</span>{% endif %}
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                <p class="text-sm text-[#7C6B51] mt-1">{{ field.help_text }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                <p class="text-[#312B1E] text-sm mt-1 flex items-center gap-1">
+                    <i class="fas fa-exclamation-triangle text-[#7C6B51]"></i>
+                    {{ error }}
+                </p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <div class="flex items-center gap-4 pt-6 border-t border-[#C5B8A8]/30">
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-save"></i>
+                    Enregistrer
+                </button>
+                <a href="{% url 'module-list-by-course' course.id %}?module_id={{ module.id }}" class="btn-secondary">
+                    Annuler
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 
 <script>
     document.querySelectorAll('input, select, textarea').forEach(el => {
-        el.classList.add(
-            'w-full', 'px-4', 'py-2', 'bg-[#EAE6D2]', 'text-[#312B1E]',
-            'rounded-lg', 'border', 'border-[#C5B8A8]',
-            'focus:outline-none', 'focus:ring-2', 'focus:ring-[#A7AA63]'
-        );
+        el.classList.add('w-full', 'px-4', 'py-3', 'rounded-xl');
     });
 </script>
 {% endblock %}

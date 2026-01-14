@@ -23,8 +23,9 @@ def validate_file_extension(file, allowed_extensions):
 def validate_resource_file(file):
     """Validation spécifique pour les ressources pédagogiques"""
     validate_file_size(file, max_size_mb=50)  # 50 MB pour vidéos
-    allowed = ['.pdf', '.mp4', '.mp3', '.pptx', '.ppt', '.docx', '.doc', '.zip', '.jpg', '.jpeg', '.png', '.gif']
-    validate_file_extension(file, allowed)
+    # Pas de restriction d'extension demandée par l'utilisateur
+    # allowed = ['.pdf', '.mp4', '.mp3', '.pptx', '.ppt', '.docx', '.doc', '.zip', '.jpg', '.jpeg', '.png', '.gif']
+    # validate_file_extension(file, allowed)
 
 
 def validate_submission_file(file):

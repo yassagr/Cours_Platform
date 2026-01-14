@@ -24,13 +24,13 @@
         </div>
         <div class="bg-[#F2EFE4] rounded-xl p-6 text-center border border-[#C5B8A8]">
             <p class="text-3xl font-bold text-[#505039]">
-                {{ submissions|dictsort:"status"|dictsortreversed:"status"|first }}
+                {{ graded_count }}
             </p>
             <p class="text-[#7C6B51]">Notées</p>
         </div>
         <div class="bg-[#F2EFE4] rounded-xl p-6 text-center border border-[#C5B8A8]">
             <p class="text-3xl font-bold text-[#7C6B51]">
-                {{ submissions|length }}
+                {{ pending_count }}
             </p>
             <p class="text-[#7C6B51]">En attente</p>
         </div>

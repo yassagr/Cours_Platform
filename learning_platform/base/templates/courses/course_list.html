@@ -2,96 +2,139 @@
 {% block title %}Nos Cours{% endblock %}
 
 {% block content %}
-<h1 class="text-3xl font-bold text-[#312B1E] mb-8"><i class="fas fa-book-open mr-3 text-[#A7AA63]"></i>Nos Cours</h1>
+<!-- Header -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
+    <div>
+        <h1 class="text-3xl font-bold text-[#312B1E]">
+            <i class="fas fa-book-open mr-3 text-[#A7AA63]"></i>Nos Cours
+        </h1>
+        <p class="text-[#505039] mt-2">Découvrez notre catalogue de formations</p>
+    </div>
 
-{% if user.is_staff or user.role == 'Admin' or user.role == 'Instructor' %}
-<div class="mb-6">
-    <a href="{% url 'course-create' %}"
-        class="inline-flex items-center gap-2 bg-[#A7AA63] text-white px-5 py-2 rounded-lg shadow hover:bg-[#8e9150] transition">
-        <i class="fas fa-plus"></i> Créer un cours
+    {% if user.is_staff or user.role == 'Admin' or user.role == 'Instructor' %}
+    <a href="{% url 'course-create' %}" class="btn-primary">
+        <i class="fas fa-plus"></i>
+        Créer un cours
     </a>
+    {% endif %}
 </div>
-{% endif %}
 
 {% if courses %}
-<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+<div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
     {% for course in courses %}
-    <div class="group relative cursor-pointer bg-[#F2EFE4] text-[#312B1E] rounded-xl shadow-md hover:shadow-xl hover:scale-[1.03] transition-all duration-300 border border-[#C5B8A8] overflow-hidden course-card"
-        data-href="{% url 'course-detail' course.pk %}">
+    <!-- Course Card -->
+    <div class="group relative cursor-pointer course-card" data-href="{% url 'course-detail' course.pk %}">
+        <div class="relative overflow-hidden rounded-2xl bg-[#F2EFE4] border border-[#C5B8A8]/30 transition-all duration-500
+                    hover:shadow-[0_12px_24px_rgba(49,43,30,0.15),0_6px_12px_rgba(49,43,30,0.1)]
+                    hover:-translate-y-2 hover:border-[#A7AA63]">
 
-        <!-- Image avec overlay au hover -->
-        <div class="relative h-48 overflow-hidden">
-            {% if course.image %}
-            <img src="{{ course.image.url }}" alt="{{ course.title }}"
-                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
-            {% else %}
-            <div class="w-full h-full bg-gradient-to-br from-[#505039] to-[#312B1E] flex items-center justify-center">
-                <i class="fas fa-book text-6xl text-white/50"></i>
-            </div>
-            {% endif %}
-
-            <!-- Overlay au hover -->
-            <div
-                class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex items-center justify-center">
-                <span
-                    class="text-white text-lg font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    Voir le cours <i class="fas fa-arrow-right ml-2"></i>
-                </span>
-            </div>
-
-            <!-- Badge niveau -->
-            <div class="absolute top-3 right-3 bg-[#A7AA63] text-white text-xs font-bold px-3 py-1 rounded-full">
-                {{ course.level }}
-            </div>
-        </div>
-
-        <!-- Contenu -->
-        <div class="p-5">
-            <h2 class="text-lg font-bold text-[#312B1E] mb-2 group-hover:text-[#A7AA63] transition">
-                {{ course.title }}
-            </h2>
-
-            <p class="text-sm text-[#7C6B51] mb-4 line-clamp-2">
-                {{ course.description|truncatechars:80 }}
-            </p>
-
-            <!-- Info rapide -->
-            <div class="flex items-center gap-4 text-xs text-[#7C6B51] mb-4">
-                <span><i class="fas fa-clock mr-1"></i>{{ course.estimated_duration }}h</span>
-                <span><i class="fas fa-layer-group mr-1"></i>{{ course.modules.count }} modules</span>
-                <span><i class="fas fa-users mr-1"></i>{{ course.enrollments.count }}</span>
-            </div>
-
-            <!-- Actions selon rôle -->
-            <div class="mt-4" onclick="event.stopPropagation()">
-                {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
-                <div class="flex gap-2">
-                    <a href="{% url 'course-update' course.pk %}" class="btn-sm btn-outline-warning"
-                        title="Modifier ce cours">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <a href="{% url 'course-delete' course.pk %}" class="btn-sm btn-outline-danger"
-                        title="Supprimer ce cours"
-                        onclick="return confirm('Voulez-vous vraiment supprimer ce cours ?')">
-                        <i class="fas fa-trash"></i>
-                    </a>
-                </div>
-                {% elif user.role == 'Student' %}
-                {% if course.id in enrolled_course_ids %}
-                <a href="{% url 'module-list-by-course' course.id %}"
-                    class="block bg-[#A7AA63] hover:bg-[#8e9150] text-white text-center font-semibold px-4 py-2 rounded-lg transition">
-                    <i class="fas fa-arrow-right mr-2"></i>Continuer
-                </a>
+            <!-- Image Container -->
+            <div class="relative h-48 overflow-hidden">
+                {% if course.image %}
+                <img src="{{ course.image.url }}" alt="{{ course.title }}"
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                 {% else %}
-                <form action="{% url 'enroll' course.id %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit"
-                        class="w-full bg-[#505039] hover:bg-[#312B1E] text-white font-semibold px-4 py-2 rounded-lg transition flex items-center justify-center gap-2">
-                        <i class="fas fa-user-graduate"></i> S'inscrire
-                    </button>
-                </form>
+                <div
+                    class="w-full h-full bg-gradient-to-br from-[#505039] to-[#312B1E] flex items-center justify-center">
+                    <i class="fas fa-book text-6xl text-[#FFFFFF]/30"></i>
+                </div>
                 {% endif %}
-                {% endif %}
+
+                <!-- Overlay gradient -->
+                <div class="absolute inset-0 bg-gradient-to-t from-[#312B1E]/60 to-transparent opacity-60"></div>
+
+                <!-- Level Badge (Glassmorphism) -->
+                <div class="absolute top-4 right-4 px-3 py-1.5 rounded-full text-xs font-semibold
+                            bg-[#EAE6D2]/95 backdrop-blur-sm text-[#312B1E]
+                            shadow-warm-sm border border-[#C5B8A8]/30">
+                    {{ course.level }}
+                </div>
+
+                <!-- Hover Overlay -->
+                <div class="absolute inset-0 bg-[#A7AA63]/0 group-hover:bg-[#A7AA63]/20 
+                            transition-all duration-500 flex items-center justify-center">
+                    <div class="transform translate-y-8 group-hover:translate-y-0 
+                                opacity-0 group-hover:opacity-100 transition-all duration-500">
+                        <span class="px-6 py-3 rounded-xl bg-[#FFFFFF] text-[#312B1E] font-semibold
+                                     shadow-warm-lg flex items-center gap-2 border border-[#E2CEAE]">
+                            Voir le cours
+                            <i class="fas fa-arrow-right text-[#A7AA63]"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6 space-y-4">
+                <h2 class="text-xl font-bold text-[#312B1E] group-hover:text-[#A7AA63] 
+                           transition-colors duration-300 line-clamp-2">
+                    {{ course.title }}
+                </h2>
+
+                <p class="text-sm text-[#505039] line-clamp-2 leading-relaxed">
+                    {{ course.description|truncatechars:100 }}
+                </p>
+
+                <!-- Meta info -->
+                <div class="flex items-center gap-4 text-xs text-[#7C6B51]">
+                    <span class="flex items-center gap-1.5">
+                        <i class="fas fa-clock text-[#A7AA63]"></i>
+                        {{ course.estimated_duration }}h
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <i class="fas fa-layer-group text-[#A7AA63]"></i>
+                        {{ course.modules.count }} modules
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <i class="fas fa-users text-[#A7AA63]"></i>
+                        {{ course.enrollments.count }}
+                    </span>
+                </div>
+
+                <!-- Separator -->
+                <div class="h-px bg-gradient-to-r from-transparent via-[#C5B8A8]/40 to-transparent"></div>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-between" onclick="event.stopPropagation()">
+                    <!-- Instructor avatar -->
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#A7AA63] to-[#E2CEAE] border border-[#C5B8A8]
+                                    flex items-center justify-center text-xs font-bold text-[#312B1E]">
+                            {{ course.instructor.username|first|upper }}
+                        </div>
+                        <span class="text-xs text-[#7C6B51]">{{ course.instructor.username }}</span>
+                    </div>
+
+                    <!-- Action buttons based on role -->
+                    {% if user.is_staff or user.role == 'Admin' or course.instructor == user %}
+                    <div class="flex gap-2">
+                        <a href="{% url 'course-update' course.pk %}" class="btn-sm btn-outline-warning"
+                            title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button type="button" class="btn-sm btn-outline-danger delete-trigger" title="Supprimer"
+                            data-delete-url="{% url 'course-delete' course.pk %}"
+                            data-item-title="{{ course.title|escapejs }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    {% elif user.role == 'Student' %}
+                    {% if course.id in enrolled_course_ids %}
+                    <a href="{% url 'module-list-by-course' course.id %}" class="btn-primary text-sm px-4 py-2">
+                        <i class="fas fa-arrow-right"></i>
+                        Continuer
+                    </a>
+                    {% else %}
+                    <form action="{% url 'enroll' course.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-secondary text-sm px-4 py-2">
+                            <i class="fas fa-user-graduate"></i>
+                            S'inscrire
+                        </button>
+                    </form>
+                    {% endif %}
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -100,29 +143,30 @@
 
 <!-- Pagination -->
 {% if is_paginated %}
-<div class="flex justify-center items-center gap-2 mt-12">
+<div class="flex justify-center items-center gap-2 mt-16">
     {% if page_obj.has_previous %}
     <a href="?page=1"
-        class="px-4 py-2 bg-[#C5B8A8] hover:bg-[#A7AA63] text-[#312B1E] hover:text-white rounded-lg transition">
+        class="px-4 py-2 bg-[#F2EFE4] hover:bg-[#E2CEAE] text-[#312B1E] rounded-lg border border-[#C5B8A8]/30 transition-all duration-300 hover:-translate-y-1 shadow-warm-sm">
         <i class="fas fa-angle-double-left"></i>
     </a>
     <a href="?page={{ page_obj.previous_page_number }}"
-        class="px-4 py-2 bg-[#C5B8A8] hover:bg-[#A7AA63] text-[#312B1E] hover:text-white rounded-lg transition">
+        class="px-4 py-2 bg-[#F2EFE4] hover:bg-[#E2CEAE] text-[#312B1E] rounded-lg border border-[#C5B8A8]/30 transition-all duration-300 hover:-translate-y-1 shadow-warm-sm">
         <i class="fas fa-angle-left"></i>
     </a>
     {% endif %}
 
-    <span class="px-4 py-2 bg-[#A7AA63] text-white rounded-lg font-medium">
+    <span
+        class="px-6 py-2 bg-gradient-to-r from-[#A7AA63] to-[#8e9150] text-[#FFFFFF] rounded-lg font-medium shadow-warm-md">
         Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
     </span>
 
     {% if page_obj.has_next %}
     <a href="?page={{ page_obj.next_page_number }}"
-        class="px-4 py-2 bg-[#C5B8A8] hover:bg-[#A7AA63] text-[#312B1E] hover:text-white rounded-lg transition">
+        class="px-4 py-2 bg-[#F2EFE4] hover:bg-[#E2CEAE] text-[#312B1E] rounded-lg border border-[#C5B8A8]/30 transition-all duration-300 hover:-translate-y-1 shadow-warm-sm">
         <i class="fas fa-angle-right"></i>
     </a>
     <a href="?page={{ page_obj.paginator.num_pages }}"
-        class="px-4 py-2 bg-[#C5B8A8] hover:bg-[#A7AA63] text-[#312B1E] hover:text-white rounded-lg transition">
+        class="px-4 py-2 bg-[#F2EFE4] hover:bg-[#E2CEAE] text-[#312B1E] rounded-lg border border-[#C5B8A8]/30 transition-all duration-300 hover:-translate-y-1 shadow-warm-sm">
         <i class="fas fa-angle-double-right"></i>
     </a>
     {% endif %}
@@ -130,7 +174,14 @@
 {% endif %}
 
 {% else %}
-<p class="text-[#7C6B51]">Aucun cours disponible pour le moment.</p>
+<!-- Empty State -->
+<div class="text-center py-20 bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30 shadow-warm-sm">
+    <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-[#E2CEAE] flex items-center justify-center">
+        <i class="fas fa-book-open text-3xl text-[#7C6B51]"></i>
+    </div>
+    <h3 class="text-xl font-semibold text-[#312B1E] mb-2">Aucun cours disponible</h3>
+    <p class="text-[#7C6B51]">Revenez bientôt pour découvrir notre catalogue.</p>
+</div>
 {% endif %}
 
 <script>

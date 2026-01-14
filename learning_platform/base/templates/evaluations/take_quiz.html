@@ -4,19 +4,32 @@
 
 {% block content %}
 <div class="max-w-4xl mx-auto">
-    <!-- Header -->
-    <div class="bg-[#F2EFE4] rounded-xl p-6 mb-8 border border-[#C5B8A8]">
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-3xl font-bold text-[#312B1E]"><i
-                        class="fas fa-clipboard-list mr-2 text-[#A7AA63]"></i>{{ evaluation.title }}</h1>
-                <p class="text-[#7C6B51] mt-2">{{ course.title }} • {{ questions|length }} questions</p>
+    <!-- Header Card -->
+    <div class="bg-[#F2EFE4] rounded-2xl p-6 mb-8 border border-[#C5B8A8]/30 shadow-warm-md">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div
+                    class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#A7AA63] to-[#8e9150] flex items-center justify-center shadow-warm-sm">
+                    <i class="fas fa-clipboard-list text-[#FFFFFF] text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-[#312B1E]">{{ evaluation.title }}</h1>
+                    <p class="text-[#505039]">
+                        {{ course.title }} • {{ questions|length }} question{{ questions|pluralize }}
+                    </p>
+                </div>
             </div>
-            <div class="text-right">
-                <p class="text-sm text-[#7C6B51]">Score minimum pour réussir</p>
-                <p class="text-2xl font-bold text-[#A7AA63]">{{ evaluation.passing_score }}%</p>
+
+            <div class="flex items-center gap-6">
+                <div class="text-center">
+                    <p class="text-sm text-[#7C6B51] mb-1">Score minimum</p>
+                    <p class="text-2xl font-bold text-[#A7AA63]">{{ evaluation.passing_score }}%</p>
+                </div>
                 {% if previous_attempts > 0 %}
-                <p class="text-sm text-[#7C6B51] mt-2">Tentative {{ previous_attempts|add:1 }}/{{ max_attempts }}</p>
+                <div class="text-center px-4 border-l border-[#C5B8A8]/50">
+                    <p class="text-sm text-[#7C6B51] mb-1">Tentative</p>
+                    <p class="text-2xl font-bold text-[#312B1E]">{{ previous_attempts|add:1 }}/{{ max_attempts }}</p>
+                </div>
                 {% endif %}
             </div>
         </div>
@@ -28,57 +41,69 @@
 
         <div class="space-y-6">
             {% for question in questions %}
-            <div class="bg-[#F2EFE4] rounded-xl p-6 border border-[#C5B8A8] hover:border-[#A7AA63] transition">
-                <div class="flex items-start gap-4 mb-4">
-                    <span class="bg-[#A7AA63] text-white text-sm font-bold px-3 py-1 rounded-full flex-shrink-0">
+            <div
+                class="bg-[#F2EFE4] rounded-2xl p-6 border border-[#C5B8A8]/30 shadow-warm-sm hover:border-[#A7AA63] transition-all duration-300">
+                <!-- Question Header -->
+                <div class="flex items-start gap-4 mb-6">
+                    <span
+                        class="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br from-[#A7AA63] to-[#8e9150] text-[#FFFFFF] text-sm font-bold flex items-center justify-center shadow-warm-sm">
                         Q{{ forloop.counter }}
                     </span>
                     <p class="text-lg font-medium text-[#312B1E]">{{ question.text }}</p>
                 </div>
 
-                <div class="space-y-3 ml-10">
+                <!-- Options -->
+                <div class="space-y-3 ml-14">
                     <label
-                        class="flex items-center gap-3 p-4 bg-[#EAE6D2] rounded-lg cursor-pointer hover:bg-[#E2CEAE] transition group border border-[#C5B8A8]">
+                        class="flex items-center gap-4 p-4 bg-[#EAE6D2] rounded-xl cursor-pointer hover:bg-[#E2CEAE] transition-all duration-300 group border border-transparent hover:border-[#A7AA63]">
                         <input type="radio" name="question_{{ question.id }}" value="A" required
-                            class="w-5 h-5 text-[#A7AA63] bg-[#EAE6D2] border-[#C5B8A8] focus:ring-[#A7AA63]">
+                            class="w-5 h-5 text-[#A7AA63] bg-[#F2EFE4] border-[#C5B8A8] focus:ring-[#A7AA63] focus:ring-offset-0">
                         <span class="font-bold text-[#A7AA63]">A.</span>
-                        <span class="text-[#505039] group-hover:text-[#312B1E]">{{ question.option1 }}</span>
+                        <span class="text-[#505039] group-hover:text-[#312B1E] transition-colors">{{ question.option1
+                            }}</span>
                     </label>
+
                     <label
-                        class="flex items-center gap-3 p-4 bg-[#EAE6D2] rounded-lg cursor-pointer hover:bg-[#E2CEAE] transition group border border-[#C5B8A8]">
+                        class="flex items-center gap-4 p-4 bg-[#EAE6D2] rounded-xl cursor-pointer hover:bg-[#E2CEAE] transition-all duration-300 group border border-transparent hover:border-[#A7AA63]">
                         <input type="radio" name="question_{{ question.id }}" value="B"
-                            class="w-5 h-5 text-[#A7AA63] bg-[#EAE6D2] border-[#C5B8A8] focus:ring-[#A7AA63]">
+                            class="w-5 h-5 text-[#A7AA63] bg-[#F2EFE4] border-[#C5B8A8] focus:ring-[#A7AA63] focus:ring-offset-0">
                         <span class="font-bold text-[#A7AA63]">B.</span>
-                        <span class="text-[#505039] group-hover:text-[#312B1E]">{{ question.option2 }}</span>
+                        <span class="text-[#505039] group-hover:text-[#312B1E] transition-colors">{{ question.option2
+                            }}</span>
                     </label>
+
                     <label
-                        class="flex items-center gap-3 p-4 bg-[#EAE6D2] rounded-lg cursor-pointer hover:bg-[#E2CEAE] transition group border border-[#C5B8A8]">
+                        class="flex items-center gap-4 p-4 bg-[#EAE6D2] rounded-xl cursor-pointer hover:bg-[#E2CEAE] transition-all duration-300 group border border-transparent hover:border-[#A7AA63]">
                         <input type="radio" name="question_{{ question.id }}" value="C"
-                            class="w-5 h-5 text-[#A7AA63] bg-[#EAE6D2] border-[#C5B8A8] focus:ring-[#A7AA63]">
+                            class="w-5 h-5 text-[#A7AA63] bg-[#F2EFE4] border-[#C5B8A8] focus:ring-[#A7AA63] focus:ring-offset-0">
                         <span class="font-bold text-[#A7AA63]">C.</span>
-                        <span class="text-[#505039] group-hover:text-[#312B1E]">{{ question.option3 }}</span>
+                        <span class="text-[#505039] group-hover:text-[#312B1E] transition-colors">{{ question.option3
+                            }}</span>
                     </label>
+
                     <label
-                        class="flex items-center gap-3 p-4 bg-[#EAE6D2] rounded-lg cursor-pointer hover:bg-[#E2CEAE] transition group border border-[#C5B8A8]">
+                        class="flex items-center gap-4 p-4 bg-[#EAE6D2] rounded-xl cursor-pointer hover:bg-[#E2CEAE] transition-all duration-300 group border border-transparent hover:border-[#A7AA63]">
                         <input type="radio" name="question_{{ question.id }}" value="D"
-                            class="w-5 h-5 text-[#A7AA63] bg-[#EAE6D2] border-[#C5B8A8] focus:ring-[#A7AA63]">
+                            class="w-5 h-5 text-[#A7AA63] bg-[#F2EFE4] border-[#C5B8A8] focus:ring-[#A7AA63] focus:ring-offset-0">
                         <span class="font-bold text-[#A7AA63]">D.</span>
-                        <span class="text-[#505039] group-hover:text-[#312B1E]">{{ question.option4 }}</span>
+                        <span class="text-[#505039] group-hover:text-[#312B1E] transition-colors">{{ question.option4
+                            }}</span>
                     </label>
                 </div>
             </div>
             {% endfor %}
         </div>
 
-        <!-- Submit Button -->
-        <div class="mt-8 flex justify-between items-center">
+        <!-- Submit Section -->
+        <div
+            class="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 p-6 bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30">
             <a href="{% url 'module-list-by-course' course.id %}"
-                class="text-[#7C6B51] hover:text-[#312B1E] transition">
-                ← Abandonner le quiz
+                class="text-[#7C6B51] hover:text-[#312B1E] transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>Abandonner le quiz
             </a>
-            <button type="submit"
-                class="bg-[#A7AA63] hover:bg-[#8e9150] text-white px-8 py-4 rounded-xl font-bold text-lg transition transform hover:scale-105">
-                <i class="fas fa-check-circle mr-2"></i>Soumettre le quiz
+            <button type="submit" class="btn-primary text-lg px-8 py-4">
+                <i class="fas fa-check-circle"></i>
+                Soumettre le quiz
             </button>
         </div>
     </form>

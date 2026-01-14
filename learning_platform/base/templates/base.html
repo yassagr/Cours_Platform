@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8" />
@@ -9,47 +9,225 @@
     <!-- Font Awesome pour les icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
-        /* ===== PALETTE CLAIRE ===== */
+        /* ===== PALETTE LIGHT NATUREL - STRICTE ===== */
         :root {
+            /* Couleurs Principales */
             --primary-darkest: #121A1B;
+            /* Vert Forêt Profond (Textes) */
             --primary-dark: #312B1E;
+            /* Marron Terre (Titres) */
             --primary-medium: #A7AA63;
+            /* Vert Sage (Accents) */
             --primary-light: #EAE6D2;
+            /* Crème (Fond principal) */
+
+            /* Backgrounds */
             --bg-main: #EAE6D2;
             --bg-card: #F2EFE4;
             --bg-input: #E2CEAE;
             --bg-hover: #d6c0a0;
+
+            /* Textes */
             --text-primary: #121A1B;
             --text-secondary: #505039;
             --text-muted: #7C6B51;
             --text-heading: #312B1E;
+
+            /* Accents */
             --accent-primary: #A7AA63;
             --accent-hover: #8e9150;
             --accent-active: #505039;
             --accent-subtle: #CFD1A1;
+
+            /* Bordures */
             --border-primary: #C5B8A8;
             --border-light: #E2CEAE;
             --border-accent: #A7AA63;
+            --border-subtle: rgba(124, 107, 81, 0.15);
+
+            /* États */
             --success: #A7AA63;
             --warning: #7C6B51;
-            --error: #8B4513;
+            --error: #312B1E;
             --info: #505039;
+
+            /* Ombres Chaudes (OBLIGATOIRE - pas de gris) */
+            --shadow-xs: 0 1px 2px rgba(49, 43, 30, 0.05);
+            --shadow-sm: 0 2px 4px rgba(49, 43, 30, 0.08);
+            --shadow-md: 0 4px 8px rgba(49, 43, 30, 0.12), 0 2px 4px rgba(49, 43, 30, 0.08);
+            --shadow-lg: 0 8px 16px rgba(49, 43, 30, 0.15), 0 4px 8px rgba(49, 43, 30, 0.1);
+            --shadow-xl: 0 12px 24px rgba(49, 43, 30, 0.15), 0 6px 12px rgba(49, 43, 30, 0.1);
+
+            /* Overlays */
+            --overlay-dark: rgba(18, 26, 27, 0.6);
+            --overlay-medium: rgba(49, 43, 30, 0.4);
+            --overlay-light: rgba(234, 230, 210, 0.8);
+        }
+
+        /* ===== RESET & BASE ===== */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-primary) var(--bg-card);
+        }
+
+        *::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        *::-webkit-scrollbar-track {
+            background: var(--bg-card);
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background: var(--border-primary);
+            border-radius: 4px;
+        }
+
+        *::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-primary);
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* ===== TYPOGRAPHIE ORGANIQUE ===== */
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: var(--text-heading);
+        }
+
+        p,
+        span,
+        li,
+        td,
+        th {
             color: var(--text-primary);
         }
 
-        a:hover {
-            transform: scale(1.02);
-            transition: all 0.2s ease-in-out;
+        /* ===== CARDS AVEC MICRO-INTERACTIONS ===== */
+        .card {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-sm);
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Classes pour boutons avec icônes */
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--accent-primary);
+        }
+
+        .card-static {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ===== BOUTONS ===== */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-hover));
+            color: #FFFFFF;
+            box-shadow: var(--shadow-md);
+            transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary:active {
+            transform: scale(1) translateY(0);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            background: var(--bg-card);
+            color: var(--text-heading);
+            border: 1px solid var(--border-primary);
+            transition: all 300ms;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-input);
+            border-color: var(--accent-primary);
+        }
+
+        .btn-danger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            background: var(--primary-dark);
+            color: var(--primary-light);
+            box-shadow: var(--shadow-md);
+            transition: all 300ms;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-danger:hover {
+            background: #423a2a;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+            transition: all 300ms;
+            cursor: pointer;
+        }
+
+        .btn-icon:hover {
+            background: var(--bg-input);
+            color: var(--text-heading);
+            border-color: var(--accent-primary);
+        }
+
+        /* Boutons outline existants - mise à jour */
         .btn-sm {
             padding: 0.5rem 0.75rem;
             font-size: 0.875rem;
@@ -57,7 +235,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            transition: all 300ms;
             border: 1px solid transparent;
             cursor: pointer;
         }
@@ -69,19 +247,21 @@
         }
 
         .btn-outline-warning:hover {
-            color: #fff;
+            color: #FFFFFF;
             background-color: var(--warning);
+            transform: translateY(-2px);
         }
 
         .btn-outline-danger {
-            color: var(--error);
-            border-color: var(--error);
+            color: var(--primary-dark);
+            border-color: var(--primary-dark);
             background-color: transparent;
         }
 
         .btn-outline-danger:hover {
-            color: #fff;
-            background-color: var(--error);
+            color: var(--primary-light);
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
         }
 
         .btn-outline-primary {
@@ -91,8 +271,9 @@
         }
 
         .btn-outline-primary:hover {
-            color: #fff;
+            color: #FFFFFF;
             background-color: var(--accent-primary);
+            transform: translateY(-2px);
         }
 
         .btn-outline-success {
@@ -102,11 +283,76 @@
         }
 
         .btn-outline-success:hover {
-            color: #fff;
+            color: #FFFFFF;
             background-color: var(--success);
+            transform: translateY(-2px);
         }
 
-        /* Tronquer le texte sur 2 lignes */
+        /* ===== FORMULAIRES AVEC FLOATING LABELS ===== */
+        .form-field {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1.5rem 1rem 0.5rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 0.75rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 300ms;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(167, 170, 99, 0.2);
+        }
+
+        .form-input::placeholder {
+            color: transparent;
+        }
+
+        .form-label {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1rem;
+            pointer-events: none;
+            transition: all 300ms;
+        }
+
+        .form-input:focus~.form-label,
+        .form-input:not(:placeholder-shown)~.form-label {
+            top: 0.5rem;
+            transform: translateY(0);
+            font-size: 0.75rem;
+            color: var(--accent-primary);
+        }
+
+        /* Style pour les inputs existants (via JS) */
+        input:not([type="radio"]):not([type="checkbox"]),
+        select,
+        textarea {
+            background: var(--bg-input) !important;
+            border: 1px solid var(--border-subtle) !important;
+            border-radius: 0.75rem !important;
+            color: var(--text-primary) !important;
+            transition: all 300ms !important;
+        }
+
+        input:not([type="radio"]):not([type="checkbox"]):focus,
+        select:focus,
+        textarea:focus {
+            outline: none !important;
+            border-color: var(--accent-primary) !important;
+            box-shadow: 0 0 0 3px rgba(167, 170, 99, 0.2) !important;
+        }
+
+        /* ===== UTILITAIRES ===== */
         .line-clamp-2 {
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -115,78 +361,192 @@
             overflow: hidden;
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        .text-gradient {
+            background: linear-gradient(135deg, var(--accent-primary), var(--text-heading));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        ::-webkit-scrollbar-track {
-            background: var(--bg-card);
+        /* Ombres personnalisées pour Tailwind override */
+        .shadow-warm-sm {
+            box-shadow: var(--shadow-sm) !important;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-primary);
-            border-radius: 4px;
+        .shadow-warm-md {
+            box-shadow: var(--shadow-md) !important;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-primary);
+        .shadow-warm-lg {
+            box-shadow: var(--shadow-lg) !important;
+        }
+
+        .shadow-warm-xl {
+            box-shadow: var(--shadow-xl) !important;
+        }
+
+        /* Progress bars */
+        .progress-bar {
+            background: var(--bg-input);
+            border-radius: 9999px;
+            height: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-hover));
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 500ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Skeleton loading */
+        .skeleton {
+            background: linear-gradient(90deg,
+                    var(--bg-card) 0%,
+                    var(--bg-input) 50%,
+                    var(--bg-card) 100%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        /* Glow effect pour cartes premium */
+        .card-glow {
+            position: relative;
+        }
+
+        .card-glow::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--bg-input));
+            border-radius: 1.125rem;
+            opacity: 0;
+            z-index: -1;
+            filter: blur(8px);
+            transition: opacity 500ms;
+        }
+
+        .card-glow:hover::before {
+            opacity: 0.5;
         }
     </style>
 </head>
 
 <body class="min-h-screen flex flex-col justify-between">
 
-    <!-- Navbar -->
-    <header class="bg-[#312B1E] shadow-md sticky top-0 z-50">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="{% url 'home' %}" class="text-xl font-bold text-[#EAE6D2] hover:text-[#A7AA63]">
-                <i class="fas fa-graduation-cap mr-3"></i>EduSphere
-            </a>
-            <nav class="flex items-center space-x-4 text-sm font-medium text-[#EAE6D2]">
-                {% if user.is_authenticated %}
-                <!-- Notification Bell -->
-                <a href="{% url 'notification-list' %}" class="relative hover:text-[#A7AA63] transition">
-                    <i class="fas fa-bell"></i>
-                    {% if unread_notifications_count > 0 %}
-                    <span
-                        class="absolute -top-2 -right-2 bg-[#8B4513] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                        {{ unread_notifications_count }}
-                    </span>
-                    {% endif %}
-                </a>
+    <!-- Navbar Glassmorphism -->
+    <header class="fixed top-0 left-0 right-0 z-50">
+        <!-- Background avec glassmorphism -->
+        <div class="absolute inset-0 bg-[#EAE6D2]/85 backdrop-blur-xl border-b border-[#C5B8A8]/30"></div>
 
-                {% if user.role == 'Admin' or user.is_superuser %}
-                <a href="/admin/" class="hover:text-[#A7AA63]"><i class="fas fa-cog mr-1"></i> Admin</a>
-                {% elif user.role == 'Instructor' %}
-                <a href="{% url 'teacher-dashboard' %}" class="hover:text-[#A7AA63]"><i
-                        class="fas fa-chalkboard-teacher mr-1"></i> Dashboard</a>
-                {% else %}
-                <a href="{% url 'student-dashboard' %}" class="hover:text-[#A7AA63]"><i class="fas fa-book mr-1"></i>
-                    Dashboard</a>
-                {% endif %}
-                <form action="{% url 'logout' %}" method="post" class="inline">{% csrf_token %}<button type="submit"
-                        class="text-[#E2CEAE] hover:text-[#8B4513] bg-transparent border-none cursor-pointer">Logout</button>
-                </form>
-                {% else %}
-                <a href="{% url 'login' %}" class="hover:text-[#A7AA63]">Login</a>
-                <a href="{% url 'signup' %}" class="hover:text-[#A7AA63]">Sign Up</a>
-                {% endif %}
-            </nav>
+        <div class="relative">
+            <div class="container mx-auto px-6">
+                <div class="flex items-center justify-between h-20">
+                    <!-- Logo -->
+                    <a href="{% url 'home' %}" class="flex items-center gap-3 group">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A7AA63] to-[#E2CEAE] flex items-center justify-center shadow-warm-md group-hover:shadow-warm-lg transition-all duration-300 group-hover:scale-110">
+                            <i class="fas fa-graduation-cap text-[#121A1B] text-xl"></i>
+                        </div>
+                        <span
+                            class="text-2xl font-bold text-[#312B1E] group-hover:text-[#A7AA63] transition-colors duration-300">
+                            EduSphere
+                        </span>
+                    </a>
+
+                    <!-- Navigation -->
+                    <nav class="flex items-center gap-2">
+
+                        <a href="{% url 'course-list' %}"
+                            class="px-4 py-2 rounded-lg text-[#505039] font-medium hover:bg-[#F2EFE4] hover:text-[#312B1E] transition-all duration-300">
+                            <i class="fas fa-book-open"></i> cours
+                        </a>
+
+                        {% if user.is_authenticated %}
+                        <!-- Notification Bell -->
+                        <a href="{% url 'notification-list' %}"
+                            class="relative px-4 py-2 rounded-lg text-[#505039] hover:bg-[#F2EFE4] hover:text-[#312B1E] transition-all duration-300">
+                            <i class="fas fa-bell text-lg"></i>
+                            {% if unread_notifications_count > 0 %}
+                            <span
+                                class="absolute -top-1 -right-1 w-5 h-5 bg-[#A7AA63] rounded-full text-[#FFFFFF] text-xs flex items-center justify-center font-bold shadow-warm-sm">
+                                {{ unread_notifications_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+
+                        {% if user.role == 'Admin' or user.is_superuser %}
+                        <a href="/admin/"
+                            class="px-4 py-2 rounded-lg text-[#505039] font-medium hover:bg-[#F2EFE4] hover:text-[#312B1E] transition-all duration-300">
+                            <i class="fas fa-cog mr-2"></i>Admin
+                        </a>
+                        {% elif user.role == 'Instructor' %}
+                        <a href="{% url 'teacher-dashboard' %}"
+                            class="px-4 py-2 rounded-lg text-[#505039] font-medium hover:bg-[#F2EFE4] hover:text-[#312B1E] transition-all duration-300">
+                            <i class="fas fa-chalkboard-teacher mr-2"></i>Dashboard
+                        </a>
+                        {% else %}
+                        <a href="{% url 'student-dashboard' %}"
+                            class="px-4 py-2 rounded-lg text-[#505039] font-medium hover:bg-[#F2EFE4] hover:text-[#312B1E] transition-all duration-300">
+                            <i class="fas fa-book mr-2"></i>Dashboard
+                        </a>
+                        {% endif %}
+
+                        <!-- User Menu -->
+                        <div class="ml-4 flex items-center gap-3 pl-4 border-l border-[#7C6B51]/20">
+                            <div class="text-right hidden sm:block">
+                                <p class="text-sm font-bold text-[#312B1E]">{{ user.username }}</p>
+                                <p class="text-xs text-[#7C6B51]">{{ user.role }}</p>
+                            </div>
+                            <form action="{% url 'logout' %}" method="post" class="inline">
+                                {% csrf_token %}
+                                <button type="submit"
+                                    class="w-10 h-10 rounded-full bg-gradient-to-br from-[#A7AA63] to-[#E2CEAE] flex items-center justify-center text-[#121A1B] font-bold hover:shadow-warm-lg transition-all duration-300 border border-[#FFFFFF]/50"
+                                    title="Déconnexion">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                        {% else %}
+                        <a href="{% url 'login' %}"
+                            class="px-4 py-2 rounded-lg text-[#505039] font-medium hover:bg-[#F2EFE4] hover:text-[#312B1E] transition-all duration-300">
+                            Connexion
+                        </a>
+                        <a href="{% url 'signup' %}" class="btn-primary">
+                            <i class="fas fa-user-plus"></i>
+                            S'inscrire
+                        </a>
+                        {% endif %}
+                    </nav>
+                </div>
+            </div>
         </div>
     </header>
+
+    <!-- Spacer for fixed navbar -->
+    <div class="h-20"></div>
 
     <!-- Main Content -->
     <main class="container mx-auto px-6 py-10 flex-1">
         {% if messages %}
-        <div class="max-w-4xl mx-auto mt-4">
+        <div class="max-w-4xl mx-auto mb-6">
             {% for message in messages %}
-            <div class="p-4 rounded text-center mb-3 font-medium
-                        {% if message.tags == 'success' %} bg-[#A7AA63] text-white
-                        {% elif message.tags == 'error' %} bg-[#8B4513] text-white
-                        {% elif message.tags == 'info' %} bg-[#505039] text-white
-                        {% else %} bg-[#7C6B51] text-white {% endif %}">
+            <div class="p-4 rounded-xl text-center mb-3 font-medium shadow-warm-sm
+                        {% if message.tags == 'success' %} bg-[#A7AA63] text-[#FFFFFF]
+                        {% elif message.tags == 'error' %} bg-[#312B1E] text-[#EAE6D2]
+                        {% elif message.tags == 'info' %} bg-[#505039] text-[#EAE6D2]
+                        {% else %} bg-[#7C6B51] text-[#EAE6D2] {% endif %}">
                 {{ message }}
             </div>
             {% endfor %}
@@ -196,31 +556,131 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-[#312B1E] text-[#C5B8A8] text-sm py-8 border-t border-[#505039] mt-12">
-        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <footer class="bg-[#312B1E] text-[#C5B8A8] text-sm py-12 border-t border-[#505039]">
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-                <h4 class="text-[#EAE6D2] font-semibold mb-2">About</h4>
-                <p>A modern learning platform. Inspired by Coursera, powered by Django & Tailwind CSS.</p>
+                <div class="flex items-center gap-3 mb-4">
+                    <div
+                        class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#A7AA63] to-[#E2CEAE] flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-[#121A1B]"></i>
+                    </div>
+                    <span class="text-lg font-bold text-[#EAE6D2]">EduSphere</span>
+                </div>
+                <p class="text-[#C5B8A8]">Une plateforme d'apprentissage moderne. Inspirée par Coursera, propulsée par
+                    Django & Tailwind CSS.</p>
             </div>
             <div>
-                <h4 class="text-[#EAE6D2] font-semibold mb-2">Useful Links</h4>
-                <ul class="space-y-1">
-                    <li><a href="{% url 'home' %}" class="hover:text-[#A7AA63]">Home</a></li>
-                    <li><a href="{% url 'course-list' %}" class="hover:text-[#A7AA63]">Courses</a></li>
-                    <li><a href="#" class="hover:text-[#A7AA63]">Privacy Policy</a></li>
+                <h4 class="text-[#EAE6D2] font-semibold mb-4">Liens Utiles</h4>
+                <ul class="space-y-2">
+                    <li><a href="{% url 'home' %}"
+                            class="hover:text-[#A7AA63] transition-colors duration-300">Accueil</a></li>
+                    <li><a href="{% url 'course-list' %}"
+                            class="hover:text-[#A7AA63] transition-colors duration-300">Cours</a></li>
+                    <li><a href="#" class="hover:text-[#A7AA63] transition-colors duration-300">Politique de
+                            confidentialité</a></li>
                 </ul>
             </div>
             <div>
-                <h4 class="text-[#EAE6D2] font-semibold mb-2">Contact</h4>
-                <p>Email: support@myplatform.com</p>
-                <p>Phone: +1 234 567 890</p>
-                <p>&copy; 2025 MyPlatform. All rights reserved.</p>
+                <h4 class="text-[#EAE6D2] font-semibold mb-4">Contact</h4>
+                <p class="mb-1"><i class="fas fa-envelope mr-2 text-[#A7AA63]"></i>support@edusphere.com</p>
+                <p class="mb-4"><i class="fas fa-phone mr-2 text-[#A7AA63]"></i>+1 234 567 890</p>
+                <p class="text-[#7C6B51]">&copy; 2025 EduSphere. Tous droits réservés.</p>
             </div>
         </div>
     </footer>
 
+    <!-- Global Delete Confirmation Modal -->
+    <div id="deleteModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <!-- Backdrop -->
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-[#312B1E] bg-opacity-75 transition-opacity" aria-hidden="true"
+                onclick="closeDeleteModal()"></div>
 
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
+            <!-- Modal Panel -->
+            <div
+                class="relative inline-block align-bottom bg-[#F2EFE4] rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-[#C5B8A8]">
+                <div class="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div
+                            class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-[#8B4513]/10 sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="fas fa-exclamation-triangle text-[#8B4513] text-lg"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-[#312B1E]" id="modal-title">
+                                Confirmer la suppression
+                            </h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-[#505039]" id="modal-description">
+                                    Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-[#EAE6D2] px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse border-t border-[#C5B8A8]">
+                    <form id="deleteForm" method="post" action="">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-[#8B4513] text-base font-medium text-white hover:bg-[#6B3410] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8B4513] sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+                            Supprimer
+                        </button>
+                    </form>
+                    <button type="button" onclick="closeDeleteModal()"
+                        class="mt-3 w-full inline-flex justify-center rounded-lg border border-[#C5B8A8] shadow-sm px-4 py-2 bg-white text-base font-medium text-[#505039] hover:bg-[#F2EFE4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#A7AA63] sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm transition-colors">
+                        Annuler
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function confirmDelete(deleteUrl, itemName) {
+            const modal = document.getElementById('deleteModal');
+            const form = document.getElementById('deleteForm');
+            const desc = document.getElementById('modal-description');
+
+            // Set the action URL for the form
+            form.action = deleteUrl;
+
+            // Update description if name provided
+            if (itemName) {
+                desc.textContent = `Êtes-vous sûr de vouloir supprimer "${itemName}" ? Cette action est irréversible.`;
+            } else {
+                desc.textContent = "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.";
+            }
+
+            // Show modal
+            modal.classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            const modal = document.getElementById('deleteModal');
+            modal.classList.add('hidden');
+        }
+
+        // Global Event Delegation for Delete Triggers
+        document.addEventListener('click', function (e) {
+            const deleteBtn = e.target.closest('.delete-trigger');
+            if (deleteBtn) {
+                e.preventDefault();
+                e.stopPropagation(); // Prevent bubbling if nested
+                const deleteUrl = deleteBtn.dataset.deleteUrl;
+                const itemTitle = deleteBtn.dataset.itemTitle;
+                confirmDelete(deleteUrl, itemTitle);
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeDeleteModal();
+            }
+        });
+    </script>
 </body>
 
 </html>

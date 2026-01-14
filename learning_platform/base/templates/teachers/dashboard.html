@@ -2,119 +2,325 @@
 {% block title %}Tableau de Bord Instructeur{% endblock %}
 
 {% block content %}
-<h1 class="text-3xl font-bold text-[#312B1E] mb-8"><i class="fas fa-chalkboard-teacher mr-3 text-[#A7AA63]"></i>Mon
-    Profil</h1>
+<!-- Header -->
+<div class="mb-10">
+    <h1 class="text-3xl font-bold text-[#312B1E]">
+        <i class="fas fa-chalkboard-teacher mr-3 text-[#A7AA63]"></i>Tableau de Bord Instructeur
+    </h1>
+    <p class="text-[#505039] mt-2">Gérez vos cours et suivez vos étudiants</p>
+</div>
 
-<!-- Formulaire modification infos -->
-<div class="bg-[#F2EFE4] p-6 rounded-xl shadow-lg border border-[#C5B8A8] max-w-3xl mb-12 mx-auto">
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+    <!-- Cours créés -->
+    <div class="group relative">
+        <div
+            class="absolute -inset-0.5 bg-gradient-to-r from-[#A7AA63] to-[#E2CEAE] rounded-2xl opacity-30 group-hover:opacity-60 blur-sm transition-opacity duration-500">
+        </div>
+        <div class="relative bg-[#F2EFE4] rounded-2xl p-6 border border-[#C5B8A8]/30">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <p class="text-sm text-[#7C6B51] mb-1">Cours créés</p>
+                    <p class="text-4xl font-bold text-[#312B1E]">{{ created_courses|length }}</p>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A7AA63] to-[#E2CEAE] flex items-center justify-center shadow-warm-sm">
+                    <i class="fas fa-book text-[#121A1B] text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total étudiants -->
+    <div class="group relative">
+        <div
+            class="absolute -inset-0.5 bg-gradient-to-r from-[#505039] to-[#7C6B51] rounded-2xl opacity-30 group-hover:opacity-60 blur-sm transition-opacity duration-500">
+        </div>
+        <div class="relative bg-[#F2EFE4] rounded-2xl p-6 border border-[#C5B8A8]/30">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <p class="text-sm text-[#7C6B51] mb-1">Total étudiants</p>
+                    {% with total_students=0 %}
+                    <p class="text-4xl font-bold text-[#312B1E]">{{ enrolled_users_by_course.values|length }}</p>
+                    {% endwith %}
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#505039] to-[#7C6B51] flex items-center justify-center shadow-warm-sm">
+                    <i class="fas fa-users text-[#FFFFFF] text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modifications -->
+    <div class="group relative">
+        <div
+            class="absolute -inset-0.5 bg-gradient-to-r from-[#7C6B51] to-[#C5B8A8] rounded-2xl opacity-30 group-hover:opacity-60 blur-sm transition-opacity duration-500">
+        </div>
+        <div class="relative bg-[#F2EFE4] rounded-2xl p-6 border border-[#C5B8A8]/30">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <p class="text-sm text-[#7C6B51] mb-1">Modifications</p>
+                    <p class="text-4xl font-bold text-[#312B1E]">{{ last_modifications|length }}</p>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#7C6B51] to-[#C5B8A8] flex items-center justify-center shadow-warm-sm">
+                    <i class="fas fa-history text-[#FFFFFF] text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Action -->
+    <div class="group relative">
+        <div
+            class="absolute -inset-0.5 bg-gradient-to-r from-[#312B1E] to-[#505039] rounded-2xl opacity-30 group-hover:opacity-60 blur-sm transition-opacity duration-500">
+        </div>
+        <div class="relative bg-[#F2EFE4] rounded-2xl p-6 border border-[#C5B8A8]/30">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <p class="text-sm text-[#7C6B51] mb-1">Action rapide</p>
+                    <a href="{% url 'course-create' %}"
+                        class="text-[#A7AA63] hover:text-[#8e9150] font-semibold transition-colors">
+                        + Nouveau cours
+                    </a>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#312B1E] to-[#505039] flex items-center justify-center shadow-warm-sm">
+                    <i class="fas fa-plus text-[#FFFFFF] text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Profile Form -->
+<div class="bg-[#F2EFE4] p-8 rounded-2xl shadow-warm-md border border-[#C5B8A8]/30 max-w-3xl mb-12">
+    <h2 class="text-2xl font-bold text-[#312B1E] mb-6 flex items-center gap-3">
+        <div
+            class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A7AA63] to-[#E2CEAE] flex items-center justify-center">
+            <i class="fas fa-user-edit text-[#121A1B]"></i>
+        </div>
+        Modifier mon profil
+    </h2>
     <form method="post" class="space-y-5">
         {% csrf_token %}
         {% for field in form %}
-        <div>
-            <label class="block text-sm font-semibold mb-1 text-[#505039]" for="{{ field.id_for_label }}">{{field.label}}</label>
+        <div class="form-field">
+            <label class="block text-sm font-semibold mb-2 text-[#505039]" for="{{ field.id_for_label }}">
+                {{ field.label }}
+            </label>
             {{ field }}
             {% for error in field.errors %}
-            <p class="text-[#8B4513] text-sm mt-1">{{ error }}</p>
+            <p class="text-[#312B1E] text-sm mt-1 flex items-center gap-1">
+                <i class="fas fa-exclamation-triangle text-[#7C6B51]"></i>{{ error }}
+            </p>
             {% endfor %}
         </div>
         {% endfor %}
-        <button type="submit"
-            class="bg-[#A7AA63] hover:bg-[#8e9150] text-white font-semibold px-6 py-2 rounded-lg transition flex items-center gap-2">
-            <i class="fas fa-save"></i> Mettre à jour
+        <button type="submit" class="btn-primary">
+            <i class="fas fa-save"></i>
+            Mettre à jour
         </button>
     </form>
 </div>
 
-<hr class="my-10 border-[#C5B8A8]">
+<!-- Separator -->
+<div class="h-px bg-gradient-to-r from-transparent via-[#C5B8A8] to-transparent mb-12"></div>
 
-<h2 class="text-2xl font-bold text-[#312B1E] mb-6"><i class="fas fa-book mr-3 text-[#A7AA63]"></i>Mes Cours Créés</h2>
-{% if created_courses %}
-<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-    {% for course in created_courses %}
-    <div class="course-card cursor-pointer bg-[#F2EFE4] text-[#312B1E] rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all p-4 border border-[#C5B8A8] flex flex-col justify-between"
-        data-href="{% url 'course-detail' course.pk %}">
-        <div>
-            {% if course.image %}
-            <img src="{{ course.image.url }}" alt="{{ course.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
-            {% else %}
-            <div
-                class="rounded-lg mb-4 h-40 w-full bg-gradient-to-br from-[#505039] to-[#312B1E] flex items-center justify-center">
-                <i class="fas fa-book text-6xl text-white/50"></i>
-            </div>
-            {% endif %}
-            <h3 class="text-lg font-semibold text-[#312B1E] mb-1 hover:text-[#A7AA63]">{{ course.title }}</h3>
-            <p class="text-sm text-[#7C6B51] mb-4">{{ course.description|truncatechars:50 }}</p>
-        </div>
-        <div class="mt-auto text-sm flex gap-2" onclick="event.stopPropagation()">
-            <a href="{% url 'course-update' course.pk %}" class="btn-sm btn-outline-warning" title="Modifier">
-                <i class="fas fa-edit"></i>
-            </a>
-            <a href="{% url 'course-delete' course.pk %}" class="btn-sm btn-outline-danger" title="Supprimer"
-                onclick="return confirm('Voulez-vous vraiment supprimer ce cours ?')">
-                <i class="fas fa-trash"></i>
-            </a>
-        </div>
+<!-- My Courses -->
+<div class="mb-12">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-[#312B1E] flex items-center gap-3">
+            <i class="fas fa-book text-[#A7AA63]"></i>
+            Mes Cours Créés
+        </h2>
+        <a href="{% url 'course-create' %}" class="btn-primary">
+            <i class="fas fa-plus"></i>
+            Créer un cours
+        </a>
     </div>
-    {% endfor %}
-</div>
-{% else %}
-<p class="text-[#7C6B51]">Vous n'avez pas encore créé de cours.</p>
-{% endif %}
 
-<hr class="my-10 border-[#C5B8A8]">
+    {% if created_courses %}
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {% for course in created_courses %}
+        <div class="group course-card cursor-pointer" data-href="{% url 'course-detail' course.pk %}">
+            <div class="bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30 overflow-hidden transition-all duration-500
+                        hover:shadow-[0_12px_24px_rgba(49,43,30,0.15),0_6px_12px_rgba(49,43,30,0.1)]
+                        hover:-translate-y-2 hover:border-[#A7AA63] flex flex-col h-full">
+                <!-- Image -->
+                <div class="relative h-40 overflow-hidden">
+                    {% if course.image %}
+                    <img src="{{ course.image.url }}" alt="{{ course.title }}"
+                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    {% else %}
+                    <div
+                        class="w-full h-full bg-gradient-to-br from-[#505039] to-[#312B1E] flex items-center justify-center">
+                        <i class="fas fa-book text-5xl text-[#FFFFFF]/30"></i>
+                    </div>
+                    {% endif %}
 
-<h2 class="text-2xl font-bold text-[#312B1E] mb-6"><i class="fas fa-history mr-3 text-[#7C6B51]"></i>Dernières
-    Modifications</h2>
-{% if last_modifications %}
-<ul class="list-none pl-0 text-[#505039] space-y-2">
-    {% for modif in last_modifications %}
-    <li class="bg-[#F2EFE4] p-3 rounded-lg border border-[#C5B8A8]">
-        <span class="text-[#A7AA63] font-medium">{{ modif.modified_at|date:"d/m/Y H:i" }}</span> : {{ modif.description}}
-    </li>
-    {% endfor %}
-</ul>
-{% else %}
-<p class="text-[#7C6B51]">Aucune modification récente enregistrée.</p>
-{% endif %}
+                    <!-- Stats overlay -->
+                    <div class="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-[#312B1E]/80 to-transparent">
+                        <div class="flex items-center gap-3 text-xs text-[#EAE6D2]">
+                            <span><i class="fas fa-users mr-1"></i>{{ course.enrollments.count }}</span>
+                            <span><i class="fas fa-layer-group mr-1"></i>{{ course.modules.count }}</span>
+                        </div>
+                    </div>
+                </div>
 
-<hr class="my-10 border-[#C5B8A8]">
+                <!-- Content -->
+                <div class="p-5 flex flex-col flex-1">
+                    <h3
+                        class="text-lg font-semibold text-[#312B1E] mb-2 group-hover:text-[#A7AA63] transition-colors line-clamp-2">
+                        {{ course.title }}
+                    </h3>
+                    <p class="text-sm text-[#7C6B51] mb-4 line-clamp-2">{{ course.description|truncatechars:60 }}</p>
 
-<h2 class="text-2xl font-bold text-[#312B1E] mb-6"><i class="fas fa-users mr-3 text-[#505039]"></i>Étudiants Inscrits à
-    Vos Cours</h2>
-{% if enrolled_users_by_course %}
-{% for course, users in enrolled_users_by_course.items %}
-<div class="mb-8 bg-[#F2EFE4] p-4 rounded-xl shadow-md border border-[#C5B8A8]">
-    <h3 class="text-[#312B1E] font-semibold mb-3">{{ course.title }}</h3>
-    {% if users %}
-    <table class="w-full text-left text-[#505039] text-sm">
-        <thead>
-            <tr>
-                <th class="border-b border-[#C5B8A8] px-3 py-1"><i class="fas fa-user mr-2"></i>Utilisateur</th>
-                <th class="border-b border-[#C5B8A8] px-3 py-1"><i class="fas fa-envelope mr-2"></i>Email</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for enrolled_user in users %}
-            <tr class="border-b border-[#E2CEAE]">
-                <td class="px-3 py-1">{{ enrolled_user.username }}</td>
-                <td class="px-3 py-1">{{ enrolled_user.email }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    <div class="mt-auto flex gap-2" onclick="event.stopPropagation()">
+                        <a href="{% url 'course-update' course.pk %}"
+                            class="btn-sm btn-outline-warning flex-1 justify-center">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <button type="button" class="btn-sm btn-outline-danger flex-1 justify-center delete-trigger"
+                            data-delete-url="{% url 'course-delete' course.pk %}"
+                            data-item-title="{{ course.title|escapejs }}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
     {% else %}
-    <p class="text-[#7C6B51]">Aucun étudiant inscrit à ce cours pour le moment.</p>
+    <div class="text-center py-16 bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-[#E2CEAE] flex items-center justify-center">
+            <i class="fas fa-book-open text-2xl text-[#7C6B51]"></i>
+        </div>
+        <p class="text-[#7C6B51] mb-4">Vous n'avez pas encore créé de cours.</p>
+        <a href="{% url 'course-create' %}" class="btn-primary">
+            <i class="fas fa-plus"></i>
+            Créer mon premier cours
+        </a>
+    </div>
     {% endif %}
 </div>
-{% endfor %}
-{% else %}
-<p class="text-[#7C6B51]">Vous n'avez pas de cours ou pas d'étudiants inscrits.</p>
-{% endif %}
+
+<!-- Separator -->
+<div class="h-px bg-gradient-to-r from-transparent via-[#C5B8A8] to-transparent mb-12"></div>
+
+<!-- Recent Modifications -->
+<div class="mb-12">
+    <h2 class="text-2xl font-bold text-[#312B1E] mb-6 flex items-center gap-3">
+        <i class="fas fa-history text-[#7C6B51]"></i>
+        Dernières Modifications
+    </h2>
+
+    {% if last_modifications %}
+    <div class="bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30 overflow-hidden">
+        <ul class="divide-y divide-[#C5B8A8]/30">
+            {% for modif in last_modifications %}
+            <li class="p-4 hover:bg-[#EAE6D2] transition-colors">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-lg bg-[#E2CEAE] flex items-center justify-center">
+                        <i class="fas fa-edit text-[#7C6B51]"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-[#312B1E]">{{ modif.description }}</p>
+                        <p class="text-sm text-[#7C6B51]">
+                            <i class="fas fa-clock mr-1"></i>{{ modif.modified_at|date:"d/m/Y H:i" }}
+                        </p>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% else %}
+    <div class="text-center py-12 bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30">
+        <p class="text-[#7C6B51]">Aucune modification récente enregistrée.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Separator -->
+<div class="h-px bg-gradient-to-r from-transparent via-[#C5B8A8] to-transparent mb-12"></div>
+
+<!-- Enrolled Students -->
+<div class="mb-12">
+    <h2 class="text-2xl font-bold text-[#312B1E] mb-6 flex items-center gap-3">
+        <i class="fas fa-users text-[#505039]"></i>
+        Étudiants Inscrits à Vos Cours
+    </h2>
+
+    {% if enrolled_users_by_course %}
+    <div class="space-y-6">
+        {% for course, users in enrolled_users_by_course.items %}
+        <div class="bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30 overflow-hidden shadow-warm-sm">
+            <div class="p-5 bg-gradient-to-r from-[#F2EFE4] to-[#EAE6D2] border-b border-[#C5B8A8]/30">
+                <h3 class="text-lg font-semibold text-[#312B1E] flex items-center gap-2">
+                    <i class="fas fa-book text-[#A7AA63]"></i>
+                    {{ course.title }}
+                    <span class="ml-auto px-3 py-1 rounded-full text-xs font-semibold bg-[#A7AA63]/10 text-[#A7AA63]">
+                        {{ users|length }} étudiant{{ users|pluralize }}
+                    </span>
+                </h3>
+            </div>
+
+            {% if users %}
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-[#EAE6D2]">
+                            <th class="text-left px-5 py-3 text-sm font-semibold text-[#505039]">
+                                <i class="fas fa-user mr-2 text-[#A7AA63]"></i>Utilisateur
+                            </th>
+                            <th class="text-left px-5 py-3 text-sm font-semibold text-[#505039]">
+                                <i class="fas fa-envelope mr-2 text-[#A7AA63]"></i>Email
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#C5B8A8]/30">
+                        {% for enrolled_user in users %}
+                        <tr class="hover:bg-[#EAE6D2]/50 transition-colors">
+                            <td class="px-5 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="w-8 h-8 rounded-full bg-gradient-to-br from-[#A7AA63] to-[#E2CEAE] flex items-center justify-center text-xs font-bold text-[#312B1E]">
+                                        {{ enrolled_user.username|first|upper }}
+                                    </div>
+                                    <span class="text-[#312B1E] font-medium">{{ enrolled_user.username }}</span>
+                                </div>
+                            </td>
+                            <td class="px-5 py-4 text-[#505039]">{{ enrolled_user.email }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-8 text-center">
+                <p class="text-[#7C6B51]">Aucun étudiant inscrit à ce cours pour le moment.</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-12 bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30">
+        <p class="text-[#7C6B51]">Vous n'avez pas de cours ou pas d'étudiants inscrits.</p>
+    </div>
+    {% endif %}
+</div>
 
 <script>
+    // Style form inputs
     document.querySelectorAll('input, select, textarea').forEach(el => {
-        el.classList.add('w-full', 'px-4', 'py-2', 'bg-[#EAE6D2]', 'text-[#312B1E]', 'rounded-lg', 'border', 'border-[#C5B8A8]', 'focus:outline-none', 'focus:ring-2', 'focus:ring-[#A7AA63]');
+        el.classList.add('w-full', 'px-4', 'py-3', 'rounded-xl');
     });
+
+    // Course card click handler
     document.querySelectorAll('.course-card[data-href]').forEach(function (card) {
         card.addEventListener('click', function (e) {
             if (!e.target.closest('a, button, form')) {
@@ -123,5 +329,4 @@
         });
     });
 </script>
-
 {% endblock %}

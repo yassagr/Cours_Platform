@@ -5,103 +5,111 @@
 {% block content %}
 <div class="max-w-3xl mx-auto">
     <!-- Breadcrumb -->
-    <nav class="text-sm text-[#7C6B51] mb-6">
-        <a href="{% url 'course-list' %}" class="hover:text-[#312B1E]">Cours</a> /
-        <a href="{% url 'course-detail' course.id %}" class="hover:text-[#312B1E]">{{ course.title }}</a> /
-        <a href="{% url 'question-list' evaluation.id %}" class="hover:text-[#312B1E]">{{ evaluation.title }}</a> /
-        <span class="text-[#312B1E]">{% if is_edit %}Modifier{% else %}Ajouter{% endif %} Question</span>
+    <nav class="flex items-center gap-2 text-sm text-[#7C6B51] mb-6 flex-wrap">
+        <a href="{% url 'course-list' %}" class="hover:text-[#A7AA63] transition-colors">Cours</a>
+        <i class="fas fa-chevron-right text-xs"></i>
+        <a href="{% url 'course-detail' course.id %}" class="hover:text-[#A7AA63] transition-colors">{{ course.title}}</a>
+        <i class="fas fa-chevron-right text-xs"></i>
+        <a href="{% url 'question-list' evaluation.id %}" class="hover:text-[#A7AA63] transition-colors">{{ evaluation.title }}</a>
+        <i class="fas fa-chevron-right text-xs"></i>
+        <span class="text-[#312B1E] font-medium">{% if is_edit %}Modifier{% else %}Ajouter{% endif %} Question</span>
     </nav>
 
     <!-- Header -->
-    <h1 class="text-3xl font-bold text-[#312B1E] mb-8">
-        {% if is_edit %}<i class="fas fa-edit mr-2 text-[#A7AA63]"></i>Modifier la question{% else %}<i
-            class="fas fa-plus mr-2 text-[#A7AA63]"></i>Nouvelle question{% endif %}
-    </h1>
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-[#312B1E] flex items-center gap-3">
+            {% if is_edit %}
+            <div
+                class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#7C6B51] to-[#C5B8A8] flex items-center justify-center">
+                <i class="fas fa-edit text-[#FFFFFF]"></i>
+            </div>
+            Modifier la question
+            {% else %}
+            <div
+                class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A7AA63] to-[#E2CEAE] flex items-center justify-center">
+                <i class="fas fa-plus text-[#121A1B]"></i>
+            </div>
+            Nouvelle question
+            {% endif %}
+        </h1>
+    </div>
 
     <!-- Form -->
-    <form method="post" class="bg-[#F2EFE4] rounded-xl p-8 space-y-6 border border-[#C5B8A8]">
+    <form method="post" class="bg-[#F2EFE4] rounded-2xl p-8 space-y-6 border border-[#C5B8A8]/30 shadow-warm-md">
         {% csrf_token %}
 
         <!-- Question Text -->
-        <div>
-            <label for="id_text" class="block text-sm font-medium text-[#505039] mb-2">
-                Énoncé de la question *
+        <div class="form-field">
+            <label for="id_text" class="block text-sm font-semibold mb-2 text-[#505039]">
+                Énoncé de la question <span class="text-[#A7AA63]">*</span>
             </label>
-            <textarea name="text" id="id_text" rows="4" required
-                class="w-full bg-[#EAE6D2] border border-[#C5B8A8] rounded-lg px-4 py-3 text-[#312B1E] focus:border-[#A7AA63] focus:ring-1 focus:ring-[#A7AA63] transition"
+            <textarea name="text" id="id_text" rows="4" required class="w-full px-4 py-3 rounded-xl"
                 placeholder="Quelle est la capitale de la France ?">{{ form.text.value|default:'' }}</textarea>
         </div>
 
         <!-- Options Grid -->
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label for="id_option1" class="block text-sm font-medium text-[#505039] mb-2">
-                    Option A *
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="form-field">
+                <label for="id_option1" class="block text-sm font-semibold mb-2 text-[#505039]">
+                    Option A <span class="text-[#A7AA63]">*</span>
                 </label>
                 <input type="text" name="option1" id="id_option1" required value="{{ form.option1.value|default:'' }}"
-                    class="w-full bg-[#EAE6D2] border border-[#C5B8A8] rounded-lg px-4 py-3 text-[#312B1E] focus:border-[#A7AA63] focus:ring-1 focus:ring-[#A7AA63] transition"
-                    placeholder="Paris">
+                    class="w-full px-4 py-3 rounded-xl" placeholder="Paris">
             </div>
-            <div>
-                <label for="id_option2" class="block text-sm font-medium text-[#505039] mb-2">
-                    Option B *
+            <div class="form-field">
+                <label for="id_option2" class="block text-sm font-semibold mb-2 text-[#505039]">
+                    Option B <span class="text-[#A7AA63]">*</span>
                 </label>
                 <input type="text" name="option2" id="id_option2" required value="{{ form.option2.value|default:'' }}"
-                    class="w-full bg-[#EAE6D2] border border-[#C5B8A8] rounded-lg px-4 py-3 text-[#312B1E] focus:border-[#A7AA63] focus:ring-1 focus:ring-[#A7AA63] transition"
-                    placeholder="Londres">
+                    class="w-full px-4 py-3 rounded-xl" placeholder="Londres">
             </div>
-            <div>
-                <label for="id_option3" class="block text-sm font-medium text-[#505039] mb-2">
-                    Option C *
+            <div class="form-field">
+                <label for="id_option3" class="block text-sm font-semibold mb-2 text-[#505039]">
+                    Option C <span class="text-[#A7AA63]">*</span>
                 </label>
                 <input type="text" name="option3" id="id_option3" required value="{{ form.option3.value|default:'' }}"
-                    class="w-full bg-[#EAE6D2] border border-[#C5B8A8] rounded-lg px-4 py-3 text-[#312B1E] focus:border-[#A7AA63] focus:ring-1 focus:ring-[#A7AA63] transition"
-                    placeholder="Berlin">
+                    class="w-full px-4 py-3 rounded-xl" placeholder="Berlin">
             </div>
-            <div>
-                <label for="id_option4" class="block text-sm font-medium text-[#505039] mb-2">
-                    Option D *
+            <div class="form-field">
+                <label for="id_option4" class="block text-sm font-semibold mb-2 text-[#505039]">
+                    Option D <span class="text-[#A7AA63]">*</span>
                 </label>
                 <input type="text" name="option4" id="id_option4" required value="{{ form.option4.value|default:'' }}"
-                    class="w-full bg-[#EAE6D2] border border-[#C5B8A8] rounded-lg px-4 py-3 text-[#312B1E] focus:border-[#A7AA63] focus:ring-1 focus:ring-[#A7AA63] transition"
-                    placeholder="Madrid">
+                    class="w-full px-4 py-3 rounded-xl" placeholder="Madrid">
             </div>
         </div>
 
         <!-- Correct Answer & Points -->
-        <div class="grid grid-cols-2 gap-4">
-            <div>
-                <label for="id_correct_option" class="block text-sm font-medium text-[#505039] mb-2">
-                    Bonne réponse *
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="form-field">
+                <label for="id_correct_option" class="block text-sm font-semibold mb-2 text-[#505039]">
+                    Bonne réponse <span class="text-[#A7AA63]">*</span>
                 </label>
-                <select name="correct_option" id="id_correct_option" required
-                    class="w-full bg-[#EAE6D2] border border-[#C5B8A8] rounded-lg px-4 py-3 text-[#312B1E] focus:border-[#A7AA63] focus:ring-1 focus:ring-[#A7AA63] transition">
+                <select name="correct_option" id="id_correct_option" required class="w-full px-4 py-3 rounded-xl">
                     <option value="A" {% if form.correct_option.value == 'A' %}selected{% endif %}>A</option>
                     <option value="B" {% if form.correct_option.value == 'B' %}selected{% endif %}>B</option>
                     <option value="C" {% if form.correct_option.value == 'C' %}selected{% endif %}>C</option>
                     <option value="D" {% if form.correct_option.value == 'D' %}selected{% endif %}>D</option>
                 </select>
             </div>
-            <div>
-                <label for="id_points" class="block text-sm font-medium text-[#505039] mb-2">
+            <div class="form-field">
+                <label for="id_points" class="block text-sm font-semibold mb-2 text-[#505039]">
                     Points
                 </label>
                 <input type="number" name="points" id="id_points" step="0.5" min="0"
-                    value="{{ form.points.value|default:'1' }}"
-                    class="w-full bg-[#EAE6D2] border border-[#C5B8A8] rounded-lg px-4 py-3 text-[#312B1E] focus:border-[#A7AA63] focus:ring-1 focus:ring-[#A7AA63] transition">
+                    value="{{ form.points.value|default:'1' }}" class="w-full px-4 py-3 rounded-xl">
             </div>
         </div>
 
         <!-- Buttons -->
-        <div class="flex justify-between pt-4">
-            <a href="{% url 'question-list' evaluation.id %}"
-                class="bg-[#C5B8A8] hover:bg-[#A7AA63] text-[#312B1E] hover:text-white px-6 py-3 rounded-lg font-semibold transition">
+        <div class="flex items-center gap-4 pt-6 border-t border-[#C5B8A8]/30">
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-save"></i>
+                {% if is_edit %}Enregistrer{% else %}Ajouter{% endif %}
+            </button>
+            <a href="{% url 'question-list' evaluation.id %}" class="btn-secondary">
                 Annuler
             </a>
-            <button type="submit"
-                class="bg-[#A7AA63] hover:bg-[#8e9150] text-white px-8 py-3 rounded-lg font-semibold transition">
-                {% if is_edit %}Enregistrer les modifications{% else %}Ajouter la question{% endif %}
-            </button>
         </div>
     </form>
 </div>

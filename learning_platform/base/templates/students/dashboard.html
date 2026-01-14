@@ -2,129 +2,308 @@
 {% block title %}Tableau de Bord Étudiant{% endblock %}
 
 {% block content %}
-<h1 class="text-3xl font-bold text-[#312B1E] mb-8"><i class="fas fa-user-graduate mr-3 text-[#A7AA63]"></i>Mon Profil
-</h1>
+<!-- Header -->
+<div class="mb-10">
+    <h1 class="text-3xl font-bold text-[#312B1E]">
+        <i class="fas fa-user-graduate mr-3 text-[#A7AA63]"></i>Mon Tableau de Bord
+    </h1>
+    <p class="text-[#505039] mt-2">Bienvenue, {{ user.username }} !</p>
+</div>
 
-<!-- Formulaire modification utilisateur -->
-<div class="bg-[#F2EFE4] p-6 rounded-xl shadow-lg border border-[#C5B8A8] max-w-3xl mb-12 mx-auto">
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+    <!-- Cours suivis -->
+    <div class="group relative">
+        <div
+            class="absolute -inset-0.5 bg-gradient-to-r from-[#A7AA63] to-[#E2CEAE] rounded-2xl opacity-30 group-hover:opacity-60 blur-sm transition-opacity duration-500">
+        </div>
+        <div class="relative bg-[#F2EFE4] rounded-2xl p-6 border border-[#C5B8A8]/30">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <p class="text-sm text-[#7C6B51] mb-1">Cours suivis</p>
+                    <p class="text-4xl font-bold text-[#312B1E]">{{ enrolled_courses|length }}</p>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A7AA63] to-[#E2CEAE] flex items-center justify-center shadow-warm-sm">
+                    <i class="fas fa-book text-[#121A1B] text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Certificats -->
+    <div class="group relative">
+        <div
+            class="absolute -inset-0.5 bg-gradient-to-r from-[#7C6B51] to-[#C5B8A8] rounded-2xl opacity-30 group-hover:opacity-60 blur-sm transition-opacity duration-500">
+        </div>
+        <div class="relative bg-[#F2EFE4] rounded-2xl p-6 border border-[#C5B8A8]/30">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <p class="text-sm text-[#7C6B51] mb-1">Certificats</p>
+                    <p class="text-4xl font-bold text-[#312B1E]">{{ certificates|length }}</p>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#7C6B51] to-[#C5B8A8] flex items-center justify-center shadow-warm-sm">
+                    <i class="fas fa-certificate text-[#FFFFFF] text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Suggested -->
+    <div class="group relative">
+        <div
+            class="absolute -inset-0.5 bg-gradient-to-r from-[#505039] to-[#7C6B51] rounded-2xl opacity-30 group-hover:opacity-60 blur-sm transition-opacity duration-500">
+        </div>
+        <div class="relative bg-[#F2EFE4] rounded-2xl p-6 border border-[#C5B8A8]/30">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <p class="text-sm text-[#7C6B51] mb-1">Suggestions</p>
+                    <p class="text-4xl font-bold text-[#312B1E]">{{ suggested_courses|length }}</p>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#505039] to-[#7C6B51] flex items-center justify-center shadow-warm-sm">
+                    <i class="fas fa-lightbulb text-[#FFFFFF] text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile -->
+    <div class="group relative">
+        <div
+            class="absolute -inset-0.5 bg-gradient-to-r from-[#312B1E] to-[#505039] rounded-2xl opacity-30 group-hover:opacity-60 blur-sm transition-opacity duration-500">
+        </div>
+        <div class="relative bg-[#F2EFE4] rounded-2xl p-6 border border-[#C5B8A8]/30">
+            <div class="flex items-start justify-between mb-4">
+                <div>
+                    <p class="text-sm text-[#7C6B51] mb-1">Profil</p>
+                    <p class="text-lg font-bold text-[#312B1E]">{{ user.role }}</p>
+                </div>
+                <div
+                    class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#312B1E] to-[#505039] flex items-center justify-center shadow-warm-sm">
+                    <i class="fas fa-user text-[#FFFFFF] text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Profile Form -->
+<div class="bg-[#F2EFE4] p-8 rounded-2xl shadow-warm-md border border-[#C5B8A8]/30 max-w-3xl mb-12">
+    <h2 class="text-2xl font-bold text-[#312B1E] mb-6 flex items-center gap-3">
+        <div
+            class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A7AA63] to-[#E2CEAE] flex items-center justify-center">
+            <i class="fas fa-user-edit text-[#121A1B]"></i>
+        </div>
+        Modifier mon profil
+    </h2>
     <form method="post" class="space-y-5">
         {% csrf_token %}
         {% for field in form %}
-        <div>
-            <label class="block text-sm font-semibold mb-1 text-[#505039]" for="{{ field.id_for_label }}">{{ field.label}}</label>
+        <div class="form-field">
+            <label class="block text-sm font-semibold mb-2 text-[#505039]" for="{{ field.id_for_label }}">
+                {{ field.label }}
+            </label>
             {{ field }}
             {% for error in field.errors %}
-            <p class="text-[#8B4513] text-sm mt-1">{{ error }}</p>
+            <p class="text-[#312B1E] text-sm mt-1 flex items-center gap-1">
+                <i class="fas fa-exclamation-triangle text-[#7C6B51]"></i>{{ error }}
+            </p>
             {% endfor %}
         </div>
         {% endfor %}
-        <button type="submit"
-            class="bg-[#A7AA63] hover:bg-[#8e9150] text-white font-semibold px-6 py-2 rounded-lg transition flex items-center gap-2">
-            <i class="fas fa-save"></i> Mettre à jour
+        <button type="submit" class="btn-primary">
+            <i class="fas fa-save"></i>
+            Mettre à jour
         </button>
     </form>
 </div>
 
-<hr class="my-10 border-[#C5B8A8]">
+<!-- Separator -->
+<div class="h-px bg-gradient-to-r from-transparent via-[#C5B8A8] to-transparent mb-12"></div>
 
-<h2 class="text-2xl font-bold text-[#312B1E] mb-6"><i class="fas fa-book mr-3 text-[#A7AA63]"></i>Mes Cours</h2>
-{% if enrolled_courses %}
-<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-    {% for course in enrolled_courses %}
-    <div class="course-card cursor-pointer bg-[#F2EFE4] text-[#312B1E] rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all p-4 border border-[#C5B8A8] flex flex-col justify-between"
-        data-href="{% url 'course-detail' course.pk %}">
-        <div>
-            {% if course.image %}
-            <img src="{{ course.image.url }}" alt="{{ course.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
-            {% else %}
-            <div
-                class="rounded-lg mb-4 h-40 w-full bg-gradient-to-br from-[#505039] to-[#312B1E] flex items-center justify-center">
-                <i class="fas fa-book text-6xl text-white/50"></i>
+<!-- My Courses -->
+<div class="mb-12">
+    <h2 class="text-2xl font-bold text-[#312B1E] mb-6 flex items-center gap-3">
+        <i class="fas fa-book text-[#A7AA63]"></i>
+        Mes Cours
+    </h2>
+
+    {% if enrolled_courses %}
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {% for course in enrolled_courses %}
+        <div class="group course-card cursor-pointer" data-href="{% url 'course-detail' course.pk %}">
+            <div class="bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30 overflow-hidden transition-all duration-500
+                        hover:shadow-[0_12px_24px_rgba(49,43,30,0.15),0_6px_12px_rgba(49,43,30,0.1)]
+                        hover:-translate-y-2 hover:border-[#A7AA63] flex flex-col h-full">
+                <!-- Image -->
+                <div class="relative h-40 overflow-hidden">
+                    {% if course.image %}
+                    <img src="{{ course.image.url }}" alt="{{ course.title }}"
+                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    {% else %}
+                    <div
+                        class="w-full h-full bg-gradient-to-br from-[#505039] to-[#312B1E] flex items-center justify-center">
+                        <i class="fas fa-book text-5xl text-[#FFFFFF]/30"></i>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Content -->
+                <div class="p-5 flex flex-col flex-1">
+                    <h3
+                        class="text-lg font-semibold text-[#312B1E] mb-2 group-hover:text-[#A7AA63] transition-colors line-clamp-2">
+                        {{ course.title }}
+                    </h3>
+                    <p class="text-sm text-[#7C6B51] mb-4 line-clamp-2">{{ course.description|truncatechars:60 }}</p>
+
+                    <div class="mt-auto" onclick="event.stopPropagation()">
+                        <a href="{% url 'module-list-by-course' course.pk %}" class="btn-primary w-full justify-center">
+                            <i class="fas fa-arrow-right"></i>
+                            Continuer
+                        </a>
+                    </div>
+                </div>
             </div>
-            {% endif %}
-            <h3 class="text-lg font-semibold text-[#312B1E] mb-1 hover:text-[#A7AA63]">{{ course.title }}</h3>
-            <p class="text-sm text-[#7C6B51] mb-4">{{ course.description|truncatechars:50 }}</p>
         </div>
-        <div class="mt-auto text-sm">
-            <a href="{% url 'module-list-by-course' course.pk %}"
-                class="bg-[#A7AA63] hover:bg-[#8e9150] text-white text-center font-semibold px-4 py-2 rounded-lg mt-2 inline-block transition w-full">
-                <i class="fas fa-arrow-right mr-2"></i>Continuer
-            </a>
-        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
+    {% else %}
+    <div class="text-center py-16 bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-[#E2CEAE] flex items-center justify-center">
+            <i class="fas fa-book-open text-2xl text-[#7C6B51]"></i>
+        </div>
+        <p class="text-[#7C6B51] mb-4">Vous n'êtes inscrit à aucun cours pour le moment.</p>
+        <a href="{% url 'course-list' %}" class="btn-primary">
+            <i class="fas fa-search"></i>
+            Découvrir les cours
+        </a>
+    </div>
+    {% endif %}
 </div>
-{% else %}
-<p class="text-[#7C6B51]">Vous n'êtes inscrit à aucun cours pour le moment.</p>
-{% endif %}
 
-<hr class="my-10 border-[#C5B8A8]">
+<!-- Separator -->
+<div class="h-px bg-gradient-to-r from-transparent via-[#C5B8A8] to-transparent mb-12"></div>
 
-<h2 class="text-2xl font-bold text-[#312B1E] mb-6"><i class="fas fa-star mr-3 text-[#7C6B51]"></i>Cours Suggérés</h2>
-{% if suggested_courses %}
-<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-    {% for course in suggested_courses %}
-    <div class="course-card cursor-pointer bg-[#F2EFE4] text-[#312B1E] rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition-all p-4 border border-[#C5B8A8] flex flex-col justify-between"
-        data-href="{% url 'course-detail' course.pk %}">
-        <div>
-            {% if course.image %}
-            <img src="{{ course.image.url }}" alt="{{ course.title }}" class="rounded-lg mb-4 h-40 w-full object-cover">
-            {% else %}
-            <div
-                class="rounded-lg mb-4 h-40 w-full bg-gradient-to-br from-[#A7AA63] to-[#505039] flex items-center justify-center">
-                <i class="fas fa-lightbulb text-6xl text-white/50"></i>
+<!-- Suggested Courses -->
+<div class="mb-12">
+    <h2 class="text-2xl font-bold text-[#312B1E] mb-6 flex items-center gap-3">
+        <i class="fas fa-star text-[#7C6B51]"></i>
+        Cours Suggérés
+    </h2>
+
+    {% if suggested_courses %}
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {% for course in suggested_courses %}
+        <div class="group course-card cursor-pointer" data-href="{% url 'course-detail' course.pk %}">
+            <div class="bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30 overflow-hidden transition-all duration-500
+                        hover:shadow-[0_12px_24px_rgba(49,43,30,0.15),0_6px_12px_rgba(49,43,30,0.1)]
+                        hover:-translate-y-2 hover:border-[#A7AA63] flex flex-col h-full">
+                <!-- Image -->
+                <div class="relative h-40 overflow-hidden">
+                    {% if course.image %}
+                    <img src="{{ course.image.url }}" alt="{{ course.title }}"
+                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    {% else %}
+                    <div
+                        class="w-full h-full bg-gradient-to-br from-[#A7AA63] to-[#505039] flex items-center justify-center">
+                        <i class="fas fa-lightbulb text-5xl text-[#FFFFFF]/40"></i>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Content -->
+                <div class="p-5 flex flex-col flex-1">
+                    <h3
+                        class="text-lg font-semibold text-[#312B1E] mb-2 group-hover:text-[#A7AA63] transition-colors line-clamp-2">
+                        {{ course.title }}
+                    </h3>
+                    <p class="text-sm text-[#7C6B51] mb-4 line-clamp-2">{{ course.description|truncatechars:60 }}</p>
+
+                    <div class="mt-auto" onclick="event.stopPropagation()">
+                        <form action="{% url 'enroll' course.pk %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-secondary w-full justify-center">
+                                <i class="fas fa-user-plus"></i>
+                                S'inscrire
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            {% endif %}
-            <h3 class="text-lg font-semibold text-[#312B1E] mb-1 hover:text-[#A7AA63]">{{ course.title }}</h3>
-            <p class="text-sm text-[#7C6B51] mb-4">{{ course.description|truncatechars:50 }}</p>
         </div>
-        <div class="mt-auto text-sm" onclick="event.stopPropagation()">
-            <form action="{% url 'enroll' course.pk %}" method="post">
-                {% csrf_token %}
-                <button type="submit"
-                    class="bg-[#505039] hover:bg-[#312B1E] text-white font-semibold px-4 py-2 mt-2 rounded-lg transition w-full flex items-center justify-center gap-2">
-                    <i class="fas fa-user-plus"></i> S'inscrire
-                </button>
-            </form>
-        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
-{% else %}
-<p class="text-[#7C6B51]">Pas de suggestions de cours disponibles pour le moment.</p>
-{% endif %}
-
-<hr class="my-10 border-[#C5B8A8]">
-
-<h2 class="text-2xl font-bold text-[#312B1E] mb-6"><i class="fas fa-certificate mr-3 text-[#A7AA63]"></i>Mes Certificats
-</h2>
-{% if certificates %}
-<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-    {% for cert in certificates %}
-    <div class="bg-[#F2EFE4] rounded-xl shadow-md p-4 border border-[#C5B8A8]">
-        <h3 class="text-[#312B1E] font-semibold mb-2">{{ cert.course.title }}</h3>
-        <p class="text-[#7C6B51] text-sm mb-2">Délivré le : {{ cert.issued_on }}</p>
-        <div class="flex gap-2 mt-3">
-            <a href="{% url 'certificate-preview' cert.id %}" target="_blank" class="btn-sm btn-outline-primary"
-                title="Voir le certificat">
-                <i class="fas fa-eye"></i>
-            </a>
-            <a href="{% url 'certificate-download' cert.id %}" class="btn-sm btn-outline-success"
-                title="Télécharger le certificat">
-                <i class="fas fa-download"></i>
-            </a>
-        </div>
+    {% else %}
+    <div class="text-center py-12 bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30">
+        <p class="text-[#7C6B51]">Pas de suggestions de cours disponibles pour le moment.</p>
     </div>
-    {% endfor %}
+    {% endif %}
 </div>
-{% else %}
-<p class="text-[#7C6B51]">Vous n'avez pas encore de certificats.</p>
-{% endif %}
+
+<!-- Separator -->
+<div class="h-px bg-gradient-to-r from-transparent via-[#C5B8A8] to-transparent mb-12"></div>
+
+<!-- Certificates -->
+<div class="mb-12">
+    <h2 class="text-2xl font-bold text-[#312B1E] mb-6 flex items-center gap-3">
+        <i class="fas fa-certificate text-[#A7AA63]"></i>
+        Mes Certificats
+    </h2>
+
+    {% if certificates %}
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {% for cert in certificates %}
+        <div class="group relative">
+            <div
+                class="absolute -inset-0.5 bg-gradient-to-r from-[#A7AA63] to-[#E2CEAE] rounded-2xl opacity-0 group-hover:opacity-40 blur-sm transition-opacity duration-500">
+            </div>
+            <div
+                class="relative bg-[#F2EFE4] rounded-2xl p-6 border border-[#C5B8A8]/30 hover:border-[#A7AA63] transition-all duration-300">
+                <div class="flex items-start gap-4 mb-4">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A7AA63] to-[#E2CEAE] flex items-center justify-center shadow-warm-sm">
+                        <i class="fas fa-award text-[#121A1B] text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-[#312B1E] font-semibold">{{ cert.course.title }}</h3>
+                        <p class="text-[#7C6B51] text-sm">Délivré le : {{ cert.issued_on }}</p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <a href="{% url 'certificate-preview' cert.id %}" target="_blank"
+                        class="btn-sm btn-outline-primary flex-1 justify-center">
+                        <i class="fas fa-eye"></i>
+                        Voir
+                    </a>
+                    <a href="{% url 'certificate-download' cert.id %}"
+                        class="btn-sm btn-outline-success flex-1 justify-center">
+                        <i class="fas fa-download"></i>
+                        Télécharger
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-12 bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-[#E2CEAE] flex items-center justify-center">
+            <i class="fas fa-certificate text-2xl text-[#7C6B51]"></i>
+        </div>
+        <p class="text-[#7C6B51]">Vous n'avez pas encore de certificats.</p>
+    </div>
+    {% endif %}
+</div>
 
 <script>
+    // Style form inputs
     document.querySelectorAll('input, select, textarea').forEach(el => {
-        el.classList.add('w-full', 'px-4', 'py-2', 'bg-[#EAE6D2]', 'text-[#312B1E]', 'rounded-lg', 'border', 'border-[#C5B8A8]', 'focus:outline-none', 'focus:ring-2', 'focus:ring-[#A7AA63]');
+        el.classList.add('w-full', 'px-4', 'py-3', 'rounded-xl');
     });
+
+    // Course card click handler
     document.querySelectorAll('.course-card[data-href]').forEach(function (card) {
         card.addEventListener('click', function (e) {
             if (!e.target.closest('a, button, form')) {
