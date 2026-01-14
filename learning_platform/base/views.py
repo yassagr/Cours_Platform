@@ -586,6 +586,34 @@ class EnrollView(LoginRequiredMixin, View):
             Enrollment.objects.create(student=request.user, course=course)
             messages.success(request, "Inscription réussie!")
             
+            # =====================================================
+            # SYNC NEO4J: Créer relation ENROLLED_IN
+            # =====================================================
+            try:
+                from base.neo_models import NeoUser, NeoCourse, get_neo_user
+                from datetime import date
+                
+                neo_user = get_neo_user(request)
+                if neo_user:
+                    # Trouver le cours Neo4j par titre
+                    neo_course = NeoCourse.nodes.get_or_none(title=course.title)
+                    if neo_course:
+                        # Créer la relation si pas déjà existante
+                        if neo_course not in neo_user.enrolled_in.all():
+                            neo_user.enrolled_in.connect(neo_course, {
+                                'enrolled_on': date.today(),
+                                'completion_percent': 0.0,
+                                'certified': False
+                            })
+                            import logging
+                            logger = logging.getLogger('base')
+                            logger.info(f"Neo4j: {request.user.username} enrolled in {course.title}")
+            except Exception as e:
+                import logging
+                logger = logging.getLogger('base')
+                logger.warning(f"Neo4j enrollment sync failed: {e}")
+            # =====================================================
+            
             # Notifier l'instructeur de la nouvelle inscription
             create_notification(
                 recipient=course.instructor,
@@ -614,6 +642,26 @@ class UnenrollView(LoginRequiredMixin, View):
         if enrollment:
             enrollment.delete()
             messages.success(request, "You have successfully unenrolled from the course.")
+            
+            # =====================================================
+            # SYNC NEO4J: Supprimer relation ENROLLED_IN
+            # =====================================================
+            try:
+                from base.neo_models import NeoUser, NeoCourse, get_neo_user
+                
+                neo_user = get_neo_user(request)
+                if neo_user:
+                    neo_course = NeoCourse.nodes.get_or_none(title=course.title)
+                    if neo_course and neo_course in neo_user.enrolled_in.all():
+                        neo_user.enrolled_in.disconnect(neo_course)
+                        import logging
+                        logger = logging.getLogger('base')
+                        logger.info(f"Neo4j: {request.user.username} unenrolled from {course.title}")
+            except Exception as e:
+                import logging
+                logger = logging.getLogger('base')
+                logger.warning(f"Neo4j unenroll sync failed: {e}")
+            # =====================================================
         else:
             messages.info(request, "You are not enrolled in this course.")
 
@@ -630,23 +678,41 @@ class UserUpdateForm(forms.ModelForm):
 class StudentDashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'students/dashboard.html'
 
+    def get_neo_recommendations(self, user):
+        """Récupérer les recommandations depuis Neo4j"""
+        try:
+            from base.recommendations import CourseRecommendationEngine
+            recommendations = CourseRecommendationEngine.get_recommendations_for_student(
+                user.username, limit=6
+            )
+            return recommendations
+        except Exception as e:
+            import logging
+            logger = logging.getLogger('base')
+            logger.warning(f"Neo4j recommendations failed: {e}")
+            return []
+
     def get(self, request, *args, **kwargs):
         user = request.user
         form = UserUpdateForm(instance=user)
 
-        # Cours où il est inscrit
+        # Cours où il est inscrit (Django ORM pour compatibilité)
         enrolled_courses = Course.objects.filter(enrollments__student=user)
 
-        # Cours non inscrits pour suggestions
+        # Cours non inscrits pour suggestions (fallback)
         suggested_courses = Course.objects.exclude(id__in=enrolled_courses.values_list('id', flat=True))[:6]
 
-        # Certificats (adapter selon ton modèle)
+        # Recommandations intelligentes Neo4j
+        neo_recommendations = self.get_neo_recommendations(user)
+
+        # Certificats
         certificates = Certificate.objects.filter(student=user)
 
         context = {
             'form': form,
             'enrolled_courses': enrolled_courses,
             'suggested_courses': suggested_courses,
+            'neo_recommendations': neo_recommendations,  # Recommandations Neo4j
             'certificates': certificates,
         }
         return self.render_to_response(context)
@@ -664,12 +730,14 @@ class StudentDashboardView(LoginRequiredMixin, TemplateView):
         # Même contexte que get
         enrolled_courses = Course.objects.filter(enrollments__student=user)
         suggested_courses = Course.objects.exclude(id__in=enrolled_courses.values_list('id', flat=True))[:6]
+        neo_recommendations = self.get_neo_recommendations(user)
         certificates = Certificate.objects.filter(student=user)
 
         context = {
             'form': form,
             'enrolled_courses': enrolled_courses,
             'suggested_courses': suggested_courses,
+            'neo_recommendations': neo_recommendations,
             'certificates': certificates,
         }
         return self.render_to_response(context)

@@ -245,6 +245,90 @@
 <!-- Separator -->
 <div class="h-px bg-gradient-to-r from-transparent via-[#C5B8A8] to-transparent mb-12"></div>
 
+<!-- Neo4j Intelligent Recommendations -->
+<div class="mb-12">
+    <h2 class="text-2xl font-bold text-[#312B1E] mb-6 flex items-center gap-3">
+        <i class="fas fa-brain text-[#A7AA63]"></i>
+        Recommandations Intelligentes
+        <span class="text-xs font-normal bg-[#A7AA63]/10 text-[#A7AA63] px-2 py-1 rounded-full ml-2">Neo4j</span>
+    </h2>
+
+    {% if neo_recommendations %}
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {% for rec in neo_recommendations %}
+        <div class="group relative">
+            <div
+                class="absolute -inset-0.5 bg-gradient-to-r from-[#A7AA63] to-[#7C6B51] rounded-2xl opacity-0 group-hover:opacity-40 blur-sm transition-opacity duration-500">
+            </div>
+            <div
+                class="relative bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30 overflow-hidden transition-all duration-500 hover:shadow-lg hover:-translate-y-1 hover:border-[#A7AA63]">
+                <!-- Image placeholder -->
+                <div class="relative h-32 overflow-hidden bg-gradient-to-br from-[#A7AA63]/20 to-[#505039]/20">
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="fas fa-brain text-4xl text-[#A7AA63]/40"></i>
+                    </div>
+                    <!-- Badge methode de recommandation -->
+                    <div class="absolute top-2 right-2">
+                        {% if rec.method == 'collaborative' %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-[#A7AA63] text-white shadow-sm">
+                            <i class="fas fa-users mr-1"></i>Collaborative
+                        </span>
+                        {% elif rec.method == 'popular' %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-[#7C6B51] text-white shadow-sm">
+                            <i class="fas fa-fire mr-1"></i>Populaire
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="p-4">
+                    <h3
+                        class="text-lg font-semibold text-[#312B1E] mb-2 line-clamp-2 group-hover:text-[#A7AA63] transition-colors">
+                        {{ rec.title }}
+                    </h3>
+
+                    <div class="flex items-center gap-2 mb-3 text-sm text-[#7C6B51]">
+                        <span class="px-2 py-0.5 bg-[#E2CEAE]/30 rounded text-xs">{{ rec.level|default:"Beginner"
+                            }}</span>
+                        {% if rec.instructor %}
+                        <span class="text-xs"><i class="fas fa-user mr-1"></i>{{ rec.instructor }}</span>
+                        {% endif %}
+                    </div>
+
+                    {% if rec.score %}
+                    <div class="flex items-center gap-1 text-xs text-[#7C6B51] mb-3">
+                        <i class="fas fa-chart-line text-[#A7AA63]"></i>
+                        Score: {{ rec.score }}
+                    </div>
+                    {% endif %}
+
+                    <p class="text-sm text-[#7C6B51] line-clamp-2 mb-4">{{ rec.description|default:"Cours recommandé
+                        pour vous"|truncatechars:80 }}</p>
+
+                    <a href="{% url 'course-list' %}" class="btn-secondary w-full justify-center text-sm">
+                        <i class="fas fa-eye mr-1"></i>Découvrir
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-12 bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30">
+        <div class="w-14 h-14 mx-auto mb-4 rounded-full bg-[#E2CEAE] flex items-center justify-center">
+            <i class="fas fa-brain text-xl text-[#7C6B51]"></i>
+        </div>
+        <p class="text-[#7C6B51] mb-2">Pas encore de recommandations personnalisées.</p>
+        <p class="text-sm text-[#7C6B51]/70">Inscrivez-vous à plus de cours pour activer les suggestions intelligentes !
+        </p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Separator -->
+<div class="h-px bg-gradient-to-r from-transparent via-[#C5B8A8] to-transparent mb-12"></div>
+
 <!-- Certificates -->
 <div class="mb-12">
     <h2 class="text-2xl font-bold text-[#312B1E] mb-6 flex items-center gap-3">

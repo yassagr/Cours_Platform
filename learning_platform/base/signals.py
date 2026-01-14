@@ -157,3 +157,71 @@ def sync_user_to_neo4j(sender, instance, created, **kwargs):
         # Ne pas faire échouer l'opération Django si Neo4j est down
         logger.warning(f"Sync Neo4j échouée pour {instance.username}: {e}")
 
+
+# =====================================================
+# SYNC COURSE TO NEO4J
+# =====================================================
+
+from .models import Course
+
+
+@receiver(post_save, sender=Course)
+def sync_course_to_neo4j(sender, instance, created, **kwargs):
+    """
+    Signal déclenché après chaque save() d'un Course Django.
+    Crée ou met à jour le NeoCourse correspondant dans Neo4j.
+    """
+    try:
+        from base.neo_models import NeoCourse, NeoUser
+        
+        if created:
+            # Création d'un nouveau NeoCourse
+            neo_course = NeoCourse(
+                title=instance.title,
+                description=instance.description or '',
+                level=instance.level or 'Beginner',
+                estimated_duration=instance.estimated_duration or 1,
+                start_date=instance.start_date,
+                end_date=instance.end_date,
+                image_path=instance.image.name if instance.image else ''
+            ).save()
+            
+            # Créer relation TEACHES avec l'instructeur
+            if instance.instructor:
+                try:
+                    neo_instructor = NeoUser.nodes.get(username=instance.instructor.username)
+                    neo_instructor.teaches.connect(neo_course)
+                except NeoUser.DoesNotExist:
+                    pass
+            
+            logger.info(f"NeoCourse créé: {instance.title}")
+        else:
+            # Mise à jour
+            try:
+                neo_course = NeoCourse.nodes.get(title=instance.title)
+                neo_course.description = instance.description or ''
+                neo_course.level = instance.level or 'Beginner'
+                neo_course.estimated_duration = instance.estimated_duration or 1
+                neo_course.start_date = instance.start_date
+                neo_course.end_date = instance.end_date
+                neo_course.save()
+                logger.debug(f"NeoCourse mis à jour: {instance.title}")
+            except NeoCourse.DoesNotExist:
+                # Créer si n'existe pas
+                neo_course = NeoCourse(
+                    title=instance.title,
+                    description=instance.description or '',
+                    level=instance.level or 'Beginner',
+                    estimated_duration=instance.estimated_duration or 1,
+                    start_date=instance.start_date,
+                    end_date=instance.end_date,
+                    image_path=instance.image.name if instance.image else ''
+                ).save()
+                logger.info(f"NeoCourse créé (sync): {instance.title}")
+                
+    except ImportError:
+        pass
+    except Exception as e:
+        logger.warning(f"Sync Neo4j échouée pour course {instance.title}: {e}")
+
+

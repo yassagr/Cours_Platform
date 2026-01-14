@@ -45,6 +45,9 @@ class Command(BaseCommand):
             # Étape 3: Créer les constraints
             self.create_constraints(verbose)
 
+            # Étape 4: Créer la projection GDS
+            self.create_gds_projection(verbose)
+
             self.stdout.write(self.style.SUCCESS(
                 f'\n{"="*60}\n'
                 f'✅ CONFIGURATION TERMINÉE\n'
@@ -147,3 +150,68 @@ class Command(BaseCommand):
                     
         except Exception as e:
             self.stdout.write(self.style.WARNING(f'   Impossible de compter: {e}'))
+
+    def create_gds_projection(self, verbose):
+        """Créer la projection graphe pour GDS (si GDS est installé)"""
+        self.stdout.write('\n📊 Configuration de la projection GDS...')
+        
+        try:
+            # Vérifier si GDS est disponible
+            try:
+                result, _ = db.cypher_query("RETURN gds.version() AS version")
+                gds_version = result[0][0] if result else 'unknown'
+                self.stdout.write(f'   GDS version: {gds_version}')
+            except Exception:
+                self.stdout.write(self.style.WARNING(
+                    '   ⚠ GDS non détecté - projection ignorée\n'
+                    '   Les recommandations utiliseront les requêtes Cypher natives'
+                ))
+                return
+            
+            # Supprimer projection existante
+            try:
+                db.cypher_query("CALL gds.graph.drop('courseGraph', false)")
+                if verbose:
+                    self.stdout.write('   ✓ Ancienne projection supprimée')
+            except Exception:
+                pass
+            
+            # Créer nouvelle projection
+            projection_query = """
+            CALL gds.graph.project(
+                'courseGraph',
+                ['NeoUser', 'NeoCourse', 'NeoSkill'],
+                {
+                    ENROLLED_IN: {
+                        type: 'ENROLLED_IN',
+                        orientation: 'UNDIRECTED'
+                    },
+                    TEACHES: {
+                        type: 'TEACHES',
+                        orientation: 'UNDIRECTED'
+                    },
+                    SIMILAR_TO: {
+                        type: 'SIMILAR_TO',
+                        orientation: 'UNDIRECTED'
+                    }
+                }
+            )
+            YIELD graphName, nodeCount, relationshipCount
+            RETURN graphName, nodeCount, relationshipCount
+            """
+            
+            result, _ = db.cypher_query(projection_query)
+            
+            if result:
+                self.stdout.write(self.style.SUCCESS(
+                    f'   ✅ Projection créée: {result[0][0]}'
+                ))
+                self.stdout.write(f'   • Nœuds: {result[0][1]}')
+                self.stdout.write(f'   • Relations: {result[0][2]}')
+            
+        except Exception as e:
+            self.stdout.write(self.style.WARNING(
+                f'   ⚠ Projection GDS non créée: {e}\n'
+                '   Les recommandations utiliseront les requêtes Cypher natives'
+            ))
+
