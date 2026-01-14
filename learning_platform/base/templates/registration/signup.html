@@ -2,12 +2,14 @@
 {% block title %}Inscription{% endblock %}
 
 {% block content %}
-<div class="bg-[#1e293b] text-white p-6 rounded-xl shadow-lg border border-gray-700 max-w-3xl mx-auto">
-    <h1 class="text-3xl font-bold text-blue-500 mb-6"><i class="fas fa-user-plus mr-2"></i>Créer un nouveau compte</h1>
+<div class="bg-[#F2EFE4] text-[#312B1E] p-6 rounded-xl shadow-lg border border-[#C5B8A8] max-w-3xl mx-auto">
+    <h1 class="text-3xl font-bold text-[#312B1E] mb-6"><i class="fas fa-user-plus mr-2 text-[#A7AA63]"></i>Créer un
+        nouveau compte</h1>
 
     {% if messages %}
     {% for message in messages %}
-    <div class="mb-4 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-700{% else %}bg-green-700{% endif %}">
+    <div
+        class="mb-4 p-4 rounded-lg {% if message.tags == 'error' %}bg-[#8B4513] text-white{% else %}bg-[#A7AA63] text-white{% endif %}">
         {{ message }}
     </div>
     {% endfor %}
@@ -17,27 +19,27 @@
         {% csrf_token %}
 
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-400">Nom d'utilisateur:</label>
+            <label class="block text-sm font-semibold mb-1 text-[#505039]">Nom d'utilisateur:</label>
             <input type="text" name="username" required>
         </div>
 
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-400">Email:</label>
+            <label class="block text-sm font-semibold mb-1 text-[#505039]">Email:</label>
             <input type="email" name="email" required>
         </div>
 
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-400">Mot de passe:</label>
+            <label class="block text-sm font-semibold mb-1 text-[#505039]">Mot de passe:</label>
             <input type="password" name="password1" required>
         </div>
 
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-400">Confirmer le mot de passe:</label>
+            <label class="block text-sm font-semibold mb-1 text-[#505039]">Confirmer le mot de passe:</label>
             <input type="password" name="password2" required>
         </div>
 
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-400">Rôle:</label>
+            <label class="block text-sm font-semibold mb-1 text-[#505039]">Rôle:</label>
             <select name="role" required>
                 <option value="Student">Étudiant</option>
                 <option value="Instructor">Instructeur</option>
@@ -46,10 +48,10 @@
 
         <div class="flex items-center gap-4 pt-4">
             <button type="submit"
-                class="bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2 rounded-lg transition flex items-center gap-2">
+                class="bg-[#A7AA63] hover:bg-[#8e9150] text-white font-semibold px-6 py-2 rounded-lg transition flex items-center gap-2">
                 <i class="fas fa-check"></i> S'inscrire
             </button>
-            <a href="{% url 'login' %}" class="text-sm text-gray-300 hover:underline">
+            <a href="{% url 'login' %}" class="text-sm text-[#7C6B51] hover:underline">
                 Déjà un compte ? Connectez-vous
             </a>
         </div>
@@ -59,9 +61,9 @@
 <script>
     document.querySelectorAll('input, select').forEach(el => {
         el.classList.add(
-            'w-full', 'px-4', 'py-2', 'bg-gray-800', 'text-white',
-            'rounded-lg', 'border', 'border-gray-600',
-            'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-600'
+            'w-full', 'px-4', 'py-2', 'bg-[#EAE6D2]', 'text-[#312B1E]',
+            'rounded-lg', 'border', 'border-[#C5B8A8]',
+            'focus:outline-none', 'focus:ring-2', 'focus:ring-[#A7AA63]'
         );
     });
 </script>

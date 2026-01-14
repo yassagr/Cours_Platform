@@ -8,9 +8,40 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome pour les icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* ===== PALETTE CLAIRE ===== */
+        :root {
+            --primary-darkest: #121A1B;
+            --primary-dark: #312B1E;
+            --primary-medium: #A7AA63;
+            --primary-light: #EAE6D2;
+            --bg-main: #EAE6D2;
+            --bg-card: #F2EFE4;
+            --bg-input: #E2CEAE;
+            --bg-hover: #d6c0a0;
+            --text-primary: #121A1B;
+            --text-secondary: #505039;
+            --text-muted: #7C6B51;
+            --text-heading: #312B1E;
+            --accent-primary: #A7AA63;
+            --accent-hover: #8e9150;
+            --accent-active: #505039;
+            --accent-subtle: #CFD1A1;
+            --border-primary: #C5B8A8;
+            --border-light: #E2CEAE;
+            --border-accent: #A7AA63;
+            --success: #A7AA63;
+            --warning: #7C6B51;
+            --error: #8B4513;
+            --info: #505039;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
         }
 
         a:hover {
@@ -32,47 +63,47 @@
         }
 
         .btn-outline-warning {
-            color: #fbbf24;
-            border-color: #fbbf24;
+            color: var(--warning);
+            border-color: var(--warning);
             background-color: transparent;
         }
 
         .btn-outline-warning:hover {
-            color: #000;
-            background-color: #fbbf24;
+            color: #fff;
+            background-color: var(--warning);
         }
 
         .btn-outline-danger {
-            color: #ef4444;
-            border-color: #ef4444;
+            color: var(--error);
+            border-color: var(--error);
             background-color: transparent;
         }
 
         .btn-outline-danger:hover {
             color: #fff;
-            background-color: #ef4444;
+            background-color: var(--error);
         }
 
         .btn-outline-primary {
-            color: #3b82f6;
-            border-color: #3b82f6;
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
             background-color: transparent;
         }
 
         .btn-outline-primary:hover {
             color: #fff;
-            background-color: #3b82f6;
+            background-color: var(--accent-primary);
         }
 
         .btn-outline-success {
-            color: #22c55e;
-            border-color: #22c55e;
+            color: var(--success);
+            border-color: var(--success);
             background-color: transparent;
         }
 
         .btn-outline-success:hover {
             color: #fff;
-            background-color: #22c55e;
+            background-color: var(--success);
         }
 
         /* Tronquer le texte sur 2 lignes */
@@ -83,58 +114,79 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-card);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-primary);
+        }
     </style>
 </head>
 
-<body class="bg-[#0f172a] text-white min-h-screen flex flex-col justify-between">
+<body class="min-h-screen flex flex-col justify-between">
 
     <!-- Navbar -->
-    <header class="bg-[#1e293b] shadow-md sticky top-0 z-50">
+    <header class="bg-[#312B1E] shadow-md sticky top-0 z-50">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="{% url 'home' %}" class="text-xl font-bold hover:text-blue-300"><i class="fas fa-graduation-cap mr-3"></i>EduSphere</a>
-            <nav class="flex items-center space-x-4 text-sm font-medium">
+            <a href="{% url 'home' %}" class="text-xl font-bold text-[#EAE6D2] hover:text-[#A7AA63]">
+                <i class="fas fa-graduation-cap mr-3"></i>EduSphere
+            </a>
+            <nav class="flex items-center space-x-4 text-sm font-medium text-[#EAE6D2]">
                 {% if user.is_authenticated %}
                 <!-- Notification Bell -->
-                <a href="{% url 'notification-list' %}" class="relative hover:text-blue-300 transition">
+                <a href="{% url 'notification-list' %}" class="relative hover:text-[#A7AA63] transition">
                     <i class="fas fa-bell"></i>
                     {% if unread_notifications_count > 0 %}
                     <span
-                        class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                        class="absolute -top-2 -right-2 bg-[#8B4513] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                         {{ unread_notifications_count }}
                     </span>
                     {% endif %}
                 </a>
 
                 {% if user.role == 'Admin' or user.is_superuser %}
-                <a href="/admin/" class="hover:text-blue-300"><i class="fas fa-cog mr-1"></i> Admin</a>
+                <a href="/admin/" class="hover:text-[#A7AA63]"><i class="fas fa-cog mr-1"></i> Admin</a>
                 {% elif user.role == 'Instructor' %}
-                <a href="{% url 'teacher-dashboard' %}" class="hover:text-blue-300"><i
+                <a href="{% url 'teacher-dashboard' %}" class="hover:text-[#A7AA63]"><i
                         class="fas fa-chalkboard-teacher mr-1"></i> Dashboard</a>
                 {% else %}
-                <a href="{% url 'student-dashboard' %}" class="hover:text-blue-300"><i class="fas fa-book mr-1"></i>
+                <a href="{% url 'student-dashboard' %}" class="hover:text-[#A7AA63]"><i class="fas fa-book mr-1"></i>
                     Dashboard</a>
                 {% endif %}
                 <form action="{% url 'logout' %}" method="post" class="inline">{% csrf_token %}<button type="submit"
-                        class="text-red-400 hover:text-red-600 bg-transparent border-none cursor-pointer">Logout</button>
+                        class="text-[#E2CEAE] hover:text-[#8B4513] bg-transparent border-none cursor-pointer">Logout</button>
                 </form>
                 {% else %}
-                <a href="{% url 'login' %}" class="hover:text-blue-300">Login</a>
-                <a href="{% url 'signup' %}" class="hover:text-blue-300">Sign Up</a>
+                <a href="{% url 'login' %}" class="hover:text-[#A7AA63]">Login</a>
+                <a href="{% url 'signup' %}" class="hover:text-[#A7AA63]">Sign Up</a>
                 {% endif %}
             </nav>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="container mx-auto px-6 py-10">
+    <main class="container mx-auto px-6 py-10 flex-1">
         {% if messages %}
         <div class="max-w-4xl mx-auto mt-4">
             {% for message in messages %}
-            <div class="p-4 rounded text-white text-center mb-3
-                        {% if message.tags == 'success' %} bg-green-600
-                        {% elif message.tags == 'error' %} bg-red-600
-                        {% elif message.tags == 'info' %} bg-blue-800
-                        {% else %} bg-gray-600 {% endif %}">
+            <div class="p-4 rounded text-center mb-3 font-medium
+                        {% if message.tags == 'success' %} bg-[#A7AA63] text-white
+                        {% elif message.tags == 'error' %} bg-[#8B4513] text-white
+                        {% elif message.tags == 'info' %} bg-[#505039] text-white
+                        {% else %} bg-[#7C6B51] text-white {% endif %}">
                 {{ message }}
             </div>
             {% endfor %}
@@ -144,22 +196,22 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-[#1e293b] text-gray-400 text-sm py-8 border-t border-gray-700 mt-12">
+    <footer class="bg-[#312B1E] text-[#C5B8A8] text-sm py-8 border-t border-[#505039] mt-12">
         <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
-                <h4 class="text-white font-semibold mb-2">About</h4>
+                <h4 class="text-[#EAE6D2] font-semibold mb-2">About</h4>
                 <p>A modern learning platform. Inspired by Coursera, powered by Django & Tailwind CSS.</p>
             </div>
             <div>
-                <h4 class="text-white font-semibold mb-2">Useful Links</h4>
+                <h4 class="text-[#EAE6D2] font-semibold mb-2">Useful Links</h4>
                 <ul class="space-y-1">
-                    <li><a href="{% url 'home' %}" class="hover:text-white">Home</a></li>
-                    <li><a href="{% url 'course-list' %}" class="hover:text-white">Courses</a></li>
-                    <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+                    <li><a href="{% url 'home' %}" class="hover:text-[#A7AA63]">Home</a></li>
+                    <li><a href="{% url 'course-list' %}" class="hover:text-[#A7AA63]">Courses</a></li>
+                    <li><a href="#" class="hover:text-[#A7AA63]">Privacy Policy</a></li>
                 </ul>
             </div>
             <div>
-                <h4 class="text-white font-semibold mb-2">Contact</h4>
+                <h4 class="text-[#EAE6D2] font-semibold mb-2">Contact</h4>
                 <p>Email: support@myplatform.com</p>
                 <p>Phone: +1 234 567 890</p>
                 <p>&copy; 2025 MyPlatform. All rights reserved.</p>

@@ -2,17 +2,17 @@
 {% block title %}{{ form.instance.pk|yesno:"Modifier Cours,Créer Cours" }}{% endblock %}
 
 {% block content %}
-<div class="bg-[#1e293b] text-white p-6 rounded-xl shadow-lg border border-gray-700 max-w-3xl mx-auto">
-    <h1 class="text-3xl font-bold text-blue-500 mb-6">
+<div class="bg-[#F2EFE4] text-[#312B1E] p-6 rounded-xl shadow-lg border border-[#C5B8A8] max-w-3xl mx-auto">
+    <h1 class="text-3xl font-bold text-[#312B1E] mb-6">
         {% if form.instance.pk %}
-        <i class="fas fa-edit mr-2"></i>Modifier le cours
+        <i class="fas fa-edit mr-2 text-[#A7AA63]"></i>Modifier le cours
         {% else %}
-        <i class="fas fa-plus mr-2"></i>Créer un nouveau cours
+        <i class="fas fa-plus mr-2 text-[#A7AA63]"></i>Créer un nouveau cours
         {% endif %}
     </h1>
 
     {% if form.non_field_errors %}
-    <div class="mb-4 p-4 bg-red-700 text-white rounded-lg">
+    <div class="mb-4 p-4 bg-[#8B4513] text-white rounded-lg">
         {{ form.non_field_errors }}
     </div>
     {% endif %}
@@ -22,25 +22,25 @@
 
         {% for field in form %}
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-200" for="{{ field.id_for_label }}">
+            <label class="block text-sm font-semibold mb-1 text-[#505039]" for="{{ field.id_for_label }}">
                 {{ field.label }}:
             </label>
             {{ field }}
             {% if field.help_text %}
-            <p class="text-sm text-gray-400">{{ field.help_text }}</p>
+            <p class="text-sm text-[#7C6B51]">{{ field.help_text }}</p>
             {% endif %}
             {% for error in field.errors %}
-            <p class="text-red-700 text-sm mt-1"><i class="fas fa-exclamation-triangle mr-1"></i>{{ error }}</p>
+            <p class="text-[#8B4513] text-sm mt-1"><i class="fas fa-exclamation-triangle mr-1"></i>{{ error }}</p>
             {% endfor %}
         </div>
         {% endfor %}
 
         <div class="flex items-center gap-4 pt-4">
             <button type="submit"
-                class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition flex items-center gap-2">
+                class="bg-[#A7AA63] hover:bg-[#8e9150] text-white font-semibold px-6 py-2 rounded-lg transition flex items-center gap-2">
                 <i class="fas fa-save"></i> Enregistrer
             </button>
-            <a href="{% url 'course-list' %}" class="text-sm text-gray-300 hover:underline">
+            <a href="{% url 'course-list' %}" class="text-sm text-[#7C6B51] hover:underline">
                 Annuler
             </a>
         </div>
@@ -51,9 +51,9 @@
     // Corriger dynamiquement les champs si form-widget n'est pas stylé
     document.querySelectorAll('input, select, textarea').forEach(el => {
         el.classList.add(
-            'w-full', 'px-4', 'py-2', 'bg-gray-800', 'text-white',
-            'rounded-lg', 'border', 'border-gray-600',
-            'focus:outline-none', 'focus:ring-2', 'focus:ring-blue-600'
+            'w-full', 'px-4', 'py-2', 'bg-[#EAE6D2]', 'text-[#312B1E]',
+            'rounded-lg', 'border', 'border-[#C5B8A8]',
+            'focus:outline-none', 'focus:ring-2', 'focus:ring-[#A7AA63]'
         );
     });
 </script>

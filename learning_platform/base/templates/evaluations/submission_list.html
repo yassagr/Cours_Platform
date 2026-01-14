@@ -7,95 +7,96 @@
     <!-- Header -->
     <div class="flex justify-between items-center mb-8">
         <div>
-            <h1 class="text-3xl font-bold"><i class="fas fa-inbox mr-2"></i>Soumissions</h1>
-            <p class="text-gray-400 mt-2">{{ evaluation.title }} • {{ course.title }}</p>
+            <h1 class="text-3xl font-bold text-[#312B1E]"><i class="fas fa-inbox mr-2 text-[#A7AA63]"></i>Soumissions
+            </h1>
+            <p class="text-[#7C6B51] mt-2">{{ evaluation.title }} • {{ course.title }}</p>
         </div>
-        <a href="{% url 'module-list-by-course' course.id %}" class="text-gray-400 hover:text-white transition">
+        <a href="{% url 'module-list-by-course' course.id %}" class="text-[#7C6B51] hover:text-[#312B1E] transition">
             <i class="fas fa-arrow-left mr-1"></i> Retour au cours
         </a>
     </div>
 
     <!-- Stats -->
     <div class="grid grid-cols-3 gap-4 mb-8">
-        <div class="bg-[#1e293b] rounded-xl p-6 text-center">
-            <p class="text-3xl font-bold text-blue-600">{{ submissions|length }}</p>
-            <p class="text-gray-400">Total soumissions</p>
+        <div class="bg-[#F2EFE4] rounded-xl p-6 text-center border border-[#C5B8A8]">
+            <p class="text-3xl font-bold text-[#A7AA63]">{{ submissions|length }}</p>
+            <p class="text-[#7C6B51]">Total soumissions</p>
         </div>
-        <div class="bg-[#1e293b] rounded-xl p-6 text-center">
-            <p class="text-3xl font-bold text-green-400">
+        <div class="bg-[#F2EFE4] rounded-xl p-6 text-center border border-[#C5B8A8]">
+            <p class="text-3xl font-bold text-[#505039]">
                 {{ submissions|dictsort:"status"|dictsortreversed:"status"|first }}
             </p>
-            <p class="text-gray-400">Notées</p>
+            <p class="text-[#7C6B51]">Notées</p>
         </div>
-        <div class="bg-[#1e293b] rounded-xl p-6 text-center">
-            <p class="text-3xl font-bold text-yellow-400">
+        <div class="bg-[#F2EFE4] rounded-xl p-6 text-center border border-[#C5B8A8]">
+            <p class="text-3xl font-bold text-[#7C6B51]">
                 {{ submissions|length }}
             </p>
-            <p class="text-gray-400">En attente</p>
+            <p class="text-[#7C6B51]">En attente</p>
         </div>
     </div>
 
     <!-- Submissions Table -->
     {% if submissions %}
-    <div class="bg-[#1e293b] rounded-xl overflow-hidden">
+    <div class="bg-[#F2EFE4] rounded-xl overflow-hidden border border-[#C5B8A8]">
         <table class="w-full">
-            <thead class="bg-gray-800">
+            <thead class="bg-[#312B1E] text-[#EAE6D2]">
                 <tr>
-                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-300">Étudiant</th>
-                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-300">Date</th>
-                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-300">Fichier</th>
-                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-300">Statut</th>
-                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-300">Score</th>
-                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-300">Actions</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium">Étudiant</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium">Date</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium">Fichier</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium">Statut</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium">Score</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium">Actions</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-700">
+            <tbody class="divide-y divide-[#C5B8A8]">
                 {% for submission in submissions %}
-                <tr class="hover:bg-gray-800 transition">
-                    <td class="px-6 py-4">
+                <tr class="hover:bg-[#E2CEAE] transition">
+                    <td class="px-6 py-4 text-[#312B1E]">
                         <span class="font-medium">{{ submission.student.username }}</span>
                     </td>
-                    <td class="px-6 py-4 text-gray-400">
+                    <td class="px-6 py-4 text-[#7C6B51]">
                         {{ submission.submitted_on|date:"d/m/Y H:i" }}
                     </td>
                     <td class="px-6 py-4">
                         {% if submission.file %}
-                        <a href="{{ submission.file.url }}" class="text-blue-600 hover:text-blue-500 transition"
+                        <a href="{{ submission.file.url }}" class="text-[#A7AA63] hover:text-[#8e9150] transition"
                             target="_blank">
                             <i class="fas fa-paperclip mr-1"></i> Télécharger
                         </a>
                         {% else %}
-                        <span class="text-gray-500">-</span>
+                        <span class="text-[#C5B8A8]">-</span>
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
                         {% if submission.status == 'graded' %}
-                        <span class="bg-green-600 text-white text-xs px-3 py-1 rounded-full">Noté</span>
+                        <span class="bg-[#A7AA63] text-white text-xs px-3 py-1 rounded-full">Noté</span>
                         {% elif submission.status == 'late' %}
-                        <span class="bg-red-600 text-white text-xs px-3 py-1 rounded-full">En retard</span>
+                        <span class="bg-[#8B4513] text-white text-xs px-3 py-1 rounded-full">En retard</span>
                         {% else %}
-                        <span class="bg-yellow-600 text-white text-xs px-3 py-1 rounded-full">En attente</span>
+                        <span class="bg-[#7C6B51] text-white text-xs px-3 py-1 rounded-full">En attente</span>
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
                         {% if submission.score is not None %}
                         <span
-                            class="{% if submission.passed %}text-green-400{% else %}text-red-400{% endif %} font-bold">
+                            class="{% if submission.passed %}text-[#A7AA63]{% else %}text-[#8B4513]{% endif %} font-bold">
                             {{ submission.score|floatformat:1 }}/{{ submission.max_score|floatformat:1 }}
                         </span>
                         {% else %}
-                        <span class="text-gray-500">-</span>
+                        <span class="text-[#C5B8A8]">-</span>
                         {% endif %}
                     </td>
                     <td class="px-6 py-4">
                         {% if submission.status != 'graded' %}
                         <a href="{% url 'submission-grade' submission.id %}"
-                            class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm transition flex items-center gap-1 inline-flex">
+                            class="bg-[#A7AA63] hover:bg-[#8e9150] text-white px-4 py-2 rounded-lg text-sm transition flex items-center gap-1 inline-flex">
                             <i class="fas fa-edit"></i> Noter
                         </a>
                         {% else %}
                         <a href="{% url 'submission-grade' submission.id %}"
-                            class="text-gray-400 hover:text-white transition text-sm">
+                            class="text-[#7C6B51] hover:text-[#312B1E] transition text-sm">
                             Modifier la note
                         </a>
                         {% endif %}
@@ -106,8 +107,8 @@
         </table>
     </div>
     {% else %}
-    <div class="bg-[#1e293b] rounded-xl p-12 text-center">
-        <p class="text-gray-400 text-lg">Aucune soumission pour cette évaluation.</p>
+    <div class="bg-[#F2EFE4] rounded-xl p-12 text-center border border-[#C5B8A8]">
+        <p class="text-[#7C6B51] text-lg">Aucune soumission pour cette évaluation.</p>
     </div>
     {% endif %}
 </div>

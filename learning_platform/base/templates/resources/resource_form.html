@@ -2,14 +2,14 @@
 {% block title %}{{ form.instance.pk|yesno:"Modifier Ressource,Ajouter Ressource" }}{% endblock %}
 
 {% block content %}
-<div class="bg-[#1e293b] text-white p-6 rounded-xl shadow-lg border border-gray-700 max-w-3xl mx-auto">
-    <h1 class="text-3xl font-bold text-blue-500 mb-6">
-        <i class="fas fa-file-alt mr-2"></i>
+<div class="bg-[#F2EFE4] text-[#312B1E] p-6 rounded-xl shadow-lg border border-[#C5B8A8] max-w-3xl mx-auto">
+    <h1 class="text-3xl font-bold text-[#312B1E] mb-6">
+        <i class="fas fa-file-alt mr-2 text-[#A7AA63]"></i>
         {{ form.instance.pk|yesno:"Modifier la Ressource,Ajouter une Ressource" }}
     </h1>
 
     {% if form.non_field_errors %}
-    <div class="mb-4 p-4 bg-red-500 text-white rounded-lg">
+    <div class="mb-4 p-4 bg-[#8B4513] text-white rounded-lg">
         {{ form.non_field_errors }}
     </div>
     {% endif %}
@@ -19,79 +19,79 @@
 
         <!-- Titre -->
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-200" for="{{ form.title.id_for_label }}">
+            <label class="block text-sm font-semibold mb-1 text-[#505039]" for="{{ form.title.id_for_label }}">
                 <i class="fas fa-heading mr-1"></i> Titre de la ressource :
             </label>
             <input type="text" name="title" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}"
-                class="w-full px-4 py-2 bg-gray-800 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                class="w-full px-4 py-2 bg-[#EAE6D2] text-[#312B1E] rounded-lg border border-[#C5B8A8] focus:outline-none focus:ring-2 focus:ring-[#A7AA63]"
                 placeholder="Titre de la ressource" required>
             {% for error in form.title.errors %}
-            <p class="text-red-700 text-sm mt-1">{{ error }}</p>
+            <p class="text-[#8B4513] text-sm mt-1">{{ error }}</p>
             {% endfor %}
         </div>
 
         <!-- Type de ressource -->
         <div>
-            <label class="block text-sm font-semibold mb-1 text-blue-200" for="{{ form.resource_type.id_for_label }}">
+            <label class="block text-sm font-semibold mb-1 text-[#505039]" for="{{ form.resource_type.id_for_label }}">
                 <i class="fas fa-tag mr-1"></i> Type :
             </label>
             <select name="resource_type" id="{{ form.resource_type.id_for_label }}"
-                class="w-full px-4 py-2 bg-gray-800 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600">
-                <option value="video" {% if form.resource_type.value == 'video' %}selected{% endif %}>Vidéo</option>
-                <option value="pdf" {% if form.resource_type.value == 'pdf' %}selected{% endif %}>PDF</option>
-                <option value="image" {% if form.resource_type.value == 'image' %}selected{% endif %}>Image</option>
-                <option value="fichier" {% if form.resource_type.value == 'fichier' %}selected{% endif %}>Fichier</option>
+                class="w-full px-4 py-2 bg-[#EAE6D2] text-[#312B1E] rounded-lg border border-[#C5B8A8] focus:outline-none focus:ring-2 focus:ring-[#A7AA63]">
+                <option value="video" {% if form.resource_type.value=='video' %}selected{% endif %}>Vidéo</option>
+                <option value="pdf" {% if form.resource_type.value=='pdf' %}selected{% endif %}>PDF</option>
+                <option value="image" {% if form.resource_type.value=='image' %}selected{% endif %}>Image</option>
+                <option value="fichier" {% if form.resource_type.value=='fichier' %}selected{% endif %}>Fichier</option>
             </select>
             {% for error in form.resource_type.errors %}
-            <p class="text-red-700 text-sm mt-1">{{ error }}</p>
+            <p class="text-[#8B4513] text-sm mt-1">{{ error }}</p>
             {% endfor %}
         </div>
 
         <!-- Card pour fichier/URL -->
-        <div class="bg-gray-800 rounded-lg border border-gray-600 overflow-hidden">
-            <div class="bg-gray-700 px-4 py-3">
+        <div class="bg-[#EAE6D2] rounded-lg border border-[#C5B8A8] overflow-hidden">
+            <div class="bg-[#312B1E] text-[#EAE6D2] px-4 py-3">
                 <i class="fas fa-cloud-upload-alt mr-2"></i>Source de la ressource
             </div>
             <div class="p-4 space-y-4">
                 <!-- Upload fichier -->
                 <div>
-                    <label class="block text-sm font-semibold mb-2 text-blue-200" for="{{ form.file.id_for_label }}">
+                    <label class="block text-sm font-semibold mb-2 text-[#505039]" for="{{ form.file.id_for_label }}">
                         <i class="fas fa-upload mr-1"></i> Importer depuis votre PC
                     </label>
                     <input type="file" name="file" id="{{ form.file.id_for_label }}"
-                        class="w-full px-4 py-2 bg-gray-900 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500">
-                    <p class="text-gray-400 text-sm mt-1">
+                        class="w-full px-4 py-2 bg-[#F2EFE4] text-[#312B1E] rounded-lg border border-[#C5B8A8] focus:outline-none focus:ring-2 focus:ring-[#A7AA63] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#A7AA63] file:text-white hover:file:bg-[#8e9150]">
+                    <p class="text-[#7C6B51] text-sm mt-1">
                         <i class="fas fa-info-circle mr-1"></i>Formats: PDF, MP4, MP3, PPTX, DOCX, ZIP (max 50 MB)
                     </p>
                     {% if form.instance.file %}
-                    <p class="text-green-400 text-sm mt-1">
+                    <p class="text-[#A7AA63] text-sm mt-1">
                         <i class="fas fa-check-circle mr-1"></i>Fichier actuel: {{ form.instance.file.name }}
                     </p>
                     {% endif %}
                     {% for error in form.file.errors %}
-                    <p class="text-red-700 text-sm mt-1">{{ error }}</p>
+                    <p class="text-[#8B4513] text-sm mt-1">{{ error }}</p>
                     {% endfor %}
                 </div>
 
                 <!-- Séparateur -->
-                <div class="text-center text-gray-500 my-3">
-                    <span class="px-3 bg-gray-800">— ou —</span>
+                <div class="text-center text-[#7C6B51] my-3">
+                    <span class="px-3 bg-[#EAE6D2]">— ou —</span>
                 </div>
 
                 <!-- URL -->
                 <div>
-                    <label class="block text-sm font-semibold mb-2 text-blue-200" for="{{ form.url.id_for_label }}">
+                    <label class="block text-sm font-semibold mb-2 text-[#505039]" for="{{ form.url.id_for_label }}">
                         <i class="fas fa-link mr-1"></i> URL de la ressource
                     </label>
                     <input type="url" name="url" id="{{ form.url.id_for_label }}"
                         value="{{ form.url.value|default:'' }}"
-                        class="w-full px-4 py-2 bg-gray-900 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                        class="w-full px-4 py-2 bg-[#F2EFE4] text-[#312B1E] rounded-lg border border-[#C5B8A8] focus:outline-none focus:ring-2 focus:ring-[#A7AA63]"
                         placeholder="https://youtube.com/watch?v=... ou https://drive.google.com/...">
-                    <p class="text-yellow-400 text-sm mt-1">
+                    <p class="text-[#7C6B51] text-sm mt-1">
                         <i class="fas fa-exclamation-triangle mr-1"></i>Si vous importez un fichier, l'URL sera ignorée.
                     </p>
                     {% for error in form.url.errors %}
-                    <p class="text-red-700 text-sm mt-1">{{ error }}</p>
+                    <p class="text-[#8B4513] text-sm mt-1">{{ error }}</p>
                     {% endfor %}
                 </div>
             </div>
@@ -100,11 +100,11 @@
         <!-- Boutons -->
         <div class="flex items-center gap-4 pt-4">
             <button type="submit"
-                class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg transition flex items-center gap-2">
+                class="bg-[#A7AA63] hover:bg-[#8e9150] text-white font-semibold px-6 py-2 rounded-lg transition flex items-center gap-2">
                 <i class="fas fa-save"></i> Enregistrer
             </button>
             <a href="{% url 'module-list-by-course' course.id %}?module_id={{ module.id }}"
-                class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-6 py-2 rounded-lg transition">
+                class="bg-[#C5B8A8] hover:bg-[#A7AA63] text-[#312B1E] hover:text-white font-semibold px-6 py-2 rounded-lg transition">
                 <i class="fas fa-times mr-1"></i> Annuler
             </a>
         </div>
