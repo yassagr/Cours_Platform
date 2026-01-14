@@ -216,13 +216,17 @@ LOGGING = {
 # NEO4J CONFIGURATION
 # =====================================================
 
-from decouple import config
+from decouple import config, Config, RepositoryEnv
+import os
 
-# URL de connexion Neo4j (depuis .env ou valeur par défaut)
-NEOMODEL_NEO4J_BOLT_URL = config(
-    'NEO4J_BOLT_URL',
-    default='bolt://neo4j:password@localhost:7687'
-)
+# Lire explicitement le fichier .env depuis le dossier du projet
+env_path = os.path.join(BASE_DIR, '.env')
+if os.path.exists(env_path):
+    neo4j_config = Config(RepositoryEnv(env_path))
+    NEOMODEL_NEO4J_BOLT_URL = neo4j_config('NEO4J_BOLT_URL', default='bolt://neo4j:password123@localhost:7687')
+else:
+    # Fallback si pas de .env
+    NEOMODEL_NEO4J_BOLT_URL = config('NEO4J_BOLT_URL', default='bolt://neo4j:password123@localhost:7687')
 
 # Configuration Neomodel
 NEOMODEL_SIGNALS = True

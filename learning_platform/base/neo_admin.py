@@ -11,10 +11,19 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.http import Http404
+from django.conf import settings
 from neomodel import db
 import logging
 
 logger = logging.getLogger('base')
+
+
+def ensure_neo4j_connection():
+    """S'assurer que la connexion Neo4j est initialisée"""
+    try:
+        db.set_connection(settings.NEOMODEL_NEO4J_BOLT_URL)
+    except Exception as e:
+        logger.warning(f"Neo4j connection init failed: {e}")
 
 
 class AdminRequiredMixin(UserPassesTestMixin):
@@ -30,6 +39,9 @@ class NeoAdminDashboardView(AdminRequiredMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        
+        # Initialiser la connexion Neo4j
+        ensure_neo4j_connection()
         
         try:
             # Statistiques des nœuds
@@ -161,6 +173,9 @@ class NeoModuleListView(AdminRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         
         try:
+            # Initialiser la connexion Neo4j
+            ensure_neo4j_connection()
+            
             query = """
             MATCH (m:NeoModule)
             OPTIONAL MATCH (c:NeoCourse)-[:CONTAINS]->(m)
@@ -168,10 +183,11 @@ class NeoModuleListView(AdminRequiredMixin, TemplateView):
             OPTIONAL MATCH (m)-[:HAS_EVALUATION]->(e:NeoEvaluation)
             RETURN m.uid AS uid, 
                    m.title AS title, 
+                   m.order AS module_order,
                    c.title AS course,
                    count(DISTINCT r) AS resources,
                    count(DISTINCT e) AS evaluations
-            ORDER BY c.title, m.order
+            ORDER BY course, module_order
             """
             result, _ = db.cypher_query(query)
             
