@@ -17,8 +17,7 @@
         <div>
             <h1 class="text-3xl font-bold text-[#312B1E]"><i
                     class="fas fa-clipboard-list mr-2 text-[#A7AA63]"></i>{{evaluation.title }}</h1>
-            <p class="text-[#7C6B51] mt-2">{{ questions|length }} question(s) • Score min: {{ evaluation.passing_score
-                }}%</p>
+            <p class="text-[#7C6B51] mt-2">{{ questions|length }} question(s) • Score min: {{ evaluation.passing_score }}%</p>
         </div>
         <a href="{% url 'question-create' evaluation.id %}"
             class="bg-[#A7AA63] hover:bg-[#8e9150] text-white px-6 py-3 rounded-lg font-semibold transition flex items-center gap-2">

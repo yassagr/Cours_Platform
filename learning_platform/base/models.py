@@ -189,6 +189,11 @@ class Progress(models.Model):
     class Meta:
         unique_together = ['enrollment', 'module']
         verbose_name_plural = "Progresses"
+        indexes = [
+            models.Index(fields=['enrollment', 'module']),
+            models.Index(fields=['is_completed']),
+            models.Index(fields=['enrollment', 'is_completed']),
+        ]
 
     def __str__(self):
         return f"{self.enrollment.student.username} - {self.module.title} ({self.completion_percent}%)"

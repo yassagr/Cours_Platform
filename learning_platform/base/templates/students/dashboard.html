@@ -183,67 +183,7 @@
     {% endif %}
 </div>
 
-<!-- Separator -->
-<div class="h-px bg-gradient-to-r from-transparent via-[#C5B8A8] to-transparent mb-12"></div>
 
-<!-- Suggested Courses -->
-<div class="mb-12">
-    <h2 class="text-2xl font-bold text-[#312B1E] mb-6 flex items-center gap-3">
-        <i class="fas fa-star text-[#7C6B51]"></i>
-        Cours Suggérés
-    </h2>
-
-    {% if suggested_courses %}
-    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {% for course in suggested_courses %}
-        <div class="group course-card cursor-pointer" data-href="{% url 'course-detail' course.pk %}">
-            <div class="bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30 overflow-hidden transition-all duration-500
-                        hover:shadow-[0_12px_24px_rgba(49,43,30,0.15),0_6px_12px_rgba(49,43,30,0.1)]
-                        hover:-translate-y-2 hover:border-[#A7AA63] flex flex-col h-full">
-                <!-- Image -->
-                <div class="relative h-40 overflow-hidden">
-                    {% if course.image %}
-                    <img src="{{ course.image.url }}" alt="{{ course.title }}"
-                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                    {% else %}
-                    <div
-                        class="w-full h-full bg-gradient-to-br from-[#A7AA63] to-[#505039] flex items-center justify-center">
-                        <i class="fas fa-lightbulb text-5xl text-[#FFFFFF]/40"></i>
-                    </div>
-                    {% endif %}
-                </div>
-
-                <!-- Content -->
-                <div class="p-5 flex flex-col flex-1">
-                    <h3
-                        class="text-lg font-semibold text-[#312B1E] mb-2 group-hover:text-[#A7AA63] transition-colors line-clamp-2">
-                        {{ course.title }}
-                    </h3>
-                    <p class="text-sm text-[#7C6B51] mb-4 line-clamp-2">{{ course.description|truncatechars:60 }}</p>
-
-                    <div class="mt-auto" onclick="event.stopPropagation()">
-                        <form action="{% url 'enroll' course.pk %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn-secondary w-full justify-center">
-                                <i class="fas fa-user-plus"></i>
-                                S'inscrire
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="text-center py-12 bg-[#F2EFE4] rounded-2xl border border-[#C5B8A8]/30">
-        <p class="text-[#7C6B51]">Pas de suggestions de cours disponibles pour le moment.</p>
-    </div>
-    {% endif %}
-</div>
-
-<!-- Separator -->
-<div class="h-px bg-gradient-to-r from-transparent via-[#C5B8A8] to-transparent mb-12"></div>
 
 <!-- Neo4j Intelligent Recommendations -->
 <div class="mb-12">
@@ -289,8 +229,7 @@
                     </h3>
 
                     <div class="flex items-center gap-2 mb-3 text-sm text-[#7C6B51]">
-                        <span class="px-2 py-0.5 bg-[#E2CEAE]/30 rounded text-xs">{{ rec.level|default:"Beginner"
-                            }}</span>
+                        <span class="px-2 py-0.5 bg-[#E2CEAE]/30 rounded text-xs">{{ rec.level|default:"Beginner" }}</span>
                         {% if rec.instructor %}
                         <span class="text-xs"><i class="fas fa-user mr-1"></i>{{ rec.instructor }}</span>
                         {% endif %}
@@ -303,10 +242,10 @@
                     </div>
                     {% endif %}
 
-                    <p class="text-sm text-[#7C6B51] line-clamp-2 mb-4">{{ rec.description|default:"Cours recommandé
-                        pour vous"|truncatechars:80 }}</p>
+                    <p class="text-sm text-[#7C6B51] line-clamp-2 mb-4">{{ rec.description|default:"Cours recommandé pour vous"|truncatechars:80 }}</p>
 
-                    <a href="{% url 'course-list' %}" class="btn-secondary w-full justify-center text-sm">
+                    <a href="{% url 'course-detail' rec.course_id %}"
+                        class="btn-secondary w-full justify-center text-sm">
                         <i class="fas fa-eye mr-1"></i>Découvrir
                     </a>
                 </div>
@@ -331,10 +270,17 @@
 
 <!-- Certificates -->
 <div class="mb-12">
-    <h2 class="text-2xl font-bold text-[#312B1E] mb-6 flex items-center gap-3">
-        <i class="fas fa-certificate text-[#A7AA63]"></i>
-        Mes Certificats
-    </h2>
+
+
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-bold text-[#312B1E] mb-6 flex items-center gap-3">
+            <i class="fas fa-certificate text-[#A7AA63]"></i>
+            Mes Certificats
+        </h2>
+        <a href="{% url 'certificate-list' %}" class="text-[#7C6B51] hover:text-[#312B1E] transition">
+            <i class="fas fa-arrow-right mr-1"></i> List Certificats
+        </a>
+    </div>
 
     {% if certificates %}
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

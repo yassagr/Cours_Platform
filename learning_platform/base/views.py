@@ -1507,3 +1507,66 @@ class CertificatePreviewView(LoginRequiredMixin, View):
         response['Content-Disposition'] = f'inline; filename="certificat_{certificate.certificate_number}.pdf"'
         
         return response
+
+
+class CertificateDetailView(LoginRequiredMixin, View):
+    """Page de détail d'un certificat avec statistiques et actions"""
+    
+    def get(self, request, pk):
+        certificate = get_object_or_404(Certificate, pk=pk)
+        
+        # Vérifier les permissions (étudiant propriétaire, admin, ou instructeur du cours)
+        if certificate.student != request.user:
+            if not (request.user.role == 'Admin' or certificate.course.instructor == request.user):
+                raise PermissionDenied("Vous n'avez pas accès à ce certificat.")
+        
+        # Récupérer les statistiques du cours pour cet étudiant
+        stats = self.get_student_stats(certificate)
+        
+        context = {
+            'certificate': certificate,
+            'stats': stats,
+        }
+        
+        return render(request, 'certificates/certificate_detail.html', context)
+    
+    def get_student_stats(self, certificate):
+        """Récupère les statistiques de l'étudiant pour ce cours"""
+        try:
+            enrollment = Enrollment.objects.filter(
+                student=certificate.student,
+                course=certificate.course
+            ).first()
+            
+            if not enrollment:
+                return None
+            
+            # Compter les modules complétés
+            modules_completed = Progress.objects.filter(
+                enrollment=enrollment,
+                is_completed=True
+            ).count()
+            
+            # Calculer le score moyen des évaluations
+            submissions = Submission.objects.filter(
+                student=certificate.student,
+                evaluation__module__course=certificate.course
+            )
+            
+            if submissions.exists():
+                total_score = sum(s.score for s in submissions if s.score)
+                average_score = round(total_score / submissions.count(), 1) if submissions.count() > 0 else 0
+            else:
+                average_score = None
+            
+            return {
+                'modules_completed': modules_completed,
+                'total_modules': certificate.course.modules.count(),
+                'evaluations_passed': submissions.filter(passed=True).count() if hasattr(Submission, 'passed') else submissions.count(),
+                'average_score': average_score,
+            }
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"Error getting student stats: {e}")
+            return None

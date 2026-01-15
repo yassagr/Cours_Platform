@@ -42,6 +42,20 @@ class CourseForm(forms.ModelForm):
                 'class': 'w-full px-4 py-2 bg-gray-800 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400'
             }),
         }
+    
+    def clean(self):
+        """Validation personnalisée des dates"""
+        cleaned_data = super().clean()
+        start_date = cleaned_data.get('start_date')
+        end_date = cleaned_data.get('end_date')
+        
+        if start_date and end_date:
+            if start_date >= end_date:
+                raise forms.ValidationError(
+                    "La date de fin doit être après la date de début."
+                )
+        
+        return cleaned_data
 
 
 class ModuleForm(forms.ModelForm):

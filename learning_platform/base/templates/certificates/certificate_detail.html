@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+{% block title %}Certificat - {{ certificate.course.title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Header avec breadcrumb -->
+    <nav class="mb-6">
+        <ol class="flex items-center space-x-2 text-sm">
+            <li><a href="{% url 'student-dashboard' %}" class="text-[#7C6B51] hover:text-[#A7AA63]">Dashboard</a></li>
+            <li class="text-[#C5B8A8]">/</li>
+            <li><a href="{% url 'student-dashboard' %}" class="text-[#7C6B51] hover:text-[#A7AA63]">Mes Certificats</a>
+            </li>
+            <li class="text-[#C5B8A8]">/</li>
+            <li class="text-[#312B1E] font-medium">{{ certificate.course.title|truncatechars:30 }}</li>
+        </ol>
+    </nav>
+
+    <!-- Badge de félicitations -->
+    <div class="bg-gradient-to-r from-[#A7AA63]/20 to-[#E2CEAE]/20 rounded-2xl p-6 mb-8 border border-[#A7AA63]/30">
+        <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-full bg-[#A7AA63] flex items-center justify-center shadow-lg">
+                <i class="fas fa-trophy text-3xl text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold text-[#312B1E]">Félicitations ! 🎉</h1>
+                <p class="text-[#505039]">Vous avez obtenu votre certificat pour ce cours.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grid principale -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- Colonne gauche : Prévisualisation -->
+        <div class="bg-[#F2EFE4] rounded-2xl p-6 border border-[#C5B8A8]/30 shadow-warm-md">
+            <h2 class="text-xl font-bold text-[#312B1E] mb-4 flex items-center gap-2">
+                <i class="fas fa-file-pdf text-[#A7AA63]"></i>
+                Aperçu du Certificat
+            </h2>
+
+            <!-- Prévisualisation stylisée -->
+            <div
+                class="relative bg-[#EAE6D2] rounded-xl p-8 border-2 border-[#A7AA63] aspect-[1.414/1] flex flex-col items-center justify-center">
+                <!-- Simulation du certificat -->
+                <div class="absolute inset-4 border border-[#C5B8A8] rounded-lg"></div>
+
+                <div class="text-center z-10">
+                    <p class="text-[#A7AA63] font-bold text-lg mb-2">EduSphere</p>
+                    <h3 class="text-2xl font-bold text-[#312B1E] mb-4">CERTIFICAT DE RÉUSSITE</h3>
+                    <div class="w-32 h-0.5 bg-[#A7AA63] mx-auto mb-4"></div>
+                    <p class="text-[#505039] mb-2">Certifie que</p>
+                    <p class="text-xl font-bold text-[#312B1E] mb-4">
+                        {{ certificate.student.first_name }} {{ certificate.student.last_name }}
+                    </p>
+                    <p class="text-[#505039] mb-2">a complété le cours</p>
+                    <p class="text-[#A7AA63] font-bold">{{ certificate.course.title|truncatechars:40 }}</p>
+                </div>
+
+                <!-- Badge vérifié -->
+                <div class="absolute bottom-4 right-4">
+                    <div class="w-10 h-10 bg-[#A7AA63] rounded-full flex items-center justify-center">
+                        <i class="fas fa-check text-white"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="mt-6 space-y-3">
+                <a href="{% url 'download-certificate' certificate.pk %}"
+                    class="btn-primary w-full justify-center text-center block">
+                    <i class="fas fa-download mr-2"></i>
+                    Télécharger le PDF
+                </a>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="window.print()" class="btn-secondary justify-center">
+                        <i class="fas fa-print mr-2"></i>
+                        Imprimer
+                    </button>
+
+                    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title=Certificat%20{{ certificate.course.title|urlencode }}"
+                        target="_blank" class="btn-secondary justify-center">
+                        <i class="fab fa-linkedin mr-2"></i>
+                        LinkedIn
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Colonne droite : Informations détaillées -->
+        <div class="space-y-6">
+
+            <!-- Informations du certificat -->
+            <div class="bg-[#F2EFE4] rounded-2xl p-6 border border-[#C5B8A8]/30 shadow-warm-md">
+                <h2 class="text-xl font-bold text-[#312B1E] mb-4 flex items-center gap-2">
+                    <i class="fas fa-info-circle text-[#A7AA63]"></i>
+                    Détails du Certificat
+                </h2>
+
+                <dl class="space-y-4">
+                    <!-- Numéro de certificat -->
+                    <div class="flex items-center gap-3 p-3 bg-[#EAE6D2] rounded-xl">
+                        <div class="w-10 h-10 rounded-lg bg-[#A7AA63]/20 flex items-center justify-center">
+                            <i class="fas fa-shield-alt text-[#A7AA63]"></i>
+                        </div>
+                        <div>
+                            <dt class="text-sm text-[#7C6B51]">Numéro de certificat</dt>
+                            <dd class="font-mono font-bold text-[#312B1E]">{{ certificate.certificate_number }}</dd>
+                        </div>
+                    </div>
+
+                    <!-- Date d'émission -->
+                    <div class="flex items-center gap-3 p-3 bg-[#EAE6D2] rounded-xl">
+                        <div class="w-10 h-10 rounded-lg bg-[#A7AA63]/20 flex items-center justify-center">
+                            <i class="fas fa-calendar-check text-[#A7AA63]"></i>
+                        </div>
+                        <div>
+                            <dt class="text-sm text-[#7C6B51]">Date d'émission</dt>
+                            <dd class="font-bold text-[#312B1E]">{{ certificate.issued_on|date:"d F Y" }}</dd>
+                        </div>
+                    </div>
+
+                    <!-- Étudiant -->
+                    <div class="flex items-center gap-3 p-3 bg-[#EAE6D2] rounded-xl">
+                        <div class="w-10 h-10 rounded-lg bg-[#A7AA63]/20 flex items-center justify-center">
+                            <i class="fas fa-user-graduate text-[#A7AA63]"></i>
+                        </div>
+                        <div>
+                            <dt class="text-sm text-[#7C6B51]">Étudiant</dt>
+                            <dd class="font-bold text-[#312B1E]">
+                                {{ certificate.student.first_name }} {{ certificate.student.last_name }}
+                            </dd>
+                        </div>
+                    </div>
+                </dl>
+            </div>
+
+            <!-- Informations du cours -->
+            <div class="bg-[#F2EFE4] rounded-2xl p-6 border border-[#C5B8A8]/30 shadow-warm-md">
+                <h2 class="text-xl font-bold text-[#312B1E] mb-4 flex items-center gap-2">
+                    <i class="fas fa-book text-[#A7AA63]"></i>
+                    Informations du Cours
+                </h2>
+
+                <dl class="space-y-4">
+                    <!-- Titre du cours -->
+                    <div class="p-3 bg-[#EAE6D2] rounded-xl">
+                        <dt class="text-sm text-[#7C6B51] mb-1">Cours</dt>
+                        <dd class="font-bold text-[#312B1E] text-lg">{{ certificate.course.title }}</dd>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Niveau -->
+                        <div class="p-3 bg-[#EAE6D2] rounded-xl">
+                            <dt class="text-sm text-[#7C6B51] mb-1">Niveau</dt>
+                            <dd>
+                                <span class="px-3 py-1 bg-[#A7AA63]/20 text-[#505039] rounded-full text-sm font-medium">
+                                    {{ certificate.course.level }}
+                                </span>
+                            </dd>
+                        </div>
+
+                        <!-- Durée -->
+                        <div class="p-3 bg-[#EAE6D2] rounded-xl">
+                            <dt class="text-sm text-[#7C6B51] mb-1">Durée</dt>
+                            <dd class="font-bold text-[#312B1E]">
+                                {{ certificate.course.estimated_duration }}h
+                            </dd>
+                        </div>
+                    </div>
+
+                    <!-- Instructeur -->
+                    <div class="flex items-center gap-3 p-3 bg-[#EAE6D2] rounded-xl">
+                        <div
+                            class="w-12 h-12 rounded-full bg-gradient-to-br from-[#A7AA63] to-[#505039] flex items-center justify-center text-white font-bold text-lg">
+                            {{ certificate.course.instructor.first_name.0 }}{{ certificate.course.instructor.last_name.0 }}
+                        </div>
+                        <div>
+                            <dt class="text-sm text-[#7C6B51]">Instructeur</dt>
+                            <dd class="font-bold text-[#312B1E]">
+                                {{ certificate.course.instructor.first_name }} {{
+                                certificate.course.instructor.last_name }}
+                            </dd>
+                        </div>
+                    </div>
+                </dl>
+            </div>
+
+            <!-- Statistiques (si disponibles) -->
+            {% if stats %}
+            <div class="bg-[#F2EFE4] rounded-2xl p-6 border border-[#C5B8A8]/30 shadow-warm-md">
+                <h2 class="text-xl font-bold text-[#312B1E] mb-4 flex items-center gap-2">
+                    <i class="fas fa-chart-bar text-[#A7AA63]"></i>
+                    Vos Performances
+                </h2>
+
+                <div class="grid grid-cols-3 gap-4">
+                    {% if stats.average_score %}
+                    <div class="text-center p-4 bg-[#EAE6D2] rounded-xl">
+                        <div class="text-3xl font-bold text-[#A7AA63]">{{ stats.average_score }}%</div>
+                        <div class="text-sm text-[#7C6B51]">Score moyen</div>
+                    </div>
+                    {% endif %}
+
+                    {% if stats.modules_completed %}
+                    <div class="text-center p-4 bg-[#EAE6D2] rounded-xl">
+                        <div class="text-3xl font-bold text-[#312B1E]">{{ stats.modules_completed }}</div>
+                        <div class="text-sm text-[#7C6B51]">Modules</div>
+                    </div>
+                    {% endif %}
+
+                    {% if stats.evaluations_passed %}
+                    <div class="text-center p-4 bg-[#EAE6D2] rounded-xl">
+                        <div class="text-3xl font-bold text-[#312B1E]">{{ stats.evaluations_passed }}</div>
+                        <div class="text-sm text-[#7C6B51]">Évaluations</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Bouton retour -->
+            <a href="{% url 'student-dashboard' %}"
+                class="flex items-center gap-2 text-[#7C6B51] hover:text-[#A7AA63] transition-colors">
+                <i class="fas fa-arrow-left"></i>
+                Retour à mes certificats
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

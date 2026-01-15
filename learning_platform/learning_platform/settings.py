@@ -20,13 +20,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-j53czfum0yfn)dqkkzuoa6c7uk_=rmnbkau-o+_dsp08b(9o(0'
+# Load environment variables
+from decouple import config, Config, RepositoryEnv
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+env_path = os.path.join(BASE_DIR, '.env')
+if os.path.exists(env_path):
+    env_config = Config(RepositoryEnv(env_path))
+    SECRET_KEY = env_config('SECRET_KEY', default='django-insecure-dev-key-change-in-production')
+    DEBUG = env_config('DEBUG', default='True', cast=bool)
+    ALLOWED_HOSTS_STR = env_config('ALLOWED_HOSTS', default='localhost,127.0.0.1')
+else:
+    SECRET_KEY = 'django-insecure-dev-key-change-in-production'
+    DEBUG = True
+    ALLOWED_HOSTS_STR = 'localhost,127.0.0.1'
 
-ALLOWED_HOSTS = []
+# Parse ALLOWED_HOSTS from comma-separated string
+ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_STR.split(',') if host.strip()]
+
+# CSRF Trusted Origins (for HTTPS proxies)
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
 
 
 # Application definition

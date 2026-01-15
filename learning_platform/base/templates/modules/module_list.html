@@ -36,8 +36,7 @@
                                 {{ module.title }}
                             </span>
                             {% if module.progress_percent is not None %}
-                            <span class="text-xs text-[#A7AA63] font-semibold">{{
-                                module.progress_percent|floatformat:0}}%</span>
+                            <span class="text-xs text-[#A7AA63] font-semibold">{{ module.progress_percent|floatformat:0}}%</span>
                             {% endif %}
                         </div>
 
@@ -243,10 +242,8 @@
                                     </span>
                                 </div>
                                 <div class="flex flex-wrap items-center gap-4 text-sm text-[#7C6B51]">
-                                    <span><i class="fas fa-calendar mr-1 text-[#A7AA63]"></i>{{
-                                        evaluation.deadline}}</span>
-                                    <span><i class="fas fa-star mr-1 text-[#A7AA63]"></i>Score max: {{
-                                        evaluation.max_score }}</span>
+                                    <span><i class="fas fa-calendar mr-1 text-[#A7AA63]"></i>{{ evaluation.deadline}}</span>
+                                    <span><i class="fas fa-star mr-1 text-[#A7AA63]"></i>Score max: {{evaluation.max_score }}</span>
                                 </div>
                             </div>
                         </div>
@@ -260,8 +257,7 @@
                                 class="px-3 py-1.5 rounded-full text-sm font-semibold
                                             {% if student_submission.status == 'graded' %}bg-[#A7AA63] text-[#FFFFFF]{% else %}bg-[#7C6B51] text-[#FFFFFF]{% endif %}">
                                 {% if student_submission.status == 'graded' %}
-                                <i class="fas fa-check mr-1"></i>{{ student_submission.score }}/{{ evaluation.max_score
-                                }}
+                                <i class="fas fa-check mr-1"></i>{{ student_submission.score }}/{{ evaluation.max_score }}
                                 {% else %}
                                 <i class="fas fa-clock mr-1"></i>En attente
                                 {% endif %}

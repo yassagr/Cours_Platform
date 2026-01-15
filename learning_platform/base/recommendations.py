@@ -9,6 +9,16 @@ import logging
 logger = logging.getLogger('base')
 
 
+def ensure_neo4j_connection():
+    """Initialise la connexion Neo4j si nécessaire"""
+    try:
+        from django.conf import settings
+        if hasattr(settings, 'NEOMODEL_NEO4J_BOLT_URL'):
+            db.set_connection(settings.NEOMODEL_NEO4J_BOLT_URL)
+    except Exception as e:
+        logger.warning(f"Neo4j connection init failed: {e}")
+
+
 class CourseRecommendationEngine:
     """
     Moteur de recommandation pour suggérer des cours pertinents.
@@ -32,6 +42,9 @@ class CourseRecommendationEngine:
             Liste de dictionnaires avec les cours recommandés
         """
         try:
+            # Initialiser la connexion Neo4j
+            ensure_neo4j_connection()
+            
             all_recs = []
             
             # Algorithme 1: Filtrage Collaboratif
@@ -40,7 +53,14 @@ class CourseRecommendationEngine:
             )
             all_recs.extend(collab_recs)
             
-            # Algorithme 2: Cours Populaires (fallback si peu de données)
+            # Algorithme 2: Filtrage par Compétences (Skills)
+            if len(all_recs) < limit:
+                skill_recs = CourseRecommendationEngine._skill_based_filtering(
+                    username, limit
+                )
+                all_recs.extend(skill_recs)
+            
+            # Algorithme 3: Cours Populaires (fallback si peu de données)
             if len(all_recs) < limit:
                 popular_recs = CourseRecommendationEngine._popular_courses(
                     username, limit
@@ -58,7 +78,20 @@ class CourseRecommendationEngine:
                     if len(unique_recs) >= limit:
                         break
             
-            return unique_recs[:limit]
+            # Ajouter l'ID Django pour chaque recommandation
+            final_recs = []
+            try:
+                from base.models import Course
+                for rec in unique_recs[:limit]:
+                    course = Course.objects.filter(title=rec['title']).first()
+                    if course:
+                        rec['course_id'] = course.pk
+                        final_recs.append(rec)
+            except Exception as e:
+                logger.warning(f'Could not add course IDs: {e}')
+                final_recs = unique_recs[:limit]
+            
+            return final_recs
             
         except Exception as e:
             logger.error(f'Recommendation error for {username}: {str(e)}')
@@ -126,6 +159,73 @@ class CourseRecommendationEngine:
             ]
         except Exception as e:
             logger.warning(f'Collaborative filtering failed: {e}')
+            return []
+    
+    @staticmethod
+    def _skill_based_filtering(username, limit):
+        """
+        Filtrage par compétences (NeoSkill): recommander des cours
+        qui partagent les mêmes skills que les cours suivis par l'étudiant.
+        
+        Logique:
+        1. Trouver les skills enseignés par les cours de l'étudiant
+        2. Trouver d'autres cours qui enseignent ces mêmes skills
+        3. Recommander ces cours (non suivis par l'étudiant)
+        """
+        # Initialiser la connexion Neo4j
+        ensure_neo4j_connection()
+        
+        query = """
+        // Trouver les compétences des cours que l'étudiant suit
+        MATCH (me:NeoUser {username: $username})-[:ENROLLED_IN]->(my_course:NeoCourse)
+        MATCH (my_course)-[:TEACHES_SKILL]->(skill:NeoSkill)
+        
+        // Trouver d'autres cours qui enseignent ces mêmes compétences
+        MATCH (skill)<-[:TEACHES_SKILL]-(rec:NeoCourse)
+        WHERE rec <> my_course
+        AND NOT (me)-[:ENROLLED_IN]->(rec)
+        
+        // Compter combien de compétences en commun
+        WITH rec, count(DISTINCT skill) AS shared_skills, collect(DISTINCT skill.name) AS skill_names
+        
+        // Récupérer l'instructeur
+        OPTIONAL MATCH (instructor:NeoUser)-[:TEACHES]->(rec)
+        
+        RETURN rec.uid AS course_uid,
+               rec.title AS title,
+               rec.level AS level,
+               rec.description AS description,
+               rec.image_path AS image_path,
+               shared_skills AS score,
+               instructor.username AS instructor,
+               'skill' AS method,
+               skill_names AS skills
+        ORDER BY shared_skills DESC
+        LIMIT $limit
+        """
+        
+        try:
+            result, _ = db.cypher_query(query, {
+                'username': username,
+                'limit': limit
+            })
+            
+            return [
+                {
+                    'course_uid': row[0],
+                    'title': row[1],
+                    'level': row[2],
+                    'description': row[3][:100] + '...' if row[3] and len(row[3]) > 100 else row[3],
+                    'image_path': row[4],
+                    'score': row[5],
+                    'instructor': row[6],
+                    'method': row[7],
+                    'skills': row[8][:3] if row[8] else []  # Limiter à 3 skills affichés
+                }
+                for row in result
+            ]
+        except Exception as e:
+            logger.warning(f'Skill-based filtering failed: {e}')
             return []
     
     @staticmethod

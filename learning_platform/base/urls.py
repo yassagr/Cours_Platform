@@ -113,8 +113,9 @@ urlpatterns = [
     # CERTIFICATES
     # =====================================================
     path('certificates/', CertificateListView.as_view(), name='certificate-list'),
+    path('certificates/<int:pk>/', CertificateDetailView.as_view(), name='certificate-detail'),
     path('certificates/<int:pk>/download/', CertificateDownloadView.as_view(), name='certificate-download'),
-    path('certificates/<int:pk>/preview/', CertificatePreviewView.as_view(), name='certificate-preview'),
+    path('certificates/<int:pk>/preview/', CertificatePreviewView.as_view(), name='certificate-preview'),                                                  
 
 
     # =====================================================

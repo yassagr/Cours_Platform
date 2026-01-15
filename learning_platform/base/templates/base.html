@@ -487,7 +487,7 @@
                         </a>
 
                         {% if user.role == 'Admin' or user.is_superuser %}
-                        <a href="/admin/"
+                        <a href="{% url 'neo-admin-dashboard' %}"
                             class="px-4 py-2 rounded-lg text-[#505039] font-medium hover:bg-[#F2EFE4] hover:text-[#312B1E] transition-all duration-300">
                             <i class="fas fa-cog mr-2"></i>Admin
                         </a>
