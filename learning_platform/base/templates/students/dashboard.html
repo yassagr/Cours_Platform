@@ -213,6 +213,10 @@
                         <span class="px-2 py-1 text-xs font-semibold rounded-full bg-[#A7AA63] text-white shadow-sm">
                             <i class="fas fa-users mr-1"></i>Collaborative
                         </span>
+                        {% elif rec.method == 'skill' %}
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-[#505039] text-white shadow-sm">
+                            <i class="fas fa-puzzle-piece mr-1"></i>Compétences
+                        </span>
                         {% elif rec.method == 'popular' %}
                         <span class="px-2 py-1 text-xs font-semibold rounded-full bg-[#7C6B51] text-white shadow-sm">
                             <i class="fas fa-fire mr-1"></i>Populaire

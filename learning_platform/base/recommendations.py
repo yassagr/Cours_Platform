@@ -45,51 +45,68 @@ class CourseRecommendationEngine:
             # Initialiser la connexion Neo4j
             ensure_neo4j_connection()
             
+            # Distribution fixe: 3 collaboratifs, 2 skills, 1 populaire
+            COLLAB_QUOTA = 3
+            SKILL_QUOTA = 2
+            POPULAR_QUOTA = 1
+            
             all_recs = []
+            seen_titles = set()
             
-            # Algorithme 1: Filtrage Collaboratif
+            # 1. Récupérer les recommandations collaboratives (max 3)
             collab_recs = CourseRecommendationEngine._collaborative_filtering(
-                username, limit
+                username, limit=10  # Récupérer plus pour avoir du choix
             )
-            all_recs.extend(collab_recs)
+            collab_count = 0
+            for rec in collab_recs:
+                if rec['title'] not in seen_titles and collab_count < COLLAB_QUOTA:
+                    seen_titles.add(rec['title'])
+                    all_recs.append(rec)
+                    collab_count += 1
             
-            # Algorithme 2: Filtrage par Compétences (Skills)
-            if len(all_recs) < limit:
-                skill_recs = CourseRecommendationEngine._skill_based_filtering(
-                    username, limit
-                )
-                all_recs.extend(skill_recs)
+            # 2. Récupérer les recommandations par skills (max 2)
+            skill_recs = CourseRecommendationEngine._skill_based_filtering(
+                username, limit=10
+            )
+            skill_count = 0
+            for rec in skill_recs:
+                if rec['title'] not in seen_titles and skill_count < SKILL_QUOTA:
+                    seen_titles.add(rec['title'])
+                    all_recs.append(rec)
+                    skill_count += 1
             
-            # Algorithme 3: Cours Populaires (fallback si peu de données)
-            if len(all_recs) < limit:
-                popular_recs = CourseRecommendationEngine._popular_courses(
-                    username, limit
-                )
-                all_recs.extend(popular_recs)
+            # 3. Récupérer les cours populaires (max 1)
+            popular_recs = CourseRecommendationEngine._popular_courses(
+                username, limit=10
+            )
+            popular_count = 0
+            for rec in popular_recs:
+                if rec['title'] not in seen_titles and popular_count < POPULAR_QUOTA:
+                    seen_titles.add(rec['title'])
+                    all_recs.append(rec)
+                    popular_count += 1
             
-            # Dédupliquer par titre
-            seen = set()
-            unique_recs = []
-            
-            for rec in all_recs:
-                if rec['title'] not in seen:
-                    seen.add(rec['title'])
-                    unique_recs.append(rec)
-                    if len(unique_recs) >= limit:
-                        break
+            # Si on n'a pas assez, compléter avec les restants
+            remaining = limit - len(all_recs)
+            if remaining > 0:
+                # Ajouter plus de collaboratifs
+                for rec in collab_recs:
+                    if rec['title'] not in seen_titles and len(all_recs) < limit:
+                        seen_titles.add(rec['title'])
+                        all_recs.append(rec)
             
             # Ajouter l'ID Django pour chaque recommandation
             final_recs = []
             try:
                 from base.models import Course
-                for rec in unique_recs[:limit]:
+                for rec in all_recs[:limit]:
                     course = Course.objects.filter(title=rec['title']).first()
                     if course:
                         rec['course_id'] = course.pk
                         final_recs.append(rec)
             except Exception as e:
                 logger.warning(f'Could not add course IDs: {e}')
-                final_recs = unique_recs[:limit]
+                final_recs = all_recs[:limit]
             
             return final_recs
             

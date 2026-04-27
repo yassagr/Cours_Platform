@@ -50,8 +50,7 @@
                 <div class="w-10 h-10 rounded-full bg-[#312B1E] flex items-center justify-center">
                     <i class="fas fa-times text-[#EAE6D2] text-xl"></i>
                 </div>
-                <p class="text-[#505039] font-semibold text-lg">Score insuffisant. <br> Minimum requis: {{
-                    evaluation.passing_score }}%</p>
+                <p class="text-[#505039] font-semibold text-lg">Score insuffisant. <br> Minimum requis: {{evaluation.passing_score }}%</p>
             </div>
             {% endif %}
         </div>
@@ -116,8 +115,7 @@
                                 bg-[#EAE6D2] border-[#C5B8A8]/50
                             {% endif %}">
                             <span
-                                class="font-bold {% if answer.question.correct_option == opt %}text-[#A7AA63]{% else %}text-[#505039]{% endif %}">{{
-                                opt }}:</span>
+                                class="font-bold {% if answer.question.correct_option == opt %}text-[#A7AA63]{% else %}text-[#505039]{% endif %}">{{opt }}:</span>
                             <span class="text-[#312B1E] ml-1">
                                 {% if opt == 'A' %}{{ answer.question.option1 }}
                                 {% elif opt == 'B' %}{{ answer.question.option2 }}
